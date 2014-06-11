@@ -60,7 +60,7 @@ class BatchMetricKey( object ):
 		fieldKey = self.w.keyTextField.get()
 		flatFieldKey = re.sub("@Base", "@base", fieldKey)
 
-		if "@base" in fieldKey or "@Base" in flatFieldKey:
+		if "@base" in fieldKey or "@Base" in fieldKey:
 			# Checks if a given layer has a metrics key of a glyph that has another key. Checks the glyph once and returns its name.
 			def nestHuntL( targetGlyphName ):
 				# Sees if the glyphName exists in the font
