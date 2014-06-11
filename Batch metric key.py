@@ -38,7 +38,7 @@ class BatchMetricKey( object ):
 		self.w.radioQText = vanilla.TextBox( ( 12, 115, 100, 17), "If there is Q:", sizeStyle='regular' )
 		self.w.radioQ = vanilla.RadioGroup( (100, 115, 350, 19), ["Use width of O (no key)", "Use RSB of Q"], sizeStyle='regular', isVertical=False)
 		self.w.radioQ.set(0)
-		self.w.line = HorizontalLine((12, 190, -10, 1))
+		self.w.line = vanilla.HorizontalLine((12, 190, -10, 1))
 		self.w.explain = vanilla.TextBox( ( 12, 200, 350, 80), "@base is a glyph without suffix of the selected glyph.\n@base of a.smcp is a\n@Base of hsuperior is H\n@base.smcp of one.numr is one.smcp", sizeStyle='regular' )
 		# Run Button:
 		self.w.setButton = vanilla.Button((290, 145, 90, 34), "Set", sizeStyle='regular', callback=self.BatchMetricKeyMain )
