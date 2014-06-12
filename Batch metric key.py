@@ -188,6 +188,11 @@ class BatchMetricKey( object ):
 							# Uses RSB as normal
 							elif baseGlyphName == "Q" and self.w.radioQ.get() == 1:
 								i.setRightMetricsKey_(finalKeyR)
+				else:
+					finalKeyL = re.sub("@base", dummyNewL, baseGlyphNameL)
+					i.setLeftMetricsKey_(finalKeyL)
+					finalKeyR = re.sub("@base", dummyNewL, baseGlyphNameR)
+					i.setRightMetricsKey_(finalKeyR)
 
 				thisGlyph.endUndo()
 				thisFont.enableUpdateInterface()
