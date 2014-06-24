@@ -144,8 +144,6 @@ class BatchMetricKey( object ):
 				else:
 					baseGlyphNameL = baseGlyphName
 					baseGlyphNameR = baseGlyphName
-				print "baseGlyphNameL= " + baseGlyphNameL
-				print "baseGlyphNameR= " + baseGlyphNameR
 				thisFont.disableUpdateInterface()
 				thisGlyph.beginUndo()	
 
@@ -154,16 +152,11 @@ class BatchMetricKey( object ):
 				if self.w.applyL.get():
 					if self.w.avoidNest:
 						dummyOldL = nestHuntL(baseGlyphNameL)
-						print "dummyOldL= " + dummyOldL
 						dummyNewL = nestHuntL(dummyOldL)
-						print "dummyNewL= " + dummyNewL
 						while dummyOldL != dummyNewL:
 							dummyOldL = nestHuntL(dummyNewL)
 							dummyNewL = nestHuntL(dummyOldL)
 						finalKeyL = re.sub("@base", dummyNewL, flatFieldKey)
-						print "flatFieldKey= " + flatFieldKey
-						print "dummyNewL= " + dummyNewL
-						print "finalKeyL= " + finalKeyL
 						for i in thisGlyph.layers:
 							i.setLeftMetricsKey_(finalKeyL)
 
