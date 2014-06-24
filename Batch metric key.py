@@ -1,7 +1,7 @@
 #MenuTitle: Batch metric key
 # -*- coding: utf-8 -*-
 __doc__="""
-Applies the specified logic of metrics key to the selected glyphs.
+(GUI) Applies the specified logic of metrics key to the selected glyphs.
 """
 
 # User can customise presets here. Don't forget to add the comma at the end! (except when it's the last one)
@@ -69,8 +69,9 @@ class BatchMetricKey( object ):
 					targetGlyphL = thisFont.glyphs[ targetGlyphName ]
 					targetLayerL = targetGlyphL.layers[ thisFontMaster.id ]
 					targetLayerKeyL = targetLayerL.leftMetricsKey()
+					# If it's a plain number or calculation, returns the original glyph name
 					a = ["=\|", "+" "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
-					if targetLayerKeyL[0].isdigit() or "-" in thisLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
+					if targetLayerKeyL[0].isdigit() or "-" in targetLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
 						return targetGlyphName
 
 					# Finds the first component and returns its name
@@ -95,8 +96,9 @@ class BatchMetricKey( object ):
 					targetGlyphR = thisFont.glyphs[ targetGlyphName ]
 					targetLayerR = targetGlyphR.layers[ thisFontMaster.id ]
 					targetLayerKeyR = targetLayerR.rightMetricsKey()
+					# If it's a plain number or calculation, returns the original glyph name
 					a = ["=\|", "+" "\*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
-					if targetLayerKeyR[0].isdigit() or "-" in thisLayerKeyL[0] or any([ x in targetLayerKeyR for x in a]):
+					if targetLayerKeyR[0].isdigit() or "-" in targetLayerKeyR[0] or any([ x in targetLayerKeyR for x in a]):
 						return targetGlyphName
 
 					# Finds the last "Letter" component and returns its name
@@ -131,9 +133,10 @@ class BatchMetricKey( object ):
 				baseGlyphName = re.sub("superior", "", baseGlyphName)
 				if "@Base" in fieldKey:
 					baseGlyphName = baseGlyphName.capitalize()
-					if thisGlyph.script == "Latin" and re.match("Ij|Ae|Oe", baseGlyphName):
+					if thisGlyph.script == "latin" and re.match("Ij|Ae|Oe", baseGlyphName):
 						baseGlyphName = baseGlyphName[0:2].upper() + baseGlyphName[2:]
-
+						baseGlyphNameL = baseGlyphName
+						baseGlyphNameR = baseGlyphName
 				# Detects ligatures and sets baseGlyphNameL and R
 				if "_" in baseGlyphName:
 					baseGlyphNameL = re.sub("_.*", "", baseGlyphName)
@@ -141,26 +144,32 @@ class BatchMetricKey( object ):
 				else:
 					baseGlyphNameL = baseGlyphName
 					baseGlyphNameR = baseGlyphName
-
+				print "baseGlyphNameL= " + baseGlyphNameL
+				print "baseGlyphNameR= " + baseGlyphNameR
 				thisFont.disableUpdateInterface()
 				thisGlyph.beginUndo()	
 
 				# Runs nestHuntL multiple times until it finds the final glyph,
 				# and then set the final left metrics key.
-				if self.w.applyL:
+				if self.w.applyL.get():
 					if self.w.avoidNest:
 						dummyOldL = nestHuntL(baseGlyphNameL)
+						print "dummyOldL= " + dummyOldL
 						dummyNewL = nestHuntL(dummyOldL)
+						print "dummyNewL= " + dummyNewL
 						while dummyOldL != dummyNewL:
 							dummyOldL = nestHuntL(dummyNewL)
 							dummyNewL = nestHuntL(dummyOldL)
 						finalKeyL = re.sub("@base", dummyNewL, flatFieldKey)
+						print "flatFieldKey= " + flatFieldKey
+						print "dummyNewL= " + dummyNewL
+						print "finalKeyL= " + finalKeyL
 						for i in thisGlyph.layers:
 							i.setLeftMetricsKey_(finalKeyL)
 
 				# Runs nestHuntR multiple times until it finds the final glyph,
 				# and then set the final right metrics key.
-				if self.w.applyR:
+				if self.w.applyR.get():
 					if self.w.avoidNest:
 						dummyOldR = nestHuntR(baseGlyphNameR)
 						dummyNewR = nestHuntR(dummyOldR)
@@ -188,25 +197,26 @@ class BatchMetricKey( object ):
 							# Uses RSB as normal
 							elif baseGlyphName == "Q" and self.w.radioQ.get() == 1:
 								i.setRightMetricsKey_(finalKeyR)
-				else:
-					finalKeyL = re.sub("@base", dummyNewL, baseGlyphNameL)
-					i.setLeftMetricsKey_(finalKeyL)
-					finalKeyR = re.sub("@base", dummyNewL, baseGlyphNameR)
-					i.setRightMetricsKey_(finalKeyR)
+				#else:
+				#	finalKeyL = re.sub("@base", dummyNewL, baseGlyphNameL)
+				#	i.setLeftMetricsKey_(finalKeyL)
+				#	finalKeyR = re.sub("@base", dummyNewL, baseGlyphNameR)
+				#	i.setRightMetricsKey_(finalKeyR)
 
 				thisGlyph.endUndo()
 				thisFont.enableUpdateInterface()
 			self.w.close()
 
 		else:
+			pass
 			for thisLayer in listOfSelectedLayers:
 				thisGlyph = thisLayer.parent
 				thisFont.disableUpdateInterface()
 				thisGlyph.beginUndo()	
 				for i in thisGlyph.layers:
-					if self.w.applyL:
+					if self.w.applyL.get():
 						i.setLeftMetricsKey_(fieldKey)
-					if self.w.applyR:
+					if self.w.applyR.get():
 						i.setRightMetricsKey_(fieldKey)
 				thisGlyph.endUndo()
 				thisFont.enableUpdateInterface()
