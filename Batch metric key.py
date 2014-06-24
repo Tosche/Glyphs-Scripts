@@ -69,8 +69,8 @@ class BatchMetricKey( object ):
 					targetGlyphL = thisFont.glyphs[ targetGlyphName ]
 					targetLayerL = targetGlyphL.layers[ thisFontMaster.id ]
 					targetLayerKeyL = targetLayerL.leftMetricsKey()
-					a = ["=|", "+" "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
-					if targetLayerKeyL[0].isdigit() or any([ x in targetLayerKeyL for x in a]):
+					a = ["=\|", "+" "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+					if targetLayerKeyL[0].isdigit() or "-" in thisLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
 						return targetGlyphName
 
 					# Finds the first component and returns its name
@@ -95,8 +95,8 @@ class BatchMetricKey( object ):
 					targetGlyphR = thisFont.glyphs[ targetGlyphName ]
 					targetLayerR = targetGlyphR.layers[ thisFontMaster.id ]
 					targetLayerKeyR = targetLayerR.rightMetricsKey()
-					a = ["=|", "+" "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
-					if targetLayerKeyR[0].isdigit() or any([ x in targetLayerKeyR for x in a]):
+					a = ["=\|", "+" "\*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+					if targetLayerKeyR[0].isdigit() or "-" in thisLayerKeyL[0] or any([ x in targetLayerKeyR for x in a]):
 						return targetGlyphName
 
 					# Finds the last "Letter" component and returns its name
@@ -131,7 +131,7 @@ class BatchMetricKey( object ):
 				baseGlyphName = re.sub("superior", "", baseGlyphName)
 				if "@Base" in fieldKey:
 					baseGlyphName = baseGlyphName.capitalize()
-					if thisGlyph.script == "Latin" and re.match("Ij|Ae|Oe", 	baseGlyphName):
+					if thisGlyph.script == "Latin" and re.match("Ij|Ae|Oe", baseGlyphName):
 						baseGlyphName = baseGlyphName[0:2].upper() + baseGlyphName[2:]
 
 				# Detects ligatures and sets baseGlyphNameL and R
@@ -199,6 +199,16 @@ class BatchMetricKey( object ):
 			self.w.close()
 
 		else:
-			Glyphs.showMacroWindow()
-			print "@base or @Base was not in the text field. Probably misspelling?"
+			for thisLayer in listOfSelectedLayers:
+				thisGlyph = thisLayer.parent
+				thisFont.disableUpdateInterface()
+				thisGlyph.beginUndo()	
+				for i in thisGlyph.layers:
+					if self.w.applyL:
+						i.setLeftMetricsKey_(fieldKey)
+					if self.w.applyR:
+						i.setRightMetricsKey_(fieldKey)
+				thisGlyph.endUndo()
+				thisFont.enableUpdateInterface()
+			self.w.close()
 BatchMetricKey()

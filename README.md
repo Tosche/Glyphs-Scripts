@@ -30,4 +30,5 @@ And you are done. The installation should be effective immediately, but to be on
 # ABOUT THE SCRIPTS
 
 ## Anchors
-* **Batch metric key:** Applies the specified logic of metrics key to the selected glyphs. *Needs Vanilla.*
+* **Batch metric key:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Needs Vanilla.*
+* **Check & Fix Metric Keys:** (GUI) Reports possibly wrong keys and cleans up some, if you wish. It checks non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Needs Vanilla.*
