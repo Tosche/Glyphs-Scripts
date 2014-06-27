@@ -1,4 +1,4 @@
-#MenuTitle: Check & Fix Metric keys
+#MenuTitle: Check & Fix Metric Keys
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Reports possibly wrong keys and cleans up some, if you wish. It checks non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys.
@@ -11,9 +11,6 @@ import re
 # Needs to report different keys in the same glyph.
 # Needs to report invalid keys.
 # Needs to report nesting.
-
-thisFont = Glyphs.font
-numberOfMasters = len(thisFont.masters)
 
 class CheckAndFixMetricKeys( object ):
 	def __init__( self ):
@@ -46,32 +43,14 @@ class CheckAndFixMetricKeys( object ):
 		self.w.reportDifference = vanilla.Button((left+textW+xSpace, buttonTop+leading, buttonW, buttonH), "Report", sizeStyle='regular', callback=self.reportDifference )
 		self.w.reportNest = vanilla.Button((left+textW+xSpace, buttonTop+leading+leading, buttonW, buttonH), "Report", sizeStyle='regular', callback=self.reportNest )
 		self.w.clearNest = vanilla.Button((left+textW+xSpace+buttonW+xSpace, buttonTop+leading+leading, buttonW, buttonH), "Clean Up", sizeStyle='regular', callback=self.clearNest )
-
-		# Load Settings:
-		if not self.LoadPreferences():
-			print "Note: 'Metric Key Checker' could not load preferences. Will resort to defaults"
 		
 		# Open window and focus on it:
 		self.w.open()
 		self.w.makeKey()
-		
-	def SavePreferences( self, sender ):
-		try:
-			Glyphs.defaults["com.Tosche.MetricKeyChecker.popup_1"] = self.w.popup_1.get()
-		except:
-			return False
-			
-		return True
-
-	def LoadPreferences( self ):
-		try:
-			self.w.popup_1.set( Glyphs.defaults["com.Tosche.MetricKeyChecker.popup_1"] )
-		except:
-			return False
-			
-		return True
 
 	def reportInvalid( self, sender ):
+		thisFont = Glyphs.font
+
 		def keyCleaner( keyValue ):
 			newValue = re.sub("=", "", keyValue)
 			newValue = re.sub(" .*", "", newValue)
@@ -81,8 +60,8 @@ class CheckAndFixMetricKeys( object ):
 		Glyphs.clearLog()
 		thisFont.disableUpdateInterface()
 
-		print 'Following glyphs use non-existent glyphs as their metric keys.\nPlease fix it manually, or use "Find and Replace in Metric Keys" script by https://github.com/mekkablue/Glyphs-Scripts'
-		print "\nLeft Sidebearing"
+		print 'Following glyphs use non-existent glyphs as their metric keys.\nPlease fix it manually, or use "Find and Replace in Metric Keys" script by https://github.com/mekkablue/Glyphs-Scripts\n'
+		print "\nLeft Sidebearing\n"
 		for thisGlyph in thisFont.glyphs:
 			for thisLayer in thisGlyph.layers:
 				thisLayerKeyL = thisLayer.leftMetricsKey()
@@ -93,9 +72,9 @@ class CheckAndFixMetricKeys( object ):
 				else:
 					cleanKeyNameL = keyCleaner(thisLayerKeyL)
 					if not thisFont.glyphs[ cleanKeyNameL ]:
-						print "%s in %s uses: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameL)
+						print "%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameL)
 
-		print "\nRight Sidebearing"
+		print "\nRight Sidebearing\n"
 		for thisGlyph in thisFont.glyphs:
 			for thisLayer in thisGlyph.layers:
 				thisLayerKeyR = thisLayer.rightMetricsKey()
@@ -106,13 +85,15 @@ class CheckAndFixMetricKeys( object ):
 				else:
 					cleanKeyNameR = keyCleaner(thisLayerKeyR)
 					if not thisFont.glyphs[ cleanKeyNameR ]:
-						print "%s in %s uses: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameR)
+						print "%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameR)
 		print "Done."
 
 		thisFont.enableUpdateInterface()
 		Glyphs.showMacroWindow()
 
 	def reportDifference( self, sender ):
+		thisFont = Glyphs.font
+		numberOfMasters = len(thisFont.masters)
 		def categoryCheck(keyValue):
 			if keyValue[0].isdigit() or "-" in keyValue[0]:
 				return "Numerical value"
@@ -127,7 +108,7 @@ class CheckAndFixMetricKeys( object ):
 
 		thisFont.disableUpdateInterface()
 		Glyphs.clearLog()
-		print "Following glyphs use different types or logics of metric key in each master. Note that this inconsistency is not necessarily a bad thing (you might have done so for a good reason). Also, Glyphs sometimes thinks that auto (component inheritance) is a plain value, therefore the script lists unnecessary glyphs. If you see this, just activate all masters once and re-run it. If you see You can use my Batch Metric Key script to apply the same key to all masters.\n"
+		print "Following glyphs use different types or logics of metric key in each master. Note that this inconsistency is not necessarily a bad thing (you might have done so for a good reason). Also, Glyphs sometimes thinks that auto (component inheritance) is a plain value, therefore the script lists unnecessary glyphs. If you see this, just activate all masters once and re-run it. You can use my Batch Metric Key script to apply the same key to all masters.\n"
 		print "\nLeft Sidebearing\n"
 		for thisGlyph in thisFont.glyphs:
 			thisGlyphKeyCategoryL = []
@@ -166,8 +147,135 @@ class CheckAndFixMetricKeys( object ):
 		Glyphs.showMacroWindow()
 
 	def reportNest( self, sender ):
-		pass
+		thisFont = Glyphs.font
+		numberOfMasters = len(thisFont.masters)
+		thisFontMaster = thisFont.selectedFontMaster
+		# Checks if a given layer has a metrics key of a glyph that has another key. Checks the glyph once and returns its name.
+		def nestHuntL( targetGlyphName ):
+			# Sees if the glyphName exists in the font
+			if thisFont.glyphs[ targetGlyphName ]:
+				# If exists, gets the left key of targetGlyph of the same layer
+				targetGlyphL = thisFont.glyphs[ targetGlyphName ]
+				targetLayerL = targetGlyphL.layers[ thisFontMaster.id ]
+				targetLayerKeyL = targetLayerL.leftMetricsKey()
+				# If it's a plain number or calculation, returns the original glyph name
+				a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+				if targetLayerKeyL[0].isdigit() or "-" in targetLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
+					return targetGlyphName
 
+				# Finds the first component and returns its name
+				elif "auto" in targetLayerKeyL:
+					firstComponent = targetLayerL.components[0]
+					return firstComponent.componentName
+
+				# This is a single-letter key, so clean it up
+				else:
+					cleanGlyphName = re.sub( "=", "", targetLayerKeyL )
+					cleanGlyphName = re.sub( " .*", "", cleanGlyphName )
+					return cleanGlyphName
+
+			# If the glyph doesn't exist:
+			else:
+				return "The above glyph doesn't exist."
+
+		def nestHuntR( targetGlyphName ):
+			# Sees if the glyphName exists in the font
+			if thisFont.glyphs[ targetGlyphName ]:
+				# If exists, gets the left key of targetGlyph of the same layer
+				targetGlyphR = thisFont.glyphs[ targetGlyphName ]
+				targetLayerR = targetGlyphR.layers[ thisFontMaster.id ]
+				targetLayerKeyR = targetLayerR.rightMetricsKey()
+				# If it's a plain number or calculation, returns the original glyph name
+				a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+				if targetLayerKeyR[0].isdigit() or "-" in targetLayerKeyR[0] or any([ x in targetLayerKeyR for x in a]):
+					return targetGlyphName
+
+				# Finds the last "Letter" component and returns its name
+				elif "auto" in targetLayerKeyR:
+					allCompornents = thisLayer.components 
+					numOfCompornents = len(allCompornents)
+					lastCompornent = allCompornents[numOfCompornents]
+					lastCompornentName = lastCompornent.componentName
+					lastCompornentGlyph = thisFont.glyphs[lastCompornentName]
+					while lastCompornentGlyph.category != "Letter":
+						numOfCompornents = numOfCompornents-1
+						lastCompornent = allCompornents[numOfCompornents]
+						lastCompornentName = lastCompornent.componentName
+						lastCompornentGlyph = thisFont.glyphs[lastCompornentName]
+					return lastCompornentName
+
+				# This is a single-letter key, so clean it up
+				else:
+					cleanGlyphName = re.sub( "=", "", targetLayerKeyR )
+					cleanGlyphName = re.sub( " .*", "", cleanGlyphName )
+					return cleanGlyphName
+
+			# If the glyph doesn't exist:
+			else:
+				return "The above glyph doesn't exist."
+
+		thisFont.disableUpdateInterface()
+		Glyphs.clearLog()
+
+		print "Following glyphs has at least one nesting of sidebearing keys in the current layer (it doesn't check all layers). Nesting should be avoided as much as possible, because Update Metrics command only checks the key once, and you have to update as many times as you nest. Nested calculation, however, cannot be easily simplified, so you might have to change it or leave it and don't forget to update metrics several times.\n\nTo fix this, click Clean Up button of this script (again, it doesn't remove calculation).\n"
+		print "\nLeft Sidebearing\n"
+		for thisGlyph in thisFont.glyphs:
+			thisGlyphNameL = thisGlyph.name
+			thisGlyphLayerL = thisGlyph.layers[ thisFontMaster.id ]
+			thisGlyphKeyL = thisGlyphLayerL.leftMetricsKey()
+			if thisGlyphKeyL[0].isdigit() or "-" in thisGlyphKeyL[0] or re.match("auto", thisGlyphKeyL):
+				pass
+			else:
+				dummyOldL = nestHuntL(thisGlyphNameL)
+				dummyNewL = nestHuntL(dummyOldL)
+				if dummyOldL != dummyNewL:
+					print thisGlyphNameL
+					indent = "\t> "
+					print indent+dummyOldL
+					indent = indent + "> "
+					print indent+dummyNewL
+					while dummyOldL != dummyNewL:
+						dummyOldL = nestHuntL(dummyNewL)
+						if dummyOldL != dummyNewL:
+							indent = indent + "> "
+							print indent + dummyOldL
+							indent = indent + "> "
+						dummyNewL = nestHuntL(dummyOldL)
+						if dummyOldL != dummyNewL:
+							print indent + dummyNewL
+						if len(indent) >= 10:
+							print indent + "> The reporter gave up. You probably have a loop. Naughty you."
+							break
+
+		print "\nRight Sidebearing\n"
+		for thisGlyph in thisFont.glyphs:
+			thisGlyphNameR = thisGlyph.name
+			thisGlyphLayerR = thisGlyph.layers[ thisFontMaster.id ]
+			thisGlyphKeyR = thisGlyphLayerR.rightMetricsKey()
+			if thisGlyphKeyR[0].isdigit() or "-" in thisGlyphKeyR[0] or re.match("auto", thisGlyphKeyR):
+				pass
+			else:
+				dummyOldR = nestHuntR(thisGlyphNameR)
+				dummyNewR = nestHuntR(dummyOldR)
+				if dummyOldR != dummyNewR:
+					print thisGlyphNameR
+					indent = "\t> "
+					print indent+dummyOldR
+					indent = indent + "> "
+					print indent+dummyNewR
+					while dummyOldR != dummyNewR:
+						dummyOldR = nestHuntR(dummyNewR)
+						if dummyOldR != dummyNewR:
+							indent = indent + "> "
+							print indent + dummyOldR
+							indent = indent + "> "
+						dummyNewR = nestHuntR(dummyOldR)
+						if dummyOldR != dummyNewR:
+							print indent + dummyNewR
+						if len(indent) >= 10:
+							print indent + "> The reporter gave up. You probably have a loop. Naughty you."
+							break
+		Glyphs.showMacroWindow()
 	def clearNest( self, sender ):
 		pass
 

@@ -1,4 +1,4 @@
-#MenuTitle: Batch metric key
+#MenuTitle: Batch Metric Key
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Applies the specified logic of metrics key to the selected glyphs.
@@ -70,7 +70,7 @@ class BatchMetricKey( object ):
 					targetLayerL = targetGlyphL.layers[ thisFontMaster.id ]
 					targetLayerKeyL = targetLayerL.leftMetricsKey()
 					# If it's a plain number or calculation, returns the original glyph name
-					a = ["=\|", "+" "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+					a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
 					if targetLayerKeyL[0].isdigit() or "-" in targetLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
 						return targetGlyphName
 
@@ -97,7 +97,7 @@ class BatchMetricKey( object ):
 					targetLayerR = targetGlyphR.layers[ thisFontMaster.id ]
 					targetLayerKeyR = targetLayerR.rightMetricsKey()
 					# If it's a plain number or calculation, returns the original glyph name
-					a = ["=\|", "+" "\*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+					a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
 					if targetLayerKeyR[0].isdigit() or "-" in targetLayerKeyR[0] or any([ x in targetLayerKeyR for x in a]):
 						return targetGlyphName
 

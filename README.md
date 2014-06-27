@@ -32,3 +32,4 @@ And you are done. The installation should be effective immediately, but to be on
 ## Anchors
 * **Batch metric key:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Needs Vanilla.*
 * **Check & Fix Metric Keys:** Not finished, but top two buttons work. (GUI) Reports possibly wrong keys and cleans up some, if you wish. It checks non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Needs Vanilla.*
+* **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
