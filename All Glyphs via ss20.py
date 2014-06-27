@@ -1,14 +1,13 @@
 #MenuTitle: Generate ss20 for All-Glyph Access
 # -*- coding: utf-8 -*-
 __doc__="""
-Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
+Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes (e.g. /Aringacute) and paste it to an OpenType-savvy application, and activate ss20 to see the glyphs.
 """
 
 import GlyphsApp
 
 thisFont = Glyphs.font # frontmost font
 thisFontMaster = thisFont.selectedFontMaster # active master
-listOfSelectedLayers = thisFont.selectedLayers # active layers of selected glyphs
 featureLineList = []
 fontFeatures = thisFont.features
 
@@ -27,20 +26,19 @@ for thisGlyph in thisFont.glyphs:
 		spacedThisGlyphName = " ".join(thisGlyphName)
 		if any(x in nonLetter.keys() for x in spacedThisGlyphName):
 			spacedThisGlyphName = replaceNonLetter(spacedThisGlyphName, nonLetter)
-		subBefore = "sub slash " + spacedThisGlyphName
-		subAfter = " by %s;" % thisGlyphName
-		featureLine = subBefore + subAfter
+		featureLine = "sub slash " + spacedThisGlyphName + " by %s;" % thisGlyphName
 		featureLineList.append(featureLine)
 
 featureLineList.sort(key = len)
 featureLineList.reverse()
 
 if "ss20" in [f.name for f in fontFeatures]:
-	caltFeature.code = "\n".join(featureLineList)
+	ss20Feature = thisFont.features["ss20"]
+	ss20Feature.code = "\n".join(featureLineList)
 else:
-	caltFeature = GSFeature()
-	caltFeature.name = "ss20"
-	caltFeature.code = "\n".join(featureLineList)
-	thisFont.features.append(caltFeature)
+	ss20Feature = GSFeature()
+	ss20Feature.name = "ss20"
+	ss20Feature.code = "\n".join(featureLineList)
+	thisFont.features.append(ss20Feature)
 
 thisFont.enableUpdateInterface() # re-enables UI updates in Font View
