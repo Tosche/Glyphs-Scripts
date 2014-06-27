@@ -7,7 +7,6 @@ Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with 
 import GlyphsApp
 
 thisFont = Glyphs.font # frontmost font
-thisFontMaster = thisFont.selectedFontMaster # active master
 featureLineList = []
 fontFeatures = thisFont.features
 
