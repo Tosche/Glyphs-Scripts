@@ -1,7 +1,7 @@
 #MenuTitle: Batch Metric Key
 # -*- coding: utf-8 -*-
 __doc__="""
-(GUI) Applies the specified logic of metrics key to the selected glyphs.
+(GUI) Applies the specified logic of metrics key to the selected glyphs. Vanilla required.
 """
 
 # User can customise presets here. Don't forget to add the comma at the end! (except when it's the last one)
@@ -105,7 +105,7 @@ class BatchMetricKey( object ):
 					elif "auto" in targetLayerKeyR:
 						allCompornents = thisLayer.components 
 						numOfCompornents = len(allCompornents)
-						lastCompornent = allCompornents[numOfCompornents]
+						lastCompornent = allCompornents[numOfCompornents-1]
 						lastCompornentName = lastCompornent.componentName
 						lastCompornentGlyph = thisFont.glyphs[lastCompornentName]
 						while lastCompornentGlyph.category != "Letter":
