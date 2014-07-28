@@ -141,6 +141,12 @@ class BatchMetricKey( object ):
 				if "_" in baseGlyphName:
 					baseGlyphNameL = re.sub("_.*", "", baseGlyphName)
 					baseGlyphNameR = re.sub(".*_", "", baseGlyphName)
+				elif "ordfeminine" in thisGlyph.name:
+					baseGlyphNameL = "a"
+					baseGlyphNameR = "a"
+				elif "ordmasculine" in thisGlyph.name:
+					baseGlyphNameL = "o"
+					baseGlyphNameR = "o"
 				else:
 					baseGlyphNameL = baseGlyphName
 					baseGlyphNameR = baseGlyphName
