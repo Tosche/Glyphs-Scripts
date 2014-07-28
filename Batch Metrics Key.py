@@ -1,4 +1,4 @@
-#MenuTitle: Batch Metric Key
+#MenuTitle: Batch Metrics Key
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Applies the specified logic of metrics key to the selected glyphs. Vanilla required.

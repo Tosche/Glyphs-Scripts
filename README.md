@@ -30,7 +30,7 @@ And you are done. The installation should be effective immediately, but to be on
 # ABOUT THE SCRIPTS
 
 ## Anchors
-* **Batch metric key:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Vanilla required.*
-* **Report Metric Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
+* **Batch Metrics key:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Vanilla required.*
+* **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
 * **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
 * **Duplicate glyph with Component:** Duplicates selected glyphs but as components, giving them 001 suffix or above, depending on availability. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
