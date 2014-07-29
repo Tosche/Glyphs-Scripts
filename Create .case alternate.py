@@ -17,12 +17,12 @@ def findSuffix( glyphName ):
 	
 	while nameIsFree is False:
 		duplicateNumber += 1
-		targetSuffix = "case.0%.2d" % duplicateNumber
+		targetSuffix = ".case.0%.2d" % duplicateNumber
 		targetGlyphName = glyphName + targetSuffix
 		if allGlyphNames.count( targetGlyphName ) == 0:
 			nameIsFree = True
-	if targetSuffix == "case.000";
-		targetSuffix = "case"
+	if targetSuffix == ".case.000":
+		targetSuffix = ".case"
 	return targetSuffix
 
 	
@@ -37,8 +37,8 @@ def process( sourceLayer ):
 	Font.glyphs.append( targetGlyph )
 
 	# place component to all layers in the new glyph:
-	sourceComponent = GSComponent( sourceGlyphName )
 	for thisMaster in Font.masters:
+		sourceComponent = GSComponent( sourceGlyphName )
 		targetGlyph.layers[thisMaster.id].components.append(sourceComponent)
 		targetGlyph.layers[thisMaster.id].setLeftMetricsKey_(sourceGlyphName)
 		targetGlyph.layers[thisMaster.id].setRightMetricsKey_(sourceGlyphName)
