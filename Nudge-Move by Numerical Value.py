@@ -122,7 +122,7 @@ class NudgeMoveWindow( object ):
 										oncurveSt = thisPath.nodes[i-3]
 										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
 			
-									# if on-curve is also selected
+									# if off-curve is the edge of selection
 									elif thisPath.nodes[i-2].type != 65:
 										oncurveMv = thisPath.nodes[i+1]
 										offcurve1 = node
@@ -141,7 +141,7 @@ class NudgeMoveWindow( object ):
 										offcurve2 = thisPath.nodes[i+2]
 										oncurveSt = thisPath.nodes[i+3]
 										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
-									
+									# if off-curve is the edge of selection
 									elif thisPath.nodes[i+2].type != 65:
 										thisPath.nodes[i-1].x -= offsetX
 										thisPath.nodes[i-1].y -= offsetY
@@ -152,6 +152,8 @@ class NudgeMoveWindow( object ):
 										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
 										thisPath.nodes[i-1].x += offsetX
 										thisPath.nodes[i-1].y += offsetY
+										node.x -= offsetX
+										node.y -= offsetY
 										
 							node.x += offsetX
 							node.y += offsetY
