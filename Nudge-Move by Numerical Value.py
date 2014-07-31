@@ -77,7 +77,7 @@ class NudgeMoveWindow( object ):
 			offsetY = -float(self.w.fieldY.get())
 
 		try:
-			thisFont = Glyphs.font # frontmost font
+			Font = Glyphs.font # frontmost font
 			listOfSelectedLayers = Font.selectedLayers
 			
 			def nudge(oncurveMv, offcurve1, offcurve2, oncurveSt):
