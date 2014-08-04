@@ -28,7 +28,10 @@ def compareAngle(node1, node2, node3):
 	innerProduct = x1*x2 + y1*y2
 	len1 = math.hypot(x1, y1)
 	len2 = math.hypot(x2, y2)
-	acosine = math.acos(innerProduct/(len1*len2))
+	try:
+		acosine = math.acos(innerProduct/(len1*len2))
+	except:
+		return False
 	ang = abs(acosine*180/math.pi)
 	if ang >= 180:
 		ang = 360-ang
@@ -38,7 +41,7 @@ def compareAngle(node1, node2, node3):
 		return False
 
 Glyphs.clearLog()
-print "Following glyphs have a very acute corner point, less than %s degrees:" % checkAngle
+print "Following glyphs have a very acute corner point, at less than %s degrees:" % checkAngle
 
 def process(thisLayer):
 	for thisPath in thisLayer.paths:
