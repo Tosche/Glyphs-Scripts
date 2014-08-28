@@ -1,7 +1,7 @@
-#MenuTitle: Nudge-move by Numerical Value (GUI)
+#MenuTitle: Nudge-move by Numerical Value
 # -*- coding: utf-8 -*-
 __doc__="""
-Nudge-moves selected nodes by the values specified in the window. Vanilla required.
+(GUI) Nudge-moves selected nodes by the values specified in the window. Vanilla required.
 """
 
 import vanilla

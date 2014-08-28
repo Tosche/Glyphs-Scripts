@@ -1,17 +1,17 @@
-#MenuTitle: Copy kerning to Greek & Cyrillic (GUI)
+#MenuTitle: Copy Kerning to Greek & Cyrillic
 # -*- coding: utf-8 -*-
 __doc__="""
-Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek.
+(GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek.
 """
 
 import vanilla
 import GlyphsApp
 
-GrkUC = {"A":"Alpha", "B":"Beta", "E":"Epsilon", "H":"Eta", "I":"Iota", "K":"Kappa", "M":"Mu", "N":"Nu", "O":"Omicron", "P":"Rho", "T":"Tau", "X":"Chi", "Y":"Upsilon", "Z":"Zeta"}
+Grk = {"A":"Alpha", "B":"Beta", "E":"Epsilon", "H":"Eta", "I":"Iota", "K":"Kappa", "M":"Mu", "N":"Nu", "O":"Omicron", "P":"Rho", "T":"Tau", "X":"Chi", "Y":"Upsilon", "Z":"Zeta", "o":"omicron" }
 
 CyrUC = {"A":"A-cy", "B":"Ve-cy", "C":"Es-cy", "E":"Ie-cy", "H":"En-cy", "I":"I-cy", "K":"Ka-cy", "M":"Em-cy", "O":"O-cy", "P":"Er-cy", "S":"Dze-cy", "T":"Te-cy", "W":"We-cy", "X":"Ha-cy", "Y":"Ustrait-cy"}
 
-CyrLCUpright = {"a": "a-cy", "abreve": "abreve-cy", "adieresis": "adieresis-cy", "e": "ie-cy", "egrave": "iegrave-cy", "edieresis": "io-cy", "o": "o-cy", "p": "er-cy", "c": "es-cy", "y": "u-cy", "ydieresis": "udieresis-cy", "x": "ha-cy", "s": "dze-cy", "h": "shha-cy", "l": "palochka-cy", "i": "i-cy", "idieresis": "yi-cy", "j": "je-cy", "w": "we-cy"}
+CyrLCNormal = {"a": "a-cy", "abreve": "abreve-cy", "adieresis": "adieresis-cy", "e": "ie-cy", "egrave": "iegrave-cy", "edieresis": "io-cy", "o": "o-cy", "p": "er-cy", "c": "es-cy", "y": "u-cy", "ydieresis": "udieresis-cy", "x": "ha-cy", "s": "dze-cy", "h": "shha-cy", "l": "palochka-cy", "i": "i-cy", "idieresis": "yi-cy", "j": "je-cy", "w": "we-cy"}
 
 CyrLCCursive = {"a": "a-cy", "abreve": "abreve-cy", "adieresis": "adieresis-cy", "e": "ie-cy", "egrave": "iegrave-cy", "edieresis": "io-cy", "ebreve": "iebreve-cy", "u": "ii-cy", "ubreve": "iishort-cy", "ugrave": "iigrave-cy", "o": "o-cy", "n": "pe-cy", "p": "er-cy", "c": "es-cy", "m": "te-cy", "y": "u-cy", "ydieresis": "udieresis-cy", "x": "ha-cy", "s": "dze-cy", "h": "shha-cy", "l": "palochka-cy", "idieresis": "yi-cy", "i": "i-cy", "j": "je-cy", "w":"we-cy"}
 
@@ -32,7 +32,8 @@ class CopyKerningToGreekCyrillic( object ):
 		
 		# UI :
 		self.w.instruction = vanilla.TextBox((spaceX, spaceY, 340, 87), "This script copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps.\nExceptions and absent glyphs are skipped.\nIt's best used after finishing Latin kerning and before starting Cyrillic and Greek.")
-		self.w.CursiveBox = vanilla.CheckBox( (spaceX, spaceY+90+spaceY, 270, Y), 'Cyrillic Lowercase is "cursive"', value=False)
+		self.w.AllCapBox = vanilla.CheckBox( (spaceX, spaceY+87+spaceY, 270, Y), "ALL CAP (skip lowercase)", callback=self.triggerCursive, value=False)
+		self.w.CursiveBox = vanilla.CheckBox( (spaceX, spaceY+87+spaceY+Y+spaceY, 270, Y), 'Cyrillic lowercase is "cursive"', value=False)
 		self.w.runButton = vanilla.Button((-80-15, spaceY+(Y+spaceY)*5, -15, Y), "Copy", sizeStyle='regular', callback=self.CopyKerningToGreekCyrillicMain )
 		self.w.setDefaultButton( self.w.runButton )
 
@@ -59,6 +60,14 @@ class CopyKerningToGreekCyrillic( object ):
 			return False
 			
 		return True
+
+	def triggerCursive(self, sender):
+		if self.w.AllCapBox.get() == True:
+			self.w.CursiveBox.enable(False)
+			self.w.CursiveBox.set(False)
+		elif self.w.AllCapBox.get() == False:
+			self.w.CursiveBox.enable(True)
+			self.w.CursiveBox.set(False)
 
 	# duplication of Latin letter-to-letter pairs to the given dictionary
 	def dupliKern(self, thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, dic):
@@ -141,14 +150,17 @@ class CopyKerningToGreekCyrillic( object ):
 						if not "@MMK_L_"+thisGlyph.rightKerningGroup in nonLetterGroupsR:
 							nonLetterGroupsR.append("@MMK_L_"+thisGlyph.rightKerningGroup)
 			print "Greek"
-			self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, GrkUC)
-			if self.w.CursiveBox.get():
-				CyrDic = dict( CyrUC.items() + CyrLCCursive.items() )
-			else:
-				CyrDic = dict( CyrUC.items() + CyrLCUpright.items() )
+			self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, Grk)
 			print "Cyrillic"
-			self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, CyrDic)
+			if self.w.AllCapBox.get() == False:
+				if self.w.CursiveBox.get():
+					CyrDic = dict( CyrUC.items() + CyrLCCursive.items() )
+				else:
+					CyrDic = dict( CyrUC.items() + CyrLCNormal.items() )
 
+				self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, CyrDic)
+			elif self.w.AllCapBox.get() == True:
+				self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, CyrUC)
 			thisFont.enableUpdateInterface()
 			Glyphs.showMacroWindow()
 

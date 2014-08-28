@@ -1,4 +1,4 @@
-#MenuTitle: Batch Metrics Key
+#MenuTitle: Batch Metric Keys
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Applies the specified logic of metrics key to the selected glyphs. Vanilla required.
@@ -39,7 +39,7 @@ class BatchMetricKey( object ):
 		self.w.radioQ = vanilla.RadioGroup( (100, 115, 350, 19), ["Use width of O (no key)", "Use RSB of Q"], sizeStyle='regular', isVertical=False)
 		self.w.radioQ.set(0)
 		self.w.line = vanilla.HorizontalLine((12, 190, -10, 1))
-		self.w.explain = vanilla.TextBox( ( 12, 200, 350, 80), "@base is a glyph without suffix of the selected glyph.\n@base of a.smcp is a\n@Base of hsuperior is H\n@base.smcp of one.numr is one.smcp", sizeStyle='regular' )
+		self.w.explain = vanilla.TextBox( ( 12, 200, 350, 80), "@base is a glyph without suffix of the selected glyph.\n@base of hsuperior is h\n@Base of a.smcp is A\n@base.smcp of one.numr is one.smcp", sizeStyle='regular' )
 		# Run Button:
 		self.w.setButton = vanilla.Button((290, 145, 90, 34), "Set", sizeStyle='regular', callback=self.BatchMetricKeyMain )
 		self.w.setDefaultButton( self.w.setButton )
