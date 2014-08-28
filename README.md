@@ -30,10 +30,11 @@ And you are done. The installation should be effective immediately, but to be on
 # ABOUT THE SCRIPTS
 
 * **Batch Metrics key:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Vanilla required.*
-* **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
-* **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
+* **Copy kerning to Greek & Cyrillic:** (GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek. *Vanilla required.*
 * **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
+* **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
 * **Nudge-move by Numerical Value (GUI):** Nudge-moves selected nodes by the values specified in the window. *Vanilla required.*
+* **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
 
 ## Outline Check
 * **Report Glyphs with Acute-angled Node:** Reports glyphs that have nodes with very acute angle (default: less than 15 degrees).
