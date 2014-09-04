@@ -44,13 +44,13 @@ class CopyKerningPairs( object ):
 		self.w.tabs = vanilla.Tabs((10, 10, -10, -20-30), ["Pair", "Preset"])
 		tab1 = self.w.tabs[0]
 		tab1.text0 = vanilla.TextBox( (spaceX, 0, 260, textY), "Copy the kerning pair between...", sizeStyle='regular' )
-		tab1.editL0 = vanilla.EditText( (spaceX, spaceY+textY, editX, editY), "", sizeStyle = 'regular', callback=self.CheckField)
-		tab1.editR0 = vanilla.EditText( (spaceX*3+editX+20, spaceY+textY, editX, editY), "", sizeStyle = 'regular', callback=self.CheckField)
+		tab1.editL0 = vanilla.EditText( (spaceX, spaceY+textY, editX, editY), "", sizeStyle = 'regular', callback=self.checkField)
+		tab1.editR0 = vanilla.EditText( (spaceX*3+editX+20, spaceY+textY, editX, editY), "", sizeStyle = 'regular', callback=self.checkField)
 		tab1.checkL0 = vanilla.TextBox( (spaceX+editX+5, spaceY+textY+2, 40, textY), u"Any", sizeStyle='regular' )
 		tab1.checkR0 = vanilla.TextBox( (spaceX*3+editX*2+25, spaceY+textY+2, 40, textY), u"Any", sizeStyle='regular' )
 		tab1.text1 = vanilla.TextBox( (spaceX, spaceY*2+textY+editY, 200, textY), "...to this pair", sizeStyle='regular' )
-		tab1.editL1 = vanilla.EditText( (spaceX, spaceY*3+textY*2+editY, editX, editY), "", sizeStyle = 'regular', callback=self.CheckField)
-		tab1.editR1 = vanilla.EditText( (spaceX*3+editX+20, spaceY*3+textY*2+editY, editX, editY), "", sizeStyle = 'regular', callback=self.CheckField)
+		tab1.editL1 = vanilla.EditText( (spaceX, spaceY*3+textY*2+editY, editX, editY), "", sizeStyle = 'regular', callback=self.checkField)
+		tab1.editR1 = vanilla.EditText( (spaceX*3+editX+20, spaceY*3+textY*2+editY, editX, editY), "", sizeStyle = 'regular', callback=self.checkField)
 		tab1.checkL1 = vanilla.TextBox( (spaceX+editX+5, spaceY*3+textY*2+editY+2, 40, textY), u"Any", sizeStyle='regular')
 		tab1.checkR1 = vanilla.TextBox( (spaceX*3+editX*2+25, spaceY*3+textY*2+editY+2, 40, textY), u"Any", sizeStyle='regular' )
 		tab1.text2 = vanilla.TextBox( (spaceX, spaceY*5+textY*3+editY, 400, textY*2), "Groups will be automatically detected.\nYou can also type group name with @ prefix (e.g. @A)", sizeStyle='regular' )
@@ -96,7 +96,7 @@ class CopyKerningPairs( object ):
 			return False
 		return True
 
-	def CheckField(self, sender):
+	def checkField(self, sender):
 		try:
 			if thisFont.glyphs[self.w.tabs[0].editL0.get()] or self.w.tabs[0].editL0.get() in groups1:
 				self.w.tabs[0].checkL0.set(u"✓")
@@ -124,9 +124,10 @@ class CopyKerningPairs( object ):
 				self.w.tabs[0].checkR1.set(u"Any")
 			else:
 				self.w.tabs[0].checkR1.set("?")
-		except e:
-			print e
-			pass
+		except Exception, e:
+			Glyphs.showMacroWindow()
+			print "Copy kerning Pairs Error (checkField): %s" % e
+			print "No font open?"
 
 	def checkRadio(self, sender):
 		try:
