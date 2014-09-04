@@ -15,9 +15,9 @@ class TransformImages( object ):
 		spaceX = 10
 		spaceY = 10
 		buttonSizeX = 60
-		windowWidth  = spaceX*2+editX*2+140
-		windowHeight = 160
-		self.w = vanilla.FloatingWindow( (windowWidth, windowHeight), "Transform Images with Real Maths", autosaveName="com.Tosche.TransformImagesWithRealMaths.mainwindow" )
+		windowWidth  = spaceX*2+editX*2+160
+		windowHeight = 150
+		self.w = vanilla.FloatingWindow( (windowWidth, windowHeight), "Transform Images with Proper Maths", autosaveName="com.Tosche.TransformImagesWithRealMaths.mainwindow" )
 		self.w.checkAbsolute = vanilla.CheckBox( (spaceX, spaceY, 75, textY), "Absolute", sizeStyle='regular', callback=self.changeAbsolute )
 		self.w.move_text1 = vanilla.TextBox( (spaceX,  spaceY*2+editY+2, 100, textY), "Move x/y to:", sizeStyle='regular' )
 		self.w.move_X = vanilla.EditText( (spaceX+88,    spaceY*2+editY, editX, editY), "0", sizeStyle = 'regular')
