@@ -35,6 +35,7 @@ And you are done. The installation should be effective immediately, but to be on
 * **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
 * **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
 * **Nudge-move by Numerical Value:** (GUI) Nudge-moves selected nodes by the values specified in the window. *Vanilla required.*
+* **Permutation Text Generator:** (GUI) Outputs glyph permutation text for kerning. *Vanilla required.*
 * **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
 * **Transform Images with Proper Maths** (GUI) Batch scale and move images in selected layers, using the maths you learned at school. Based on mekkablue's Transform Images script. *Vanilla required.*
 ## Outline Check
