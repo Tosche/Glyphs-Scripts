@@ -35,9 +35,9 @@ class PermutationTextGenerator( object ):
 		self.w.edit_2 = vanilla.EditText( (spaceX*2+40, spaceY*2+editY, -15, editY), "", sizeStyle = 'small')
 		self.w.text_3 = vanilla.TextBox( (spaceX*2+40, spaceY*3+editY*2, 85, textY), "Insert List 2", sizeStyle='regular' )
 		self.w.radio  = vanilla.RadioGroup((spaceX*3+120, spaceY*3+editY*2, 200, textY), ["Both", "Before", "After"], isVertical = False, sizeStyle='regular')
-		self.w.text_4 = vanilla.TextBox( (spaceX*2+40, spaceY*4+editY*2+textY, 300, textY), "Break line by every\t\tpairs", sizeStyle='regular' )
-		self.w.edit_3 = vanilla.EditText( (spaceX*2+165, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
-
+		self.w.text_4 = vanilla.TextBox( (spaceX*2+40, spaceY*4+editY*2+textY, 320, textY), "Break line after every", sizeStyle='regular' )
+		self.w.edit_3 = vanilla.EditText( (spaceX*2+181, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
+		self.w.text_5 = vanilla.TextBox( (spaceX*2+225, spaceY*4+editY*2+textY, 40, textY), "pairs", sizeStyle='regular' )
 		# Run Button:
 		self.w.runButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Get Text", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
 		self.w.setDefaultButton( self.w.runButton )
