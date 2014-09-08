@@ -1,4 +1,4 @@
-#MenuTitle: Generate Permutated Text
+#MenuTitle: Permutation Text Generator
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Outputs glyph permutation text for kerning.
@@ -7,7 +7,7 @@ __doc__="""
 import vanilla
 import GlyphsApp
 
-class GeneratePermutatedText( object ):
+class PermutationTextGenerator( object ):
 	def __init__( self ):
 		# Window 'self.w':
 		editY = 22
@@ -17,15 +17,15 @@ class GeneratePermutatedText( object ):
 		buttonX = 100
 		buttonY = 20
 		windowWidth = 400
-		windowHeight = spaceY*5+editY*2+textY+buttonY+20
+		windowHeight = spaceY*7+editY*2+textY*2+buttonY+20
 		windowWidthResize  = 600 # user can resize width by this value
 		windowHeightResize = 0   # user can resize height by this value
 		self.w = vanilla.FloatingWindow(
 			( windowWidth, windowHeight ), # default window size
-			"Generate Permutated Text", # window title
+			"Permutation Text Generator", # window title
 			minSize = ( windowWidth, windowHeight ), # minimum size (for resizing)
 			maxSize = ( windowWidth + windowWidthResize, windowHeight + windowHeightResize ), # maximum size (for resizing)
-			autosaveName = "com.Tosche.GeneratePermutatedText.mainwindow" # stores last window position and size
+			autosaveName = "com.Tosche.PermutationTextGenerator.mainwindow" # stores last window position and size
 		)
 		
 		# UI elements:
@@ -35,13 +35,16 @@ class GeneratePermutatedText( object ):
 		self.w.edit_2 = vanilla.EditText( (spaceX*2+40, spaceY*2+editY, -15, editY), "", sizeStyle = 'small')
 		self.w.text_3 = vanilla.TextBox( (spaceX*2+40, spaceY*3+editY*2, 85, textY), "Insert List 2", sizeStyle='regular' )
 		self.w.radio  = vanilla.RadioGroup((spaceX*3+120, spaceY*3+editY*2, 200, textY), ["Both", "Before", "After"], isVertical = False, sizeStyle='regular')
+		self.w.text_4 = vanilla.TextBox( (spaceX*2+40, spaceY*4+editY*2+textY, 300, textY), "Break line by every\t\tpairs", sizeStyle='regular' )
+		self.w.edit_3 = vanilla.EditText( (spaceX*2+165, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
+
 		# Run Button:
-		self.w.runButton = vanilla.Button((spaceX*2+40, spaceY*4+editY*2+textY, buttonX, buttonY), "Get Text", sizeStyle='regular', callback=self.GeneratePermutatedTextMain )
+		self.w.runButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Get Text", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
 		self.w.setDefaultButton( self.w.runButton )
 		
 		# Load Settings:
 		if not self.LoadPreferences():
-			print "Note: 'Generate Permutated Text' could not load preferences. Will resort to defaults"
+			print "Note: 'Permutation Text Generator' could not load preferences. Will resort to defaults"
 			self.w.radio.set(0)
 		
 		# Open window and focus on it:
@@ -51,9 +54,10 @@ class GeneratePermutatedText( object ):
 		
 	def SavePreferences( self, sender ):
 		try:
-			Glyphs.defaults["com.Tosche.GeneratePermutatedText.edit_1"] = self.w.edit_1.get()
-			Glyphs.defaults["com.Tosche.GeneratePermutatedText.edit_2"] = self.w.edit_2.get()
-			Glyphs.defaults["com.Tosche.GeneratePermutatedText.radio"] = self.w.radio.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_1"] = self.w.edit_1.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] = self.w.edit_2.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.radio"] = self.w.radio.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_3"] = self.w.edit_3.get()
 		except:
 			return False
 			
@@ -61,9 +65,10 @@ class GeneratePermutatedText( object ):
 
 	def LoadPreferences( self ):
 		try:
-			self.w.edit_1.set( Glyphs.defaults["com.Tosche.GeneratePermutatedText.edit_1"] )
-			self.w.edit_2.set( Glyphs.defaults["com.Tosche.GeneratePermutatedText.edit_2"] )
-			self.w.radio.set( Glyphs.defaults["com.Tosche.GeneratePermutatedText.radio"] )
+			self.w.edit_1.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_1"] )
+			self.w.edit_2.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] )
+			self.w.radio.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.radio"] )
+			self.w.edit_3.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_3"] )
 		except:
 			return False
 			
@@ -94,9 +99,9 @@ class GeneratePermutatedText( object ):
 
 		except Exception, e:
 			Glyphs.showMacroWindow()
-			print "Generate Permutated Text Error: %s" % e
+			print "Permutation Text Generator Error: %s" % e
 
-	def GeneratePermutatedTextMain( self, sender ):
+	def PermutationTextGeneratorMain( self, sender ):
 		try:
 			string1 = self.w.edit_1.get()
 			string2 = self.w.edit_2.get()
@@ -104,11 +109,11 @@ class GeneratePermutatedText( object ):
 				Glyphs.showMacroWindow()
 				print "There needs to be something in both fields."
 			else:
-				print u"——————————————————"
 				newList1 = self.makeList(string1)
 				newList2 = self.makeList(string2)
 				
 				for item2 in newList2:
+					print u"——————————————————"
 					if item2[0] == "/":
 						item2 = item2 + " "
 					row = ""
@@ -117,31 +122,50 @@ class GeneratePermutatedText( object ):
 							if item1[0] == "/":
 								item1 = item1 + " "
 							row = row + " "+ item2 + item1
-						row = row + item2
-						row = row[1:-1]
+						if int(self.w.edit_3.get()) != 0:
+							length = int(self.w.edit_3.get())*3
+							rowList = [ row[i+1:i+length+1] for i in range(0, len(row), length) ]
+							
+						else:
+							row = row + item2
+							row = row[1:-1]
 					elif self.w.radio.get() ==2:
 						for item1 in newList1:
 							if item1[0] == "/":
 								item1 = item1 + " "
 							row = row + item2 + " " + item1
-						row = row + item2
-						row = row[2:]
+						if int(self.w.edit_3.get()) != 0:
+							length = int(self.w.edit_3.get())*3
+							rowList = [ row[i+2:i+length+2] for i in range(0, len(row), length) ]
+							rowList.append(rowList[-1]+item2)
+							rowList.remove(rowList[-2])
+						else:
+							row = row + item2
+							row = row[2:]
 					else:
 						for item1 in newList1:
 							if item1[0] == "/":
 								item1 = item1 + " "
 							row = row + item2 + item1
-						row = row + item2
+						if int(self.w.edit_3.get()) != 0:
+							length = int(self.w.edit_3.get())*2
+							rowList = [ row[i:i+length]+item2 for i in range(0, len(row), length) ]
+						else:
+							row = row + item2
 					Glyphs.showMacroWindow()
-					print row
+					if int(self.w.edit_3.get()) != 0:
+						for thisRow in rowList:
+							print thisRow
+					else:
+						print row
 			
 			if not self.SavePreferences( self ):
-				print "Note: 'Generate Permutated Text' could not write preferences."
+				print "Note: 'Permutation Text Generator' could not write preferences."
 			
 			
 		except Exception, e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Generate Permutated Text Error: %s" % e
+			print "Permutation Text Generator Error: %s" % e
 
-GeneratePermutatedText()
+PermutationTextGenerator()
