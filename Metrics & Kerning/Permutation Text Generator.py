@@ -109,11 +109,11 @@ class PermutationTextGenerator( object ):
 				Glyphs.showMacroWindow()
 				print "There needs to be something in both fields."
 			else:
+				print u"——————————————————"
 				newList1 = self.makeList(string1)
 				newList2 = self.makeList(string2)
 				
 				for item2 in newList2:
-					print u"——————————————————"
 					if item2[0] == "/":
 						item2 = item2 + " "
 					row = ""
