@@ -40,7 +40,7 @@ class PermutationTextGenerator( object ):
 		self.w.edit_3 = vanilla.EditText( (spaceX*2+184, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
 		self.w.text_5 = vanilla.TextBox( (spaceX*2+228, spaceY*4+editY*2+textY, 40, textY), "pairs", sizeStyle='regular' )
 		# Run Button:
-		self.w.outputButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Output Window", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
+		self.w.outputButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Macro Panel", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
 		self.w.viewButton = vanilla.Button((spaceX*3+40+buttonX, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Edit View", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
 		self.w.setDefaultButton( self.w.viewButton )
 		
