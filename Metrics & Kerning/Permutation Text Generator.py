@@ -6,6 +6,7 @@ __doc__="""
 
 import vanilla
 import GlyphsApp
+import re
 
 class PermutationTextGenerator( object ):
 	def __init__( self ):
@@ -14,7 +15,7 @@ class PermutationTextGenerator( object ):
 		textY  = 17
 		spaceX = 10
 		spaceY = 10
-		buttonX = 100
+		buttonX = 120
 		buttonY = 20
 		windowWidth = 400
 		windowHeight = spaceY*7+editY*2+textY*2+buttonY+20
@@ -39,8 +40,9 @@ class PermutationTextGenerator( object ):
 		self.w.edit_3 = vanilla.EditText( (spaceX*2+184, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
 		self.w.text_5 = vanilla.TextBox( (spaceX*2+228, spaceY*4+editY*2+textY, 40, textY), "pairs", sizeStyle='regular' )
 		# Run Button:
-		self.w.runButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Get Text", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
-		self.w.setDefaultButton( self.w.runButton )
+		self.w.outputButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Output Window", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
+		self.w.viewButton = vanilla.Button((spaceX*3+40+buttonX, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Edit View", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
+		self.w.setDefaultButton( self.w.viewButton )
 		
 		# Load Settings:
 		if not self.LoadPreferences():
@@ -109,10 +111,9 @@ class PermutationTextGenerator( object ):
 				Glyphs.showMacroWindow()
 				print "There needs to be something in both fields."
 			else:
-				print u"——————————————————"
 				newList1 = self.makeList(string1)
 				newList2 = self.makeList(string2)
-				
+				finalRow = []
 				for item2 in newList2:
 					if item2[0] == "/":
 						item2 = item2 + " "
@@ -125,10 +126,12 @@ class PermutationTextGenerator( object ):
 						if int(self.w.edit_3.get()) != 0:
 							length = int(self.w.edit_3.get())*3
 							rowList = [ row[i+1:i+length+1] for i in range(0, len(row), length) ]
-							
+							finalRow = finalRow+rowList
 						else:
 							row = row + item2
 							row = row[1:-1]
+							finalRow.append(row)
+
 					elif self.w.radio.get() ==2:
 						for item1 in newList1:
 							if item1[0] == "/":
@@ -139,9 +142,12 @@ class PermutationTextGenerator( object ):
 							rowList = [ row[i+2:i+length+2] for i in range(0, len(row), length) ]
 							rowList.append(rowList[-1]+item2)
 							rowList.remove(rowList[-2])
+							finalRow = finalRow+rowList
 						else:
 							row = row + item2
 							row = row[2:]
+							finalRow.append(row)
+
 					else:
 						for item1 in newList1:
 							if item1[0] == "/":
@@ -150,14 +156,28 @@ class PermutationTextGenerator( object ):
 						if int(self.w.edit_3.get()) != 0:
 							length = int(self.w.edit_3.get())*2
 							rowList = [ row[i:i+length]+item2 for i in range(0, len(row), length) ]
+							finalRow = finalRow+rowList
 						else:
 							row = row + item2
+							finalRow.append(row)
+
+				if sender == self.w.outputButton:
 					Glyphs.showMacroWindow()
 					if int(self.w.edit_3.get()) != 0:
-						for thisRow in rowList:
+						for thisRow in finalRow:
 							print thisRow
+
+				else:
+					if int(self.w.edit_3.get()) != 0:
+						finalText="\n".join(finalRow)
+						finalText=re.sub(" \n", "\n", finalText)
 					else:
-						print row
+						finalText=row
+					
+					try:
+						Glyphs.currentDocument.windowController().activeEditViewController().graphicView().setDisplayString_(finalText)
+					except:
+						Glyphs.currentDocument.windowController().addTabWithString_(finalText)
 			
 			if not self.SavePreferences( self ):
 				print "Note: 'Permutation Text Generator' could not write preferences."
