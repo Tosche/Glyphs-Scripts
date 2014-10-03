@@ -47,10 +47,11 @@ class PermutationTextGenerator( object ):
 		# Load Settings:
 		if not self.LoadPreferences():
 			print "Note: 'Permutation Text Generator' could not load preferences. Will resort to defaults"
-			self.w.radio.set(0)
+			
 		
 		# Open window and focus on it:
 		self.w.open()
+		self.w.radio.set(0)
 		self.w.makeKey()
 
 		
@@ -118,54 +119,74 @@ class PermutationTextGenerator( object ):
 					if item2[0] == "/":
 						item2 = item2 + " "
 					row = ""
-					if self.w.radio.get() ==1:
-						for item1 in newList1:
-							if item1[0] == "/":
-								item1 = item1 + " "
-							row = row + " "+ item2 + item1
+					
+					if self.w.radio.get() ==1: # if Before
 						if int(self.w.edit_3.get()) != 0:
-							length = int(self.w.edit_3.get())*3
-							rowList = [ row[i+1:i+length+1] for i in range(0, len(row), length) ]
-							finalRow = finalRow+rowList
+							i = 0
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								
+								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
+									row = row + "\n" + item2 + item1
+									i = 0
+								else:
+									row = row + " " + item2 + item1
+								i = i+1
+						else:
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								row = row + " "+ item2 + item1
+						row = row[1:]
+						finalRow.append(row)
+
+					elif self.w.radio.get() ==2: # if After
+						if int(self.w.edit_3.get()) != 0:
+							i = 1
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								
+								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
+									row = row + item1 + item2+ "\n"
+									i = 0
+								else:
+									row = row + item1 + item2 + " "
+								i = i+1
+						else:
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								row = row + item1 + item2 + " "
+						finalRow.append(row)
+
+					else: # if Both
+						if int(self.w.edit_3.get()) != 0:
+							i = 1
+							row = row + item2
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								
+								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
+									row = row + item1 + item2+ "\n" + item2
+									i = 0
+								else:
+									row = row + item1 + item2
+								i = i+1
 						else:
 							row = row + item2
-							row = row[1:-1]
-							finalRow.append(row)
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								row = row + item1 + item2
+						finalRow.append(row)
 
-					elif self.w.radio.get() ==2:
-						for item1 in newList1:
-							if item1[0] == "/":
-								item1 = item1 + " "
-							row = row + item2 + " " + item1
-						if int(self.w.edit_3.get()) != 0:
-							length = int(self.w.edit_3.get())*3
-							rowList = [ row[i+2:i+length+2] for i in range(0, len(row), length) ]
-							rowList.append(rowList[-1]+item2)
-							rowList.remove(rowList[-2])
-							finalRow = finalRow+rowList
-						else:
-							row = row + item2
-							row = row[2:]
-							finalRow.append(row)
-
-					else:
-						for item1 in newList1:
-							if item1[0] == "/":
-								item1 = item1 + " "
-							row = row + item2 + item1
-						if int(self.w.edit_3.get()) != 0:
-							length = int(self.w.edit_3.get())*2
-							rowList = [ row[i:i+length]+item2 for i in range(0, len(row), length) ]
-							finalRow = finalRow+rowList
-						else:
-							row = row + item2
-							finalRow.append(row)
-
-				if sender == self.w.outputButton:
+				if sender == self.w.outputButton: # Show in Macro Window
 					Glyphs.showMacroWindow()
-					if int(self.w.edit_3.get()) != 0:
-						for thisRow in finalRow:
-							print thisRow
+					for thisRow in finalRow:
+						print thisRow
 
 				else:
 					if int(self.w.edit_3.get()) != 0:

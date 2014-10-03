@@ -10,6 +10,7 @@ import re
 
 try:
 	thisFont = Glyphs.font
+	thisFontMaster = thisFont.selectedFontMaster
 	# For Group validation in check text
 	groups1 = []
 	groups2 = []
@@ -127,7 +128,6 @@ class CopyKerningPairs( object ):
 		except Exception, e:
 			Glyphs.showMacroWindow()
 			print "Copy kerning Pairs Error (checkField): %s" % e
-			print "No font open?"
 
 	def checkRadio(self, sender):
 		try:
@@ -171,28 +171,25 @@ class CopyKerningPairs( object ):
 				except:
 					pass
 			if L0 == "":
-				for thisMaster in thisFont.masters:
-					print thisMaster.name
-					pairList = newKernDic[thisMaster.id]
+					print thisFontMaster.name
+					pairList = newKernDic[thisFontMaster.id]
 					for i in range(len(pairList)):
 						if pairList[i][1] == R0:
 							print "\t%s,  %s,  %s" % (pairList[i][0], R1, pairList[i][2])
-							thisFont.setKerningForPair(thisMaster.id, pairList[i][0], R1, pairList[i][2])
+							thisFont.setKerningForPair(thisFontMaster.id, pairList[i][0], R1, pairList[i][2])
 			elif R0 == "":
-				for thisMaster in thisFont.masters:
-					print thisMaster.name
+					print thisFontMaster.name
 					pairList = newKernDic[thisMaster.id]
 					for i in range(len(pairList)):
 						if pairList[i][0] == L0:
 							print "\t%s,  %s,  %s" % (L1, pairList[i][1], pairList[i][2])
-							thisFont.setKerningForPair(thisMaster.id, L1, pairList[i][1], pairList[i][2])
+							thisFont.setKerningForPair(thisFontMaster.id, L1, pairList[i][1], pairList[i][2])
 			else:
-				for thisMaster in thisFont.masters:
-					print thisMaster.name
-					pairList = newKernDic[thisMaster.id]
+					print thisFontMaster.name
+					pairList = newKernDic[thisFontMaster.id]
 					i = 0
 					value = None
-					while i != len(newKernDic[thisMaster.id]):
+					while i != len(newKernDic[thisFontMaster.id]):
 						if pairList[i][0] == L0 and pairList[i][1] == R0:
 							value = pairList[i][2]
 							print "\t%s,  %s,  %s" % (pairList[i][0], pairList[i][1], pairList[i][2])
@@ -202,7 +199,7 @@ class CopyKerningPairs( object ):
 						print "The source pair does not exist."
 					else:
 						print "\t%s,  %s,  %s" % (L1, R1, pairList[i][2])
-						thisFont.setKerningForPair(thisMaster.id, L1, R1, pairList[i][2])
+						thisFont.setKerningForPair(thisFontMaster.id, L1, R1, pairList[i][2])
 		except Exception, e:
 			Glyphs.showMacroWindow()
 			print "Copy kerning Pairs Error (dupliKernPair): %s" % e
@@ -291,20 +288,18 @@ class CopyKerningPairs( object ):
 					dicL.update({newKeyL:newValueL})
 				if newKeyR != None and newValueR != None:
 					dicR.update({newKeyR:newValueR})
-
 			scale = float(self.w.tabs[1].editScale.get())/100
 			skip = self.w.tabs[1].editSkip.get()
-			for thisMaster in thisFont.masters:
-				print thisMaster.name
-				pairList = newKernDic[thisMaster.id]
-				for keyL in dicL:
+			print thisFontMaster.name
+			pairList = newKernDic[thisFontMaster.id]
+			for keyL in dicL:
+				for keyR in dicR:
 					for i in range(len(pairList)):
-						if keyL in pairList[i][0]:
-							for keyR in dicR:
-								if keyR in pairList[i][1]:
-									if int(abs(float(pairList[i][2])*scale)) >= int(skip):
-										print "\t%s,  %s,  %s" % (dicL[keyL], dicR[keyR], float(pairList[i][2])*scale)
-										thisFont.setKerningForPair(thisMaster.id, dicL[keyL], dicR[keyR], float(pairList[i][2])*scale)
+						if pairList[i][0] == keyL and pairList[i][1] == keyR:
+							if int(abs(float(pairList[i][2])*scale)) >= int(skip):
+								theValue = int(round(float(pairList[i][2])*scale))
+								#print "\t%s,  %s,  %s" % (dicL[keyL], dicR[keyR], theValue)
+								thisFont.setKerningForPair(thisFontMaster.id, dicL[keyL], dicR[keyR], theValue)
 
 		except Exception, e:
 			Glyphs.showMacroWindow()
@@ -314,13 +309,12 @@ class CopyKerningPairs( object ):
 		try:
 			kernDic = thisFont.kerningDict()				
 			newKernDic = {}
-			for thisMaster in thisFont.masters: # building newKernDic
-				kernList = []
-				for key1 in kernDic[thisMaster.id]:
-					for key2 in kernDic[thisMaster.id][key1]:
-						pairInList = [key1, key2, kernDic[thisMaster.id][key1][key2]]
-						kernList.append(pairInList)
-				newKernDic.update({thisMaster.id:kernList})
+			kernList = []
+			for key1 in kernDic[thisFontMaster.id]: # Builing new kerning dictionary
+				for key2 in kernDic[thisFontMaster.id][key1]:
+					pairInList = [key1, key2, kernDic[thisFontMaster.id][key1][key2]]
+					kernList.append(pairInList)
+			newKernDic.update({thisFontMaster.id:kernList})
 			if self.w.tabs.get()==0: # If it's an pair operation
 				editList = [self.w.tabs[0].editL0.get(), self.w.tabs[0].editR0.get(), self.w.tabs[0].editL1.get(), self.w.tabs[0].editR1.get()]
 				checkList = [self.w.tabs[0].checkL0.get(), self.w.tabs[0].checkR0.get(), self.w.tabs[0].checkL1.get(), self.w.tabs[0].checkR1.get()]
@@ -357,7 +351,6 @@ class CopyKerningPairs( object ):
 						for i in range(len(capList)):
 							capList[i] = re.sub(".smcp", "", capList[i]).capitalize()
 							capList[i] = re.sub(".sc", "", capList[i]).capitalize()
-						print capList
 						c2scDic={}
 						for i in range(len(capList)):
 							if thisFont.glyphs[capList[i]]:
@@ -375,7 +368,6 @@ class CopyKerningPairs( object ):
 						for thisGlyph in thisFont.glyphs:
 							if thisGlyph.category =="Letter" and suffix in thisGlyph.name:
 								destiList.append(thisGlyph.name)
-						print destiList
 						sourceList = list(destiList)
 						for i in range(len(sourceList)):
 							sourceList[i] = re.sub(suffix, "", sourceList[i])
@@ -384,6 +376,7 @@ class CopyKerningPairs( object ):
 							if thisFont.glyphs[sourceList[i]]:
 								letterDic.update({sourceList[i]:destiList[i]})
 						smallLetterDic = (letterDic.items() + self.miscSymbolDic(miscType).items())
+
 						self.dupliKernPreset(newKernDic, smallLetterDic)
 
 				else: # If it's an Number preset
