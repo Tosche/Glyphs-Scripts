@@ -298,7 +298,7 @@ class CopyKerningPairs( object ):
 						if pairList[i][0] == keyL and pairList[i][1] == keyR:
 							if int(abs(float(pairList[i][2])*scale)) >= int(skip):
 								theValue = int(round(float(pairList[i][2])*scale))
-								#print "\t%s,  %s,  %s" % (dicL[keyL], dicR[keyR], theValue)
+								print "\t%s,  %s,  %s" % (dicL[keyL], dicR[keyR], theValue)
 								thisFont.setKerningForPair(thisFontMaster.id, dicL[keyL], dicR[keyR], theValue)
 
 		except Exception, e:
