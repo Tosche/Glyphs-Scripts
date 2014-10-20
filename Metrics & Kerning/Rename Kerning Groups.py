@@ -35,7 +35,7 @@ for thisGlyph in thisFont.glyphs:
 			groupsR[thisGlyph.rightKerningGroup] = []
 		groupsR[thisGlyph.rightKerningGroup].append(thisGlyph.name)
 
-class RenameKerningGroup( object ):
+class RenameKerningGroups( object ):
 	def __init__( self ):
 		# Window 'self.w':
 		editX = 180
@@ -48,10 +48,10 @@ class RenameKerningGroup( object ):
 
 		self.w = vanilla.FloatingWindow(
 			( windowWidth, windowHeight ), # default window size
-			"Rename Kerning Group", # window title
+			"Rename Kerning Groups", # window title
 			minSize = ( windowWidth, windowHeight ), # minimum size (for resizing)
 			maxSize = ( windowWidth + 100, windowHeight ), # maximum size (for resizing)
-			autosaveName = "com.Tosche.RenameKerningGroup.mainwindow" # stores last window position and size
+			autosaveName = "com.Tosche.RenameKerningGroups.mainwindow" # stores last window position and size
 		)
 		
 		# UI elements:
@@ -62,7 +62,7 @@ class RenameKerningGroup( object ):
 		self.w.popup = vanilla.PopUpButton( (spaceX+130, spaceY*2+textY, -15, editY), [str(x) for x in sorted(groupsL)], sizeStyle='regular' )
 		self.w.newName = vanilla.EditText( (spaceX+130, spaceY*3+editY+textY, -15, editY), "", sizeStyle = 'regular' )
 		# Run Button:
-		self.w.runButton = vanilla.Button((-80-15, spaceY*4+editY*3, -15, -15), "Run", sizeStyle='regular', callback=self.RenameKerningGroupMain )
+		self.w.runButton = vanilla.Button((-80-15, spaceY*4+editY*3, -15, -15), "Run", sizeStyle='regular', callback=self.RenameKerningGroupsMain )
 		self.w.setDefaultButton( self.w.runButton )
 		# Open window and focus on it:
 		self.w.open()
@@ -77,7 +77,7 @@ class RenameKerningGroup( object ):
 		except Exception, e:
 			print "Rename Kerning Group Error (switchList): %s" % e
 
-	def RenameKerningGroupMain( self, sender ):
+	def RenameKerningGroupsMain( self, sender ):
 		try:
 			newName = self.w.newName.get()
 			popupNum = self.w.popup.get()
@@ -122,6 +122,6 @@ class RenameKerningGroup( object ):
 		except Exception, e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Rename Kerning Group Error (RenameKerningGroupMain): %s" % e
+			print "Rename Kerning Group Error (RenameKerningGroupsMain): %s" % e
 
-RenameKerningGroup()
+RenameKerningGroups()
