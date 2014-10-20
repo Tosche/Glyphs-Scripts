@@ -103,12 +103,12 @@ class RenameKerningGroups( object ):
 			if self.w.radio.get() == 1: # it it's a right group
 				popup = sorted(groupsR)[popupNum]
 				for thisGlyphName in groupsR[popup]:
-					thisFont.glyphs(thisGlyphName).rightKerningGroup = newName
+					thisFont.glyphs[thisGlyphName].rightKerningGroup = newName
 				for thisMaster in thisFont.masters:
 					for thisPair in newKernDic[thisMaster.id]:
 						if "@MMK_L_"+popup in thisPair[0]:
 							thisFont.setKerningForPair(thisMaster.id, "@MMK_L_"+newName, thisPair[1], thisPair[2])
-							thisFont.removeKerningForPair(thisMaster.id, "@MMK_L_"+popup, thisPair[1], thisPair[2])
+							thisFont.removeKerningForPair(thisMaster.id, "@MMK_L_"+popup, thisPair[1])
 				# updating groupsR popup
 				groupsR[newName] = groupsR.pop(popup)
 				self.w.popup.setItems(sorted(groupsR))
