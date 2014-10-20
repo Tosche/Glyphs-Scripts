@@ -179,7 +179,7 @@ class CopyKerningPairs( object ):
 							thisFont.setKerningForPair(thisFontMaster.id, pairList[i][0], R1, pairList[i][2])
 			elif R0 == "":
 					print thisFontMaster.name
-					pairList = newKernDic[thisMaster.id]
+					pairList = newKernDic[thisFontMaster.id]
 					for i in range(len(pairList)):
 						if pairList[i][0] == L0:
 							print "\t%s,  %s,  %s" % (L1, pairList[i][1], pairList[i][2])
@@ -332,7 +332,6 @@ class CopyKerningPairs( object ):
 						if editList[1] == editList[3] !="" or editList[0] == editList[2] !="":
 							print "Nothing happened. Source and destination are the same."
 						else:
-							print "checkpoint. work on it."
 							self.dupliKernPair(newKernDic, editList[0], editList[1], editList[2], editList[3])
 					else:
 						if editList[0] == editList[2] and editList[1] == editList[3]:
