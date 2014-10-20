@@ -37,7 +37,7 @@ And you are done. The installation should be effective immediately, but to be on
 * **Copy Kerning Pairs:** (GUI) Copies kerning patterns to another. It supports pair-to-pair and preset group copying. *Vanilla required.*
 * **Copy kerning to Greek & Cyrillic:** (GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek. *Vanilla required.*
 * **Permutation Text Generator:** (GUI) Outputs glyph permutation text for kerning. *Vanilla required.*
-* **Rename Kerning Group:** (GUI) Lets you rename kerning names and pairs associated with them. *Vanilla required.*
+* **Rename Kerning Groups:** (GUI) Lets you rename kerning names and pairs associated with them. *Vanilla required.*
 * **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
 ## Outline Check
 * **Report Glyphs with Acute-angled Node:** Reports glyphs that have nodes with very acute angle (default: less than 15 degrees).
