@@ -93,7 +93,7 @@ class RenameKerningGroups( object ):
 				# updating groupsL popup
 				groupsL[newName] = groupsL.pop(popup)
 				self.w.popup.setItems(sorted(groupsL))
-				self.w.popup.set(popupNum)
+				self.w.popup.set(sorted(groupsL).index(newName))
 				# updating newKernDic
 				for thisMaster in thisFont.masters:
 					for thisPair in newKernDic[thisMaster.id]:
@@ -112,7 +112,7 @@ class RenameKerningGroups( object ):
 				# updating groupsR popup
 				groupsR[newName] = groupsR.pop(popup)
 				self.w.popup.setItems(sorted(groupsR))
-				self.w.popup.set(popupNum)
+				self.w.popup.set(sorted(groupsR).index(newName))
 				# updating newKernDic
 				for thisMaster in thisFont.masters:
 					for thisPair in newKernDic[thisMaster.id]:
