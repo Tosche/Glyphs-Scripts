@@ -172,7 +172,7 @@ class NudgeMoveWindow( object ):
 				print "Nudge-move by Numerical Value (GUI) Error: %s" % e
 
 		except:
-			Glyphs.displayDialog_withTitle_("You seem to have entered a value that is not a number.", "Numbers only!")
+			Glyphs.displayDialog_withTitle_("You seem to have entered a value that is not a number. Period is fine.", "Numbers only!")
 
 
 NudgeMoveWindow()
