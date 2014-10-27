@@ -320,22 +320,22 @@ class CopyKerningPairs( object ):
 				checkList = [self.w.tabs[0].checkL0.get(), self.w.tabs[0].checkR0.get(), self.w.tabs[0].checkL1.get(), self.w.tabs[0].checkR1.get()]
 				if editList[0] == editList[1] == "":
 					Glyphs.showMacroWindow()
-					print 'Nothing happened. You cannot leave both sides of the pair as "Any."'
+					Glyphs.displayDialog_('You cannot leave both sides of the pair as "Any."')
 				elif (editList[0] =="" and editList[2] != "") or (editList[0] !="" and editList[2] == "") or (editList[1] =="" and editList[3] != "") or (editList[1] !="" and editList[3] == ""):
 					Glyphs.showMacroWindow()
-					print 'Nothing happened. "Any" should only be allowed on either side. And if the source pair consists of "Any", the same side of the destination should also be "Any".'
+					Glyphs.displayDialog_('"Any" should only be allowed on either side. And if the source pair consists of "Any", the same side of the destination should also be "Any".')
 				elif "?" in checkList:
-					print "Nothing happened. Please make sure the glyphs or groups exist."
+					Glyphs.displayDialog_("Please make sure the glyphs or groups exists.")
 				# When there's no problem in the font
 				else:
 					if editList[0] == editList[2] == "" or editList[1] == editList[3] == "":
 						if editList[1] == editList[3] !="" or editList[0] == editList[2] !="":
-							print "Nothing happened. Source and destination are the same."
+							Glyphs.displayDialog_("Source and destination are the same.")
 						else:
 							self.dupliKernPair(newKernDic, editList[0], editList[1], editList[2], editList[3])
 					else:
 						if editList[0] == editList[2] and editList[1] == editList[3]:
-							print "Nothing happened. Source and destination are the same."
+							Glyphs.displayDialog_("Source and destination are the same.")
 						else:
 							self.dupliKernPair(newKernDic, editList[0], editList[1], editList[2], editList[3])
 
@@ -380,7 +380,7 @@ class CopyKerningPairs( object ):
 
 				else: # If it's an Number preset
 					if self.w.tabs[1].popNum1.get() == self.w.tabs[1].popNum2.get():
-						print "Nothing happened. You cannot set the same group as source and destination."
+						Glyphs.displayDialog_("You cannot set the same group as source and destination.")
 					else:
 						numDic = {}
 						miscDic = {}
