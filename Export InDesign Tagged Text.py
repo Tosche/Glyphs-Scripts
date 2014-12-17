@@ -1,7 +1,7 @@
-#MenuTitle: Export Tagged Text with All Glyphs for InDesign
+#MenuTitle: Export InDesign Tagged Text with All Glyphs
 # -*- coding: utf-8 -*-
 __doc__="""
-Saves tagged Text file that contains all glyphs for typesetting a specimen in InDesign, using glyph ID. This is a better solution than generating ss20 feature.
+Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID. This is a better solution than generating ss20 feature.
 """
 
 import GlyphsApp
@@ -40,7 +40,7 @@ for instance in instanceList:
 	except:
 		directory = "the Documents folder, because the source is not a saved Glyphs file"
 		dirPath = filepath = abspath(expanduser("~/") + '/Documents')
-	filePath = abspath(dirPath+"/Tagged Text - %s %s.txt" % (thisFont.familyName, instance))
+	filePath = abspath(dirPath+"/InDesign Tagged Text - %s %s.txt" % (thisFont.familyName, instance))
 	with open(filePath, 'w') as thisFile:
 		thisFile.write(header+line)
 		thisFile.close
