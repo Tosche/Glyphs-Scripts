@@ -39,8 +39,8 @@ for instance in instanceList:
 		dirPath = os.path.dirname(thisFont.filepath)
 	except:
 		directory = "the Documents folder, because the source is not a saved Glyphs file"
-		dirPath = filepath = abspath(expanduser("~/") + '/Documents')
-	filePath = abspath(dirPath+"/InDesign Tagged Text - %s %s.txt" % (thisFont.familyName, instance))
+		dirPath = filepath = os.path.abspath(expanduser("~/") + '/Documents')
+	filePath = os.path.abspath(dirPath+"/InDesign Tagged Text - %s %s.txt" % (thisFont.familyName, instance))
 	with open(filePath, 'w') as thisFile:
 		thisFile.write(header+line)
 		thisFile.close
