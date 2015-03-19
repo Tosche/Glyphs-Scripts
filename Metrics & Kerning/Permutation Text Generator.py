@@ -30,15 +30,15 @@ class PermutationTextGenerator( object ):
 		)
 		
 		# UI elements:
-		self.w.text_1 = vanilla.TextBox( (spaceX, spaceY, 40, textY), "List 1", sizeStyle='regular' )
+		self.w.text_1 = vanilla.TextBox( (spaceX, spaceY+2, 40, textY), "List A", sizeStyle='regular' )
 		self.w.edit_1 = vanilla.EditText( (spaceX*2+40, spaceY, -15, editY), "", sizeStyle = 'small')
-		self.w.text_2 = vanilla.TextBox( (spaceX, spaceY*2+editY, 40, textY), "List 2", sizeStyle='regular' )
+		self.w.text_2 = vanilla.TextBox( (spaceX, spaceY*2+editY+2, 40, textY), "List B", sizeStyle='regular' )
 		self.w.edit_2 = vanilla.EditText( (spaceX*2+40, spaceY*2+editY, -15, editY), "", sizeStyle = 'small')
-		self.w.text_3 = vanilla.TextBox( (spaceX*2+40, spaceY*3+editY*2, 85, textY), "Insert List 2", sizeStyle='regular' )
-		self.w.radio  = vanilla.RadioGroup((spaceX*3+120, spaceY*3+editY*2, 200, textY), ["Both", "Before", "After"], isVertical = False, sizeStyle='regular')
-		self.w.text_4 = vanilla.TextBox( (spaceX*2+40, spaceY*4+editY*2+textY, 320, textY), "Line break after every", sizeStyle='regular' )
-		self.w.edit_3 = vanilla.EditText( (spaceX*2+184, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
-		self.w.text_5 = vanilla.TextBox( (spaceX*2+228, spaceY*4+editY*2+textY, 40, textY), "pairs", sizeStyle='regular' )
+		self.w.text_3 = vanilla.TextBox( (spaceX*2+40, spaceY*3+editY*2, 85, textY), "Pattern:", sizeStyle='regular' )
+		self.w.radio  = vanilla.RadioGroup((spaceX*2+100, spaceY*3+editY*2, 250, textY), ["BABABAB", "AB AB AB", "BA BA BA"], isVertical = False, sizeStyle='regular')
+		self.w.edit_3 = vanilla.EditText( (spaceX*2+40, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
+		self.w.text_4 = vanilla.TextBox( (spaceX*2+85, spaceY*4+editY*2+textY, 200, textY), "pairs per line", sizeStyle='regular' )
+
 		# Run Button:
 		self.w.outputButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Macro Panel", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
 		self.w.viewButton = vanilla.Button((spaceX*3+40+buttonX, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Edit View", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
@@ -51,9 +51,8 @@ class PermutationTextGenerator( object ):
 		
 		# Open window and focus on it:
 		self.w.open()
-		self.w.radio.set(0)
 		self.w.makeKey()
-
+		self.w.radio.set(0)
 		
 	def SavePreferences( self, sender ):
 		try:
@@ -119,8 +118,29 @@ class PermutationTextGenerator( object ):
 					if item2[0] == "/":
 						item2 = item2 + " "
 					row = ""
-					
-					if self.w.radio.get() ==1: # if Before
+
+					if self.w.radio.get() ==1: # if AB AB AB
+						if int(self.w.edit_3.get()) != 0:
+							i = 1
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								
+								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
+									row = row + item1 + item2+ "\n"
+									i = 0
+								else:
+									row = row + item1 + item2 + " "
+								i = i+1
+						else:
+							for item1 in newList1:
+								if item1[0] == "/":
+									item1 = item1 + " "
+								row = row + item1 + item2 + " "
+						row=re.sub(r"\n$", "", row)
+						finalRow.append(row)
+
+					elif self.w.radio.get() ==2: # if BA BA BA
 						if int(self.w.edit_3.get()) != 0:
 							i = 0
 							for item1 in newList1:
@@ -139,26 +159,6 @@ class PermutationTextGenerator( object ):
 									item1 = item1 + " "
 								row = row + " "+ item2 + item1
 						row = row[1:]
-						finalRow.append(row)
-
-					elif self.w.radio.get() ==2: # if After
-						if int(self.w.edit_3.get()) != 0:
-							i = 1
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
-								
-								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
-									row = row + item1 + item2+ "\n"
-									i = 0
-								else:
-									row = row + item1 + item2 + " "
-								i = i+1
-						else:
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
-								row = row + item1 + item2 + " "
 						finalRow.append(row)
 
 					else: # if Both
@@ -181,6 +181,7 @@ class PermutationTextGenerator( object ):
 								if item1[0] == "/":
 									item1 = item1 + " "
 								row = row + item1 + item2
+						row=re.sub(r"\n.$", "", row)
 						finalRow.append(row)
 
 				if sender == self.w.outputButton: # Show in Macro Window
