@@ -26,7 +26,7 @@ class GuidelineLocker( object ):
 		self.w.runButton0 = vanilla.Button((spaceX, spaceY, buttonSizeX, buttonSizeY), "Lock Selected Guidelines", sizeStyle='regular', callback=self.GuidelineLockerMain )
 		self.w.runButton1 = vanilla.Button((spaceX, spaceY*2+buttonSizeY, buttonSizeX, buttonSizeY), "Unock all global Guidelines", sizeStyle='regular', callback=self.GuidelineLockerMain )
 		self.w.runButton2 = vanilla.Button((spaceX, spaceY*3+buttonSizeY*2, buttonSizeX, buttonSizeY), "Unock all local Guidelines*", sizeStyle='regular', callback=self.GuidelineLockerMain )
-		self.w.text_1 = vanilla.TextBox( (spaceX, spaceY*3+buttonSizeY*3+10, buttonSizeX, 15), "* Only in the current layer of a selected glyph", sizeStyle='small' )
+		self.w.text_1 = vanilla.TextBox( (spaceX, spaceY*3+buttonSizeY*3+10, buttonSizeX, 15), "* Only in the current layer of current glyph", sizeStyle='small' )
 		# Open window and focus on it:
 		self.w.open()
 		self.w.makeKey()
