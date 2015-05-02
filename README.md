@@ -30,6 +30,7 @@ And you are done. The installation should be effective immediately, but to be on
 # ABOUT THE SCRIPTS
 * **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
 * **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
+* **Guideline Lockwe:** (GUI) Locks selected guidelines and unlocks all global guidelines. *Vanilla required.*
 * **Export Tagged Text with All Glyphs for InDesign:** Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID. This is a better solution than generating ss20 feature.
 * **Nudge-move by Numerical Value:** (GUI) Nudge-moves selected nodes by the values specified in the window. *Vanilla required.*
 * **Regular Expression Glyph Renaming:** (GUI) Renames selected glyphs using regular expression, with case conversion options. You can use it as a normal renaming tool too. *Vanilla required.*
