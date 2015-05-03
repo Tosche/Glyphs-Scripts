@@ -18,14 +18,14 @@ class GuidelineLocker( object ):
 		windowHeight = spaceY*4+buttonSizeY*3+25
 		self.w = vanilla.FloatingWindow(
 			( windowWidth, windowHeight ), # default window size
-			"GuidelineLocker", # window title
+			"Guideline Locker", # window title
 			autosaveName = "com.Tosche.GuidelineLocker.mainwindow" # stores last window position and size
 		)
 		
 		# Run Button:
-		self.w.runButton0 = vanilla.Button((spaceX, spaceY, buttonSizeX, buttonSizeY), "Lock Selected Guidelines", sizeStyle='regular', callback=self.GuidelineLockerMain )
-		self.w.runButton1 = vanilla.Button((spaceX, spaceY*2+buttonSizeY, buttonSizeX, buttonSizeY), "Unock all global Guidelines", sizeStyle='regular', callback=self.GuidelineLockerMain )
-		self.w.runButton2 = vanilla.Button((spaceX, spaceY*3+buttonSizeY*2, buttonSizeX, buttonSizeY), "Unock all local Guidelines*", sizeStyle='regular', callback=self.GuidelineLockerMain )
+		self.w.runButton0 = vanilla.Button((spaceX, spaceY, buttonSizeX, buttonSizeY), "Lock selected guidelines", sizeStyle='regular', callback=self.GuidelineLockerMain )
+		self.w.runButton1 = vanilla.Button((spaceX, spaceY*2+buttonSizeY, buttonSizeX, buttonSizeY), "Unlock all global guidelines", sizeStyle='regular', callback=self.GuidelineLockerMain )
+		self.w.runButton2 = vanilla.Button((spaceX, spaceY*3+buttonSizeY*2, buttonSizeX, buttonSizeY), "Unlock all local guidelines*", sizeStyle='regular', callback=self.GuidelineLockerMain )
 		self.w.text_1 = vanilla.TextBox( (spaceX, spaceY*3+buttonSizeY*3+10, buttonSizeX, 15), "* Only in the current layer of current glyph", sizeStyle='small' )
 		# Open window and focus on it:
 		self.w.open()
