@@ -39,6 +39,7 @@ And you are done. The installation should be effective immediately, but to be on
 * **Batch Metric keys:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Vanilla required.*
 * **Copy Kerning Pairs:** (GUI) Copies kerning patterns to another. It supports pair-to-pair and preset group copying. *Vanilla required.*
 * **Copy kerning to Greek & Cyrillic:** (GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek. *Vanilla required.*
+* **MenuTitle: Display Unlocked Kerning Pairs** Shows unlocked kerning pairs (exceptions) in the edit view. String part done by Ben Jones, display part done by Toshi Omagari and Georg Seifert.
 * **Kerning Exception** (GUI) Makes an kerning exception of the current pair. Note: Current glyph is considered the RIGHT side of the glyph. *Vanilla required.*
 * **Permutation Text Generator:** (GUI) Outputs glyph permutation text for kerning. *Vanilla required.*
 * **Rename Kerning Groups:** (GUI) Lets you rename kerning names and pairs associated with them. *Vanilla required.*

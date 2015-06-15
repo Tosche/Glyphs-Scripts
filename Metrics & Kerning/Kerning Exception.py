@@ -54,16 +54,18 @@ class KerningException( object ):
 #			HasExeption = ActiveLayer.leftKerningExeptionForLayer_(PrevLayer) # Returns 0 or 1
 
 			if validLayer(ActiveLayer) and validLayer(PrevLayer):
-				if sender == self.w.runButton1:
+				if sender == self.w.runButton1: #Unlock Right
 					ActiveLayer.setLeftKerningExeption_forLayer_(True, PrevLayer)
-				elif sender == self.w.runButton2:
-					PrevLayer.setRightKerningExeption_forLayer_(True, ActiveLayer)
-				elif  sender == self.w.runButton3:
-					ActiveLayer.setLeftKerningExeption_forLayer_(True, PrevLayer)
-					PrevLayer.setRightKerningExeption_forLayer_(True, ActiveLayer)
-				else:
 					PrevLayer.setRightKerningExeption_forLayer_(False, ActiveLayer)
+				elif sender == self.w.runButton2: #Unlock Left
 					ActiveLayer.setLeftKerningExeption_forLayer_(False, PrevLayer)
+					PrevLayer.setRightKerningExeption_forLayer_(True, ActiveLayer)
+				elif  sender == self.w.runButton3: #Unock Both
+					ActiveLayer.setLeftKerningExeption_forLayer_(True, PrevLayer)
+					PrevLayer.setRightKerningExeption_forLayer_(True, ActiveLayer)
+				else: #Lock Both
+					ActiveLayer.setLeftKerningExeption_forLayer_(False, PrevLayer)
+					PrevLayer.setRightKerningExeption_forLayer_(False, ActiveLayer)
 			else:
 				Glyphs.displayDialog_('Text cursor should be between the pair you want to make an exception!')
 
