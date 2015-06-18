@@ -7,13 +7,14 @@ __doc__="""
 import vanilla
 import GlyphsApp
 
-Grk = {"A":"Alpha", "B":"Beta", "E":"Epsilon", "H":"Eta", "I":"Iota", "K":"Kappa", "M":"Mu", "N":"Nu", "O":"Omicron", "P":"Rho", "T":"Tau", "X":"Chi", "Y":"Upsilon", "Z":"Zeta", "o":"omicron" }
+#Stores a Latin glyph name as key and G/C glyph as unicode value, because glyph name may differ
+Grk = {"A": "0391", "B": "0392", "E": "0395", "H": "0397", "I": "0399", "K": "039A", "M": "039C", "N": "039D", "O": "039F", "P": "03A1", "T": "03A4", "X": "03A7", "Y": "03A5", "Z": "0396", "o": "03BF"}
 
-CyrUC = {"A":"A-cy", "B":"Ve-cy", "C":"Es-cy", "E":"Ie-cy", "H":"En-cy", "I":"I-cy", "K":"Ka-cy", "M":"Em-cy", "O":"O-cy", "P":"Er-cy", "S":"Dze-cy", "T":"Te-cy", "W":"We-cy", "X":"Ha-cy", "Y":"Ustrait-cy"}
+CyrUC = {"A": "0410", "B": "0412", "C": "0421", "E": "0415", "H": "041D", "I": "0406", "J": "0408", "K": "041A", "M": "041C", "O": "041E", "P": "0420", "S": "0405", "T": "0422", "W": "051C", "X": "0425", "Y": "04AE", "Schwa": "04D8"}
 
-CyrLCNormal = {"a": "a-cy", "abreve": "abreve-cy", "adieresis": "adieresis-cy", "e": "ie-cy", "egrave": "iegrave-cy", "edieresis": "io-cy", "o": "o-cy", "p": "er-cy", "c": "es-cy", "y": "u-cy", "ydieresis": "udieresis-cy", "x": "ha-cy", "s": "dze-cy", "h": "shha-cy", "l": "palochka-cy", "i": "i-cy", "idieresis": "yi-cy", "j": "je-cy", "w": "we-cy"}
+CyrLCNormal = {"a": "0430", "abreve": "04D1", "adieresis": "04D3", "e": "0435", "egrave": "0450", "edieresis": "0451", "o": "043E", "p": "0440", "c": "0441", "y": "0443", "ydieresis": "04F1", "x": "0445", "s": "0455", "h": "04BB", "l": "04CF", "i": "0456", "idieresis": "0457", "j": "0458", "w": "051D", "schwa": "04D9", "v": "04AF"}
 
-CyrLCCursive = {"a": "a-cy", "abreve": "abreve-cy", "adieresis": "adieresis-cy", "e": "ie-cy", "egrave": "iegrave-cy", "edieresis": "io-cy", "ebreve": "iebreve-cy", "u": "ii-cy", "ubreve": "iishort-cy", "ugrave": "iigrave-cy", "o": "o-cy", "n": "pe-cy", "p": "er-cy", "c": "es-cy", "m": "te-cy", "y": "u-cy", "ydieresis": "udieresis-cy", "x": "ha-cy", "s": "dze-cy", "h": "shha-cy", "l": "palochka-cy", "idieresis": "yi-cy", "i": "i-cy", "j": "je-cy", "w":"we-cy"}
+CyrLCCursive = {"a": "0430", "abreve": "04D1", "adieresis": "04D3", "e": "0435", "egrave": "0450", "edieresis": "0451", "ebreve": "04D7", "u": "0438", "ubreve": "0439", "ugrave": "045D", "o": "043E", "n": "043F", "p": "0440", "c": "0441", "m": "0442", "y": "0443", "ydieresis": "04F1", "x": "0445", "s": "0455", "h": "04BB", "l": "04CF", "idieresis": "0457", "i": "0456", "j": "0458", "w": "051D", "schwa": "04D9"}
 
 
 class CopyKerningToGreekCyrillic( object ):
@@ -150,6 +151,11 @@ class CopyKerningToGreekCyrillic( object ):
 						if not "@MMK_L_"+thisGlyph.rightKerningGroup in nonLetterGroupsR:
 							nonLetterGroupsR.append("@MMK_L_"+thisGlyph.rightKerningGroup)
 			print "Greek"
+			for key1, value1 in Grk.iteritems():
+				try:
+					Grk[key1] = thisFont.glyphForUnicode_(value1).name
+				except:
+					pass
 			self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, Grk)
 			print "Cyrillic"
 			if self.w.AllCapBox.get() == False:
@@ -158,9 +164,15 @@ class CopyKerningToGreekCyrillic( object ):
 				else:
 					CyrDic = dict( CyrUC.items() + CyrLCNormal.items() )
 
-				self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, CyrDic)
 			elif self.w.AllCapBox.get() == True:
-				self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, CyrUC)
+				CyrDic = CyrUC.copy
+			for key2, value2 in CyrDic.iteritems():
+				try:
+					CyrDic[key2] = thisFont.glyphForUnicode_(value2).name
+				except:
+					pass
+
+			self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, CyrDic)
 			thisFont.enableUpdateInterface()
 			Glyphs.showMacroWindow()
 
