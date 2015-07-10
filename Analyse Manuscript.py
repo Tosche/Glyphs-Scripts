@@ -35,6 +35,7 @@ class AnalyseManuscript( object ):
 		self.w.dump._textView.setAutomaticTextReplacementEnabled_(False)
 		self.w.dump._textView.setContinuousSpellCheckingEnabled_(False)
 		self.w.dump._textView.setGrammarCheckingEnabled_(False)
+		self.w.dump._textView.setAutomaticQuoteSubstitutionEnabled_(False)
 
 		# Run Button:
 		self.w.runButton = vanilla.Button((-btnX-spX, -btnY-spY-7, -spX, -spY-7), "Add missing characters to the Font", sizeStyle='regular', callback=self.AnalyseManuscriptMain )
@@ -46,8 +47,10 @@ class AnalyseManuscript( object ):
 	
 	def updateChar( self, sender ):
 		try:
+			# Strip off control characters
 			cleanUpDict = dict.fromkeys(range(32))
 			cleanStr = self.w.dump.get().translate(cleanUpDict)
+			# Make unique set
 			charList = sorted(set(cleanStr))
 			niceNameList = [Glyphs.niceGlyphName(char) for char in charList]
 			if sender == self.w.dump:
