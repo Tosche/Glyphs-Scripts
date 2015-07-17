@@ -1,4 +1,4 @@
-#MenuTitle: Permutation Text Generator
+#MenuTitle: Permutation Text Generator...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Outputs glyph permutation text for kerning.

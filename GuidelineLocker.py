@@ -1,4 +1,4 @@
-#MenuTitle: Guideline Locker
+#MenuTitle: Guideline Locker...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Locks selected guidelines and unlocks all guidelines. It’s convenient for un/locking multiple selected guidelines.

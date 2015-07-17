@@ -1,4 +1,4 @@
-#MenuTitle: Rename Kerning Groups
+#MenuTitle: Rename Kerning Groups...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Lets you rename kerning names and pairs associated with them. 

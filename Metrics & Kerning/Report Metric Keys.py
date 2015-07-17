@@ -1,4 +1,4 @@
-#MenuTitle: Report Metric Keys
+#MenuTitle: Report Metric Keys...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. Vanilla required.

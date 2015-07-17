@@ -1,4 +1,4 @@
-#MenuTitle: Copy Kerning to Greek & Cyrillic
+#MenuTitle: Copy Kerning to Greek & Cyrillic...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek.

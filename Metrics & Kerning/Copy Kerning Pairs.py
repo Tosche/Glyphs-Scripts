@@ -1,4 +1,4 @@
-#MenuTitle: Copy Kerning Pairs
+#MenuTitle: Copy Kerning Pairs...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Copies kerning patterns to another. It supports pair-to-pair and preset group copying.

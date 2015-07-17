@@ -1,4 +1,4 @@
-#MenuTitle: Analyse Manuscript
+#MenuTitle: Analyse Manuscript...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Calculates the minimal character set required for the pasted text.

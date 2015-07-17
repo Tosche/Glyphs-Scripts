@@ -1,4 +1,4 @@
-#MenuTitle: Batch Metric Keys
+#MenuTitle: Batch Metric Keys...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Applies the specified logic of metrics key to the selected glyphs. Vanilla required.
@@ -54,170 +54,185 @@ class BatchMetricKey( object ):
 		self.w.keyTextField.set(setFieldKey)
 
 	def BatchMetricKeyMain( self, sender ):
-		thisFont = Glyphs.font
-		thisFontMaster = thisFont.selectedFontMaster
-		listOfSelectedLayers = thisFont.selectedLayers
-		fieldKey = self.w.keyTextField.get()
-		flatFieldKey = re.sub("@Base", "@base", fieldKey)
-
-		if "@base" in fieldKey or "@Base" in fieldKey:
-			# Checks if a given layer has a metrics key of a glyph that has another key. Checks the glyph once and returns its name.
-			def nestHuntL( targetGlyphName ):
-				# Sees if the glyphName exists in the font
-				if thisFont.glyphs[ targetGlyphName ]:
-					# If exists, gets the left key of targetGlyph of the same layer
-					targetGlyphL = thisFont.glyphs[ targetGlyphName ]
-					targetLayerL = targetGlyphL.layers[ thisFontMaster.id ]
-					targetLayerKeyL = targetLayerL.leftMetricsKey()
-					# If it's a plain number or calculation, returns the original glyph name
-					a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
-					if targetLayerKeyL[0].isdigit() or "-" in targetLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
-						return targetGlyphName
-
-					# Finds the first component and returns its name
-					elif "auto" in targetLayerKeyL:
-						firstComponent = targetLayerL.components[0]
-						return firstComponent.componentName
-
-					# This is a single-letter key, so clean it up
+		try:
+			thisFont = Glyphs.font
+			thisFontMaster = thisFont.selectedFontMaster
+			listOfSelectedLayers = thisFont.selectedLayers
+			fieldKey = self.w.keyTextField.get()
+			flatFieldKey = re.sub("@Base", "@base", fieldKey)
+	
+			if "@base" in fieldKey or "@Base" in fieldKey:
+				# Checks if a given layer has a metrics key of a glyph that has another key. Checks the glyph once and returns its name.
+				def nestHuntL( targetGlyphName ):
+					try:
+						# Sees if the glyphName exists in the font
+						if thisFont.glyphs[ targetGlyphName ]:
+							# If exists, gets the left key of targetGlyph of the same layer
+							targetGlyphL = thisFont.glyphs[ targetGlyphName ]
+							targetLayerL = targetGlyphL.layers[ thisFontMaster.id ]
+							targetLayerKeyL = targetLayerL.leftMetricsKeyUI()
+							print targetGlyphL
+							print targetLayerL
+							print targetLayerKeyL
+							# If it's a plain number or calculation, returns the original glyph name
+							a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+							if targetLayerKeyL[0].isdigit() or "-" in targetLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
+								return targetGlyphName
+		
+							# Finds the first component and returns its name
+							elif "auto" in targetLayerKeyL:
+								firstComponent = targetLayerL.components[0]
+								return firstComponent.componentName
+		
+							# This is a single-letter key, so clean it up
+							else:
+								cleanGlyphName = re.sub( "=", "", targetLayerKeyL )
+								cleanGlyphName = re.sub( " .*", "", cleanGlyphName )
+								return cleanGlyphName
+		
+						# If the glyph doesn't exist:
+						else:
+							print "Found invalid LSB key while checking the key of %s" % thisGlyph.name
+					except Exception, e:
+						Glyphs.showMacroWindow()
+						print "nestHuntL Error: %s" % e
+	
+				def nestHuntR( targetGlyphName ):
+					try:
+						# Sees if the glyphName exists in the font
+						if thisFont.glyphs[ targetGlyphName ]:
+							# If exists, gets the left key of targetGlyph of the same layer
+							targetGlyphR = thisFont.glyphs[ targetGlyphName ]
+							targetLayerR = targetGlyphR.layers[ thisFontMaster.id ]
+							targetLayerKeyR = targetLayerR.rightMetricsKeyUI()
+							# If it's a plain number or calculation, returns the original glyph name
+							a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
+							if targetLayerKeyR[0].isdigit() or "-" in targetLayerKeyR[0] or any([ x in targetLayerKeyR for x in a]):
+								return targetGlyphName
+		
+							# Finds the last "Letter" component and returns its name
+							elif "auto" in targetLayerKeyR:
+								allCompornents = thisLayer.components 
+								numOfCompornents = len(allCompornents)
+								lastCompornent = allCompornents[numOfCompornents-1]
+								lastCompornentName = lastCompornent.componentName
+								lastCompornentGlyph = thisFont.glyphs[lastCompornentName]
+								while lastCompornentGlyph.category != "Letter":
+									numOfCompornents = numOfCompornents-1
+									lastCompornent = allCompornents[numOfCompornents]
+									lastCompornentName = lastCompornent.componentName
+									lastCompornentGlyph = thisFont.glyphs[lastCompornentName]
+								return lastCompornentName
+		
+							# This is a single-letter key, so clean it up
+							else:
+								cleanGlyphName = re.sub( "=", "", targetLayerKeyR )
+								cleanGlyphName = re.sub( " .*", "", cleanGlyphName )
+								return cleanGlyphName
+		
+						# If the glyph doesn't exist:
+						else:
+							print "Found invalid RSB key while checking the key of %s" % thisGlyph.name
+					except Exception, e:
+						Glyphs.showMacroWindow()
+						print "nestHuntR Error: %s" % e
+	
+				# Set baseGlyphName for further nest hunting.
+				for thisLayer in thisFont.selectedLayers:
+					# Checks case of base glyph.
+					thisGlyph = thisLayer.parent
+					baseGlyphName = re.sub("\..*", "", thisGlyph.name)
+					baseGlyphName = re.sub("superior", "", baseGlyphName)
+					if "@Base" in fieldKey:
+						baseGlyphName = baseGlyphName.capitalize()
+						if thisGlyph.script == "latin" and re.match("Ij|Ae|Oe", baseGlyphName):
+							baseGlyphName = baseGlyphName[0:2].upper() + baseGlyphName[2:]
+							baseGlyphNameL = baseGlyphName
+							baseGlyphNameR = baseGlyphName
+					# Detects ligatures and sets baseGlyphNameL and R
+					if "_" in baseGlyphName:
+						baseGlyphNameL = re.sub("_.*", "", baseGlyphName)
+						baseGlyphNameR = re.sub(".*_", "", baseGlyphName)
+					elif "ordfeminine" in thisGlyph.name:
+						baseGlyphNameL = "a"
+						baseGlyphNameR = "a"
+					elif "ordmasculine" in thisGlyph.name:
+						baseGlyphNameL = "o"
+						baseGlyphNameR = "o"
 					else:
-						cleanGlyphName = re.sub( "=", "", targetLayerKeyL )
-						cleanGlyphName = re.sub( " .*", "", cleanGlyphName )
-						return cleanGlyphName
-
-				# If the glyph doesn't exist:
-				else:
-					print "Found invalid LSB key while checking the key of %s" % thisGlyph.name
-
-			def nestHuntR( targetGlyphName ):
-				# Sees if the glyphName exists in the font
-				if thisFont.glyphs[ targetGlyphName ]:
-					# If exists, gets the left key of targetGlyph of the same layer
-					targetGlyphR = thisFont.glyphs[ targetGlyphName ]
-					targetLayerR = targetGlyphR.layers[ thisFontMaster.id ]
-					targetLayerKeyR = targetLayerR.rightMetricsKey()
-					# If it's a plain number or calculation, returns the original glyph name
-					a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
-					if targetLayerKeyR[0].isdigit() or "-" in targetLayerKeyR[0] or any([ x in targetLayerKeyR for x in a]):
-						return targetGlyphName
-
-					# Finds the last "Letter" component and returns its name
-					elif "auto" in targetLayerKeyR:
-						allCompornents = thisLayer.components 
-						numOfCompornents = len(allCompornents)
-						lastCompornent = allCompornents[numOfCompornents-1]
-						lastCompornentName = lastCompornent.componentName
-						lastCompornentGlyph = thisFont.glyphs[lastCompornentName]
-						while lastCompornentGlyph.category != "Letter":
-							numOfCompornents = numOfCompornents-1
-							lastCompornent = allCompornents[numOfCompornents]
-							lastCompornentName = lastCompornent.componentName
-							lastCompornentGlyph = thisFont.glyphs[lastCompornentName]
-						return lastCompornentName
-
-					# This is a single-letter key, so clean it up
-					else:
-						cleanGlyphName = re.sub( "=", "", targetLayerKeyR )
-						cleanGlyphName = re.sub( " .*", "", cleanGlyphName )
-						return cleanGlyphName
-
-				# If the glyph doesn't exist:
-				else:
-					print "Found invalid RSB key while checking the key of %s" % thisGlyph.name
-
-			# Set baseGlyphName for further nest hunting.
-			for thisLayer in thisFont.selectedLayers:
-				# Checks case of base glyph.
-				thisGlyph = thisLayer.parent
-				baseGlyphName = re.sub("\..*", "", thisGlyph.name)
-				baseGlyphName = re.sub("superior", "", baseGlyphName)
-				if "@Base" in fieldKey:
-					baseGlyphName = baseGlyphName.capitalize()
-					if thisGlyph.script == "latin" and re.match("Ij|Ae|Oe", baseGlyphName):
-						baseGlyphName = baseGlyphName[0:2].upper() + baseGlyphName[2:]
 						baseGlyphNameL = baseGlyphName
 						baseGlyphNameR = baseGlyphName
-				# Detects ligatures and sets baseGlyphNameL and R
-				if "_" in baseGlyphName:
-					baseGlyphNameL = re.sub("_.*", "", baseGlyphName)
-					baseGlyphNameR = re.sub(".*_", "", baseGlyphName)
-				elif "ordfeminine" in thisGlyph.name:
-					baseGlyphNameL = "a"
-					baseGlyphNameR = "a"
-				elif "ordmasculine" in thisGlyph.name:
-					baseGlyphNameL = "o"
-					baseGlyphNameR = "o"
-				else:
-					baseGlyphNameL = baseGlyphName
-					baseGlyphNameR = baseGlyphName
-				thisFont.disableUpdateInterface()
-				thisGlyph.beginUndo()	
-
-				# Runs nestHuntL multiple times until it finds the final glyph,
-				# and then set the final left metrics key.
-				if self.w.applyL.get():
-					if self.w.avoidNest:
-						dummyOldL = nestHuntL(baseGlyphNameL)
-						dummyNewL = nestHuntL(dummyOldL)
-						while dummyOldL != dummyNewL:
-							dummyOldL = nestHuntL(dummyNewL)
-							dummyNewL = nestHuntL(dummyOldL)
-						finalKeyL = re.sub("@base", dummyNewL, flatFieldKey)
-						for i in thisGlyph.layers:
-							i.setLeftMetricsKey_(finalKeyL)
-
-				# Runs nestHuntR multiple times until it finds the final glyph,
-				# and then set the final right metrics key.
-				if self.w.applyR.get():
-					if self.w.avoidNest:
-						dummyOldR = nestHuntR(baseGlyphNameR)
-						dummyNewR = nestHuntR(dummyOldR)
-						while dummyOldR != dummyNewR:
-							dummyOldR = nestHuntR(dummyNewR)
-							dummyNewR = nestHuntR(dummyOldR)
-						finalKeyR = re.sub("@base", dummyNewR, flatFieldKey)
+					thisFont.disableUpdateInterface()
+					thisGlyph.beginUndo()	
 	
-						for i in thisGlyph.layers:
-							# Processes as normal
-							if baseGlyphName != "Q":
-								i.setRightMetricsKey_(finalKeyR)
-							# Uses width of the width of O of the same group
-							elif baseGlyphName == "Q" and self.w.radioQ.get() == 0:
-								Qbefore = thisGlyph.name
-								Qname = re.sub("Q", "O", Qbefore)
-								Qname = re.sub("q", "o", Qbefore)
-								glyphO = thisFont.glyphs[Qname]
-								numOfMasters = len(thisFont.masters)
-								for i in thisFont.masters:
-									thisGlyphLayer = thisGlyph.layers[ i.id ]
-									thisOLayer = glyphO.layers[ i.id ]
-									thisOWidth = thisOLayer.width
-									thisGlyphLayer.setWidth_(thisOWidth)
-							# Uses RSB as normal
-							elif baseGlyphName == "Q" and self.w.radioQ.get() == 1:
-								i.setRightMetricsKey_(finalKeyR)
-				#else:
-				#	finalKeyL = re.sub("@base", dummyNewL, baseGlyphNameL)
-				#	i.setLeftMetricsKey_(finalKeyL)
-				#	finalKeyR = re.sub("@base", dummyNewL, baseGlyphNameR)
-				#	i.setRightMetricsKey_(finalKeyR)
-
-				thisGlyph.endUndo()
-				thisFont.enableUpdateInterface()
-			self.w.close()
-
-		else:
-			pass
-			for thisLayer in listOfSelectedLayers:
-				thisGlyph = thisLayer.parent
-				thisFont.disableUpdateInterface()
-				thisGlyph.beginUndo()	
-				for i in thisGlyph.layers:
+					# Runs nestHuntL multiple times until it finds the final glyph,
+					# and then set the final left metrics key.
 					if self.w.applyL.get():
-						i.setLeftMetricsKey_(fieldKey)
+						if self.w.avoidNest:
+							dummyOldL = nestHuntL(baseGlyphNameL)
+							dummyNewL = nestHuntL(dummyOldL)
+							while dummyOldL != dummyNewL:
+								dummyOldL = nestHuntL(dummyNewL)
+								dummyNewL = nestHuntL(dummyOldL)
+							finalKeyL = re.sub("@base", dummyNewL, flatFieldKey)
+							for i in thisGlyph.layers:
+								i.setLeftMetricsKey_(finalKeyL)
+	
+					# Runs nestHuntR multiple times until it finds the final glyph,
+					# and then set the final right metrics key.
 					if self.w.applyR.get():
-						i.setRightMetricsKey_(fieldKey)
-				thisGlyph.endUndo()
-				thisFont.enableUpdateInterface()
-			self.w.close()
+						if self.w.avoidNest:
+							dummyOldR = nestHuntR(baseGlyphNameR)
+							dummyNewR = nestHuntR(dummyOldR)
+							while dummyOldR != dummyNewR:
+								dummyOldR = nestHuntR(dummyNewR)
+								dummyNewR = nestHuntR(dummyOldR)
+							finalKeyR = re.sub("@base", dummyNewR, flatFieldKey)
+		
+							for i in thisGlyph.layers:
+								# Processes as normal
+								if baseGlyphName != "Q":
+									i.setRightMetricsKey_(finalKeyR)
+								# Uses width of the width of O of the same group
+								elif baseGlyphName == "Q" and self.w.radioQ.get() == 0:
+									Qbefore = thisGlyph.name
+									Qname = re.sub("Q", "O", Qbefore)
+									Qname = re.sub("q", "o", Qbefore)
+									glyphO = thisFont.glyphs[Qname]
+									numOfMasters = len(thisFont.masters)
+									for i in thisFont.masters:
+										thisGlyphLayer = thisGlyph.layers[ i.id ]
+										thisOLayer = glyphO.layers[ i.id ]
+										thisOWidth = thisOLayer.width
+										thisGlyphLayer.setWidth_(thisOWidth)
+								# Uses RSB as normal
+								elif baseGlyphName == "Q" and self.w.radioQ.get() == 1:
+									i.setRightMetricsKey_(finalKeyR)
+					#else:
+					#	finalKeyL = re.sub("@base", dummyNewL, baseGlyphNameL)
+					#	i.setLeftMetricsKey_(finalKeyL)
+					#	finalKeyR = re.sub("@base", dummyNewL, baseGlyphNameR)
+					#	i.setRightMetricsKey_(finalKeyR)
+	
+					thisGlyph.endUndo()
+					thisFont.enableUpdateInterface()
+				self.w.close()
+	
+			else:
+				pass
+				for thisLayer in listOfSelectedLayers:
+					thisGlyph = thisLayer.parent
+					thisFont.disableUpdateInterface()
+					thisGlyph.beginUndo()	
+					for i in thisGlyph.layers:
+						if self.w.applyL.get():
+							i.setLeftMetricsKey_(fieldKey)
+						if self.w.applyR.get():
+							i.setRightMetricsKey_(fieldKey)
+					thisGlyph.endUndo()
+					thisFont.enableUpdateInterface()
+				self.w.close()
+		except Exception, e:
+			Glyphs.showMacroWindow()
+			print "BatchMetricKeyMain Error: %s" % e
 BatchMetricKey()

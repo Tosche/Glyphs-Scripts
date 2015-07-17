@@ -1,4 +1,4 @@
-#MenuTitle: Transform Images with Proper Maths
+#MenuTitle: Transform Images with Proper Maths...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Batch scale and move images in selected layers, using the maths you learned at school. Based on mekkablue's Transform Images script.

@@ -1,4 +1,4 @@
-#MenuTitle: Kerning Exception
+#MenuTitle: Kerning Exception...
 # -*- coding: utf-8 -*-
 __doc__="""
 (GUI) Makes an kerning exception of the current pair. Note: Current glyph is considered the RIGHT side of the glyph.
