@@ -71,9 +71,7 @@ class BatchMetricKey( object ):
 							targetGlyphL = thisFont.glyphs[ targetGlyphName ]
 							targetLayerL = targetGlyphL.layers[ thisFontMaster.id ]
 							targetLayerKeyL = targetLayerL.leftMetricsKeyUI()
-							print targetGlyphL
-							print targetLayerL
-							print targetLayerKeyL
+
 							# If it's a plain number or calculation, returns the original glyph name
 							a = ["=|", "+", "*", "/", "-1", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
 							if targetLayerKeyL[0].isdigit() or "-" in targetLayerKeyL[0] or any([ x in targetLayerKeyL for x in a]):
@@ -175,8 +173,7 @@ class BatchMetricKey( object ):
 								dummyOldL = nestHuntL(dummyNewL)
 								dummyNewL = nestHuntL(dummyOldL)
 							finalKeyL = re.sub("@base", dummyNewL, flatFieldKey)
-							for i in thisGlyph.layers:
-								i.setLeftMetricsKey_(finalKeyL)
+							thisGlyph.setLeftMetricsKey_(finalKeyL)
 	
 					# Runs nestHuntR multiple times until it finds the final glyph,
 					# and then set the final right metrics key.
@@ -189,30 +186,21 @@ class BatchMetricKey( object ):
 								dummyNewR = nestHuntR(dummyOldR)
 							finalKeyR = re.sub("@base", dummyNewR, flatFieldKey)
 		
-							for i in thisGlyph.layers:
-								# Processes as normal
-								if baseGlyphName != "Q":
-									i.setRightMetricsKey_(finalKeyR)
-								# Uses width of the width of O of the same group
-								elif baseGlyphName == "Q" and self.w.radioQ.get() == 0:
-									Qbefore = thisGlyph.name
-									Qname = re.sub("Q", "O", Qbefore)
-									Qname = re.sub("q", "o", Qbefore)
-									glyphO = thisFont.glyphs[Qname]
-									numOfMasters = len(thisFont.masters)
-									for i in thisFont.masters:
-										thisGlyphLayer = thisGlyph.layers[ i.id ]
-										thisOLayer = glyphO.layers[ i.id ]
-										thisOWidth = thisOLayer.width
-										thisGlyphLayer.setWidth_(thisOWidth)
-								# Uses RSB as normal
-								elif baseGlyphName == "Q" and self.w.radioQ.get() == 1:
-									i.setRightMetricsKey_(finalKeyR)
-					#else:
-					#	finalKeyL = re.sub("@base", dummyNewL, baseGlyphNameL)
-					#	i.setLeftMetricsKey_(finalKeyL)
-					#	finalKeyR = re.sub("@base", dummyNewL, baseGlyphNameR)
-					#	i.setRightMetricsKey_(finalKeyR)
+							
+							# Processes as normal
+							if baseGlyphName != "Q":
+								thisGlyph.setRightMetricsKey_(finalKeyR)
+							# Uses width of the width of O of the same group
+							elif baseGlyphName == "Q" and self.w.radioQ.get() == 0:
+								Qbefore = thisGlyph.name
+								Qname = re.sub("Q", "O", Qbefore)
+								Qname = re.sub("q", "o", Qbefore)
+								glyphO = thisFont.glyphs[Qname]
+								numOfMasters = len(thisFont.masters)
+								thisGlyph.setWidth_(thisOWidth)
+							# Uses RSB as normal
+							elif baseGlyphName == "Q" and self.w.radioQ.get() == 1:
+								thisGlyph.setRightMetricsKey_(finalKeyR)
 	
 					thisGlyph.endUndo()
 					thisFont.enableUpdateInterface()
