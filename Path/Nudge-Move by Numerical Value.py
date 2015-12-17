@@ -128,9 +128,9 @@ class NudgeMoveWindow( object ):
 					numOfNodes = len(thisPath.nodes)
 					for i in range(numOfNodes):
 						node = thisPath.nodes[i]
-						if node in thisLayer.selection():
+						if node in thisLayer.selection:
 							nodeBefore = thisPath.nodes[i-1]
-							if not nodeBefore in thisLayer.selection():
+							if (nodeBefore != None) and (not nodeBefore in thisLayer.selection):
 								if nodeBefore.type == 65:
 									if thisPath.nodes[i-2].type == 65:
 										oncurveMv = node
@@ -138,7 +138,7 @@ class NudgeMoveWindow( object ):
 										offcurve2 = thisPath.nodes[i-2]
 										oncurveSt = thisPath.nodes[i-3]
 										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
-			
+									
 									# if off-curve is the edge of selection
 									elif thisPath.nodes[i-2].type != 65:
 										oncurveMv = thisPath.nodes[i+1]
@@ -148,9 +148,9 @@ class NudgeMoveWindow( object ):
 										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
 										node.x -= offsetX
 										node.y -= offsetY
-										
+							
 							nodeAfter = thisPath.nodes[i+1]
-							if not nodeAfter in thisLayer.selection():
+							if (nodeAfter !=None) and (not nodeAfter in thisLayer.selection):
 								if nodeAfter.type == 65:
 									if thisPath.nodes[i+2].type ==65:
 										oncurveMv = node
@@ -171,7 +171,7 @@ class NudgeMoveWindow( object ):
 										thisPath.nodes[i-1].y += offsetY
 										node.x -= offsetX
 										node.y -= offsetY
-										
+							print 3			
 							node.x += offsetX
 							node.y += offsetY
 				glyph.endUndo()
