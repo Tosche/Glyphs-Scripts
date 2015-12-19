@@ -170,8 +170,7 @@ class NudgeMoveWindow( object ):
 										thisPath.nodes[i-1].x += offsetX
 										thisPath.nodes[i-1].y += offsetY
 										node.x -= offsetX
-										node.y -= offsetY
-							print 3			
+										node.y -= offsetY		
 							node.x += offsetX
 							node.y += offsetY
 				glyph.endUndo()
