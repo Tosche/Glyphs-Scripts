@@ -1,7 +1,7 @@
-#MenuTitle: Sync Edit views
+#MenuTitle: Sync Edit Views
 # -*- coding: utf-8 -*-
 __doc__="""
-Refreshes the edit view contents of non-front files. Have multiple files open!
+Refreshes the edit view contents of non-front files. Have multiple files open! Vanilla required.
 """
 
 import vanilla
@@ -15,7 +15,7 @@ class SyncEditViews( object ):
 		windowHeight = 44
 		self.w = vanilla.FloatingWindow(
 			( windowWidth, windowHeight ), # default window size
-			"Sync Edit views", # window title
+			"Sync Edit Views", # window title
 			autosaveName = "com.Tosche.SyncEditViews.mainwindow" # stores last window position and size
 		)
 		# Run Button:
