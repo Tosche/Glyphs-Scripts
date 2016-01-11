@@ -48,6 +48,7 @@ And you are done. The installation should be effective immediately, but to be on
 * **Split Cross-Script Kerning:** Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly. Kern once, split later.
 ## Outline Check
 * **Report Glyphs with Acute-angled Node:** Reports glyphs that have nodes with very acute angle (default: less than 15 degrees).
+* **Sync Edit Views:** Refreshes the edit view contents of non-front files. Have multiple files open! *Vanilla required.*
 
 # License
 
