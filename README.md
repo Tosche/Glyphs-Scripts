@@ -28,7 +28,7 @@ While we're at it, we can also install Robofab, DialogKit, and FontTools. You do
 And you are done. The installation should be effective immediately, but to be on the safe side, you may want to restart or log out and back in again.
 
 # ABOUT THE SCRIPTS
-## Metrics & Kerning
+### Metrics & Kerning
 * **Batch Metric keys:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Vanilla required.*
 * **Copy Kerning Pairs:** (GUI) Copies kerning patterns to another. It supports pair-to-pair and preset group copying. *Vanilla required.*
 * **Copy kerning to Greek & Cyrillic:** (GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek. *Vanilla required.*
@@ -39,7 +39,7 @@ And you are done. The installation should be effective immediately, but to be on
 * **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
 * **Split Cross-Script Kerning:** Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly. Kern once, split later.
 
-## Path
+### Path
 * **Delete Diagonal Nodes Between Extremes:** Good for cleaning TTF curve. It removes Diagonal Node Between Extremes, after placing the current outline in the background.
 * **Nudge-move by Numerical Value:** (GUI) Nudge-moves selected nodes by the values specified in the window. *Vanilla required.*
 * **Report Compatibility by Numbers:** Outputs path count, node count, anchor count etc. of selected glyphs in the Macro Window.
