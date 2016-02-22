@@ -29,15 +29,6 @@ And you are done. The installation should be effective immediately, but to be on
 
 # ABOUT THE SCRIPTS
 ## Metrics & Kerning
-* **Analyse Manuscript:** (GUI) Calculates the minimal character set required for the pasted text. Ideal for starting a font for specific text (e.g. book). *Vanilla required.*
-* **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
-* **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
-* **Guideline Locker:** (GUI) Locks selected guidelines and unlocks all global guidelines. *Vanilla required.*
-* **Export Tagged Text with All Glyphs for InDesign:** Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID. This is a better solution than generating ss20 feature.
-* **Nudge-move by Numerical Value:** (GUI) Nudge-moves selected nodes by the values specified in the window. *Vanilla required.*
-* **Regular Expression Glyph Renaming:** (GUI) Renames selected glyphs using regular expression, with case conversion options. You can use it as a normal renaming tool too. *Vanilla required.*
-* **Transform Images with Proper Maths** (GUI) Batch scale and move images in selected layers, using the maths you learned at school. Based on mekkablue's Transform Images script. *Vanilla required.*
-*Metrics & Kerning*
 * **Batch Metric keys:** (GUI) Applies the specified logic of metrics key to the selected glyphs. *Vanilla required.*
 * **Copy Kerning Pairs:** (GUI) Copies kerning patterns to another. It supports pair-to-pair and preset group copying. *Vanilla required.*
 * **Copy kerning to Greek & Cyrillic:** (GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek. *Vanilla required.*
@@ -47,11 +38,19 @@ And you are done. The installation should be effective immediately, but to be on
 * **Rename Kerning Groups:** (GUI) Lets you rename kerning names and pairs associated with them. *Vanilla required.*
 * **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
 * **Split Cross-Script Kerning:** Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly. Kern once, split later.
-**Path**
+## Path
+* **Delete Diagonal Nodes Between Extremes:** Good for cleaning TTF curve. It removes Diagonal Node Between Extremes, after placing the current outline in the background.
+* **Nudge-move by Numerical Value:** (GUI) Nudge-moves selected nodes by the values specified in the window. *Vanilla required.*
+* **Report Compatibility by Numbers:** Outputs path count, node count, anchor count etc. of selected glyphs in the Macro Window.
 * **Report Glyphs with Acute-angled Node:** Reports glyphs that have nodes with very acute angle (default: less than 15 degrees).
+* **Un-Round Corners:** Removes corners of outlines of the selected letters (current master only).
+## Else
+* **Analyse Manuscript:** (GUI) Calculates the minimal character set required for the pasted text. Ideal for starting a font for specific text (e.g. book). *Vanilla required.*
+* **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
+* **Export Tagged Text with All Glyphs for InDesign:** Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID.
+* **Guideline Locker:** (GUI) Locks selected guidelines and unlocks all global guidelines. *Vanilla required.*
 * **Sync Edit Views:** Refreshes the edit view contents of non-front files. Have multiple files open! *Vanilla required.*
-*Else*
-
+* **Transform Images with Proper Maths** (GUI) Batch scale and move images in selected layers, using the maths you learned at school. Based on mekkablue's Transform Images script. *Vanilla required.*
 
 # License
 
