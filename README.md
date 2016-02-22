@@ -38,13 +38,15 @@ And you are done. The installation should be effective immediately, but to be on
 * **Rename Kerning Groups:** (GUI) Lets you rename kerning names and pairs associated with them. *Vanilla required.*
 * **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
 * **Split Cross-Script Kerning:** Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly. Kern once, split later.
+
 ## Path
 * **Delete Diagonal Nodes Between Extremes:** Good for cleaning TTF curve. It removes Diagonal Node Between Extremes, after placing the current outline in the background.
 * **Nudge-move by Numerical Value:** (GUI) Nudge-moves selected nodes by the values specified in the window. *Vanilla required.*
 * **Report Compatibility by Numbers:** Outputs path count, node count, anchor count etc. of selected glyphs in the Macro Window.
 * **Report Glyphs with Acute-angled Node:** Reports glyphs that have nodes with very acute angle (default: less than 15 degrees).
 * **Un-Round Corners:** Removes corners of outlines of the selected letters (current master only).
-## Else
+
+### Else
 * **Analyse Manuscript:** (GUI) Calculates the minimal character set required for the pasted text. Ideal for starting a font for specific text (e.g. book). *Vanilla required.*
 * **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
 * **Export Tagged Text with All Glyphs for InDesign:** Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID.
