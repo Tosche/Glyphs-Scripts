@@ -28,6 +28,9 @@ While we're at it, we can also install Robofab, DialogKit, and FontTools. You do
 And you are done. The installation should be effective immediately, but to be on the safe side, you may want to restart or log out and back in again.
 
 # ABOUT THE SCRIPTS
+* Metrics & Kerning*
+* Path*
+* Else*
 * **Analyse Manuscript:** (GUI) Calculates the minimal character set required for the pasted text. Ideal for starting a font for specific text (e.g. book). *Vanilla required.*
 * **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
 * **Generate ss20 for All-Glyph Access:** Writes OpenType ss20 feature for all glyphs in the font. Copy glyphs names with slashes and paste it to an OT-savvy application, and activate ss20 to see the glyphs.
