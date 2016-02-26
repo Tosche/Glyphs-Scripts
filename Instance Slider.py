@@ -19,7 +19,6 @@ for ins in font.instances:
 		"Custom" : int(ins.interpolationCustom())
 		}
 	insList.append(insParameters)
-		
 
 masterWeights = [x.weightValue for x in font.masters]
 masterWidths = [x.widthValue for x in font.masters]
@@ -128,6 +127,8 @@ class InstanceSlider( object ):
 			self.w.slider1.set(uiList[0]["Weight"])
 			self.w.slider2.set(uiList[0]["Width"])
 			self.w.slider3.set(uiList[0]["Custom"])
+			if not font.tabs:
+				font.newTab("HALOGEN halogen 0123")
 			font.currentTab.previewInstances = 'live'
 			font.currentTab.previewInstances = font.instances[0]
 			if font.currentTab.previewHeight == 1.0:
@@ -197,9 +198,9 @@ class InstanceSlider( object ):
 			self.w.edit2.set(int(self.w.slider2.get()))
 			self.w.edit3.set(int(self.w.slider3.get()))
 
-			font.instances[index].setInterpolationWeight_(self.w.slider1.get())
-			font.instances[index].setInterpolationWidth_(self.w.slider2.get())
-			font.instances[index].setInterpolationCustom_(self.w.slider3.get())
+			font.instances[index].setInterpolationWeight_(int(self.w.slider1.get()))
+			font.instances[index].setInterpolationWidth_(int(self.w.slider2.get()))
+			font.instances[index].setInterpolationCustom_(int(self.w.slider3.get()))
 			uiList[index]["Weight"] = int(self.w.slider1.get())
 			uiList[index]["Width"] = int(self.w.slider2.get())
 			uiList[index]["Custom"] = int(self.w.slider3.get())
