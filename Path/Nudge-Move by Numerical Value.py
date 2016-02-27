@@ -62,11 +62,44 @@ class NudgeMoveWindow( object ):
 			
 		return True
 
+	def nudge(self, onMv, off1, off2, onSt, offsetX, offsetY):
+		try:
+			# onST = starting on-curve
+			# onMv = moving on-curve
+			distanceX = onMv.x - onSt.x
+			distanceX1 = onMv.x - off1.x
+			distanceX2 = off2.x - onSt.x
+			if distanceX != 0:
+				valueX1 = distanceX1/distanceX
+				valueX2 = distanceX2/distanceX
+			else:
+				valueX1 = 0
+				valueX2 = 0
+			if distanceX1 != 0:
+				off1.x += (1-valueX1)*offsetX
+			else:
+				off1.x += offsetX
+		
+			if distanceX2 != 0:
+				off2.x += (valueX2)*offsetX
+		
+			distanceY = onMv.y - onSt.y
+			distanceY1 = onMv.y - off1.y
+			distanceY2 = off2.y - onSt.y
+			if distanceY1 != 0:
+				off1.y += (1-distanceY1/distanceY)*offsetY
+			else:
+				off1.y += offsetY
+		
+			if distanceY2 != 0:
+				off2.y += (distanceY2/distanceY)*offsetY
+		except Exception, e:
+			# brings macro window to front and reports error:
+			Glyphs.showMacroWindow()
+			print "Nudge-move by Numerical Value Error (nudge): %s" % e
+
 	def nudgeMove( self, sender ):
 		try:
-			float(self.w.fieldX.get())
-			float(self.w.fieldY.get())
-
 			if sender is self.w.leftButton:
 				offsetX = -float(self.w.fieldX.get())
 				offsetY = 0.0
@@ -79,44 +112,9 @@ class NudgeMoveWindow( object ):
 			elif sender is self.w.downButton:
 				offsetX = 0.0
 				offsetY = -float(self.w.fieldY.get())
-		
 		except:
 			Glyphs.displayDialog_withTitle_("You seem to have entered a value that is not a number. Period is fine.", "Numbers only!")
-			
-		def nudge(oncurveMv, offcurve1, offcurve2, oncurveSt):
-			try:
-				distanceX = oncurveMv.x - oncurveSt.x
-				distanceX1 = oncurveMv.x - offcurve1.x
-				distanceX2 = offcurve2.x - oncurveSt.x
-				if distanceX != 0:
-					valueX1 = distanceX1/distanceX
-					valueX2 = distanceX2/distanceX
-				else:
-					valueX1 = 0
-					valueX2 = 0
-				if distanceX1 != 0:
-					offcurve1.x += (1-valueX1)*offsetX
-				else:
-					offcurve1.x += offsetX
-			
-				if distanceX2 != 0:
-					offcurve2.x += (valueX2)*offsetX
-			
-				distanceY = oncurveMv.y - oncurveSt.y
-				distanceY1 = oncurveMv.y - offcurve1.y
-				distanceY2 = offcurve2.y - oncurveSt.y
-				if distanceY1 != 0:
-					offcurve1.y += (1-distanceY1/distanceY)*offsetY
-				else:
-					offcurve1.y += offsetY
-			
-				if distanceY2 != 0:
-					offcurve2.y += (distanceY2/distanceY)*offsetY
-			except Exception, e:
-				# brings macro window to front and reports error:
-				Glyphs.showMacroWindow()
-				print "Nudge-move by Numerical Value Error (nudge): %s" % e
-				
+
 		try:
 			Font = Glyphs.font # frontmost font
 			Font.disableUpdateInterface()
@@ -131,42 +129,43 @@ class NudgeMoveWindow( object ):
 						if node in thisLayer.selection:
 							nodeBefore = thisPath.nodes[i-1]
 							if (nodeBefore != None) and (not nodeBefore in thisLayer.selection):
-								if nodeBefore.type == 65:
-									if thisPath.nodes[i-2].type == 65:
+								if nodeBefore.type == GSOFFCURVE: # if on-curve is the edge of selection
+									if thisPath.nodes[i-2].type == GSOFFCURVE:
+										print 1
 										oncurveMv = node
 										offcurve1 = nodeBefore
 										offcurve2 = thisPath.nodes[i-2]
 										oncurveSt = thisPath.nodes[i-3]
-										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
-									
-									# if off-curve is the edge of selection
-									elif thisPath.nodes[i-2].type != 65:
+										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
+									elif thisPath.nodes[i-2].type == GSCURVE: # if off-curve is the edge of selection
+										print 2
 										oncurveMv = thisPath.nodes[i+1]
 										offcurve1 = node
 										offcurve2 = nodeBefore
 										oncurveSt = thisPath.nodes[i-2]
-										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
+										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
 										node.x -= offsetX
 										node.y -= offsetY
-							
+
 							nodeAfter = thisPath.nodes[i+1]
-							if (nodeAfter !=None) and (not nodeAfter in thisLayer.selection):
-								if nodeAfter.type == 65:
-									if thisPath.nodes[i+2].type ==65:
+							if (nodeAfter != None) and (not nodeAfter in thisLayer.selection):
+								if nodeAfter.type == GSOFFCURVE: # if on-curve is the edge of selection
+									if thisPath.nodes[i+2].type == GSOFFCURVE:
+										print 3
 										oncurveMv = node
 										offcurve1 = nodeAfter
 										offcurve2 = thisPath.nodes[i+2]
 										oncurveSt = thisPath.nodes[i+3]
-										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
-									# if off-curve is the edge of selection
-									elif thisPath.nodes[i+2].type != 65:
+										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
+									elif thisPath.nodes[i+2].type == GSCURVE: # if off-curve is the edge of selection
+										print 4
 										thisPath.nodes[i-1].x -= offsetX
 										thisPath.nodes[i-1].y -= offsetY
 										oncurveMv = thisPath.nodes[i-1]
 										offcurve1 = node
 										offcurve2 = nodeAfter
 										oncurveSt = thisPath.nodes[i+2]
-										nudge(oncurveMv, offcurve1, offcurve2, oncurveSt)
+										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
 										thisPath.nodes[i-1].x += offsetX
 										thisPath.nodes[i-1].y += offsetY
 										node.x -= offsetX
