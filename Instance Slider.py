@@ -198,8 +198,8 @@ class InstanceSlider( object ):
 				newInstance.isItalic = False
 				newInstance.isBold = False
 				font.addInstance_(newInstance)
-				insList.append({"Instance": "%s %s" % (ins.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin})
-				uiList.append({"Instance": "%s %s" % (ins.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin})
+				insList.append({"Instance": "%s %s" % (font.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin, "WeightY": None})
+				uiList.append({"Instance": "%s %s" % (font.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin, "WeightY": None})
 			elif sender == self.w.delete:
 				if askYesNo("Deleting Instance", 'Are you sure you want to delete the selected instance?', alertStyle=1, parentWindow=None, resultCallback=None):
 					index = uiList.getSelection()[0]
