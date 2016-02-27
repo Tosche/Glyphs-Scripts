@@ -140,9 +140,9 @@ class InstanceSlider( object ):
 			font.currentTab.previewInstances = font.instances[0]
 			if font.currentTab.previewHeight == 1.0:
 				font.currentTab.previewHeight = 150
-			if font.instances[0].customParameters["InterpolationWeightY"]:
+			if font.instances[0].customParameters["InterpolationWeightY"] != None:
 				self.w.checkY.set(True)
-				self.w.sliderY.set(uiList[0]["WeightY"])
+				self.w.sliderY.set(float(uiList[0]["WeightY"]))
 				self.w.editY.set(int(uiList[0]["WeightY"]))
 			else:
 				self.w.checkY.set(False)
@@ -164,7 +164,7 @@ class InstanceSlider( object ):
 				self.w.slider1.set(uiList[index]["Weight"])
 				self.w.slider2.set(uiList[index]["Width"])
 				self.w.slider3.set(uiList[index]["Custom"])
-				if font.instances[index].customParameters["InterpolationWeightY"]:
+				if font.instances[index].customParameters["InterpolationWeightY"] != None:
 					self.w.checkY.set(True)
 					self.w.sliderY.show(True)
 					self.w.editY.show(True)
@@ -229,7 +229,7 @@ class InstanceSlider( object ):
 			uiList[index]["Width"] = int(self.w.slider2.get())
 			uiList[index]["Custom"] = int(self.w.slider3.get())
 
-			if font.instances[index].customParameters["InterpolationWeightY"]:
+			if font.instances[index].customParameters["InterpolationWeightY"] != None:
 				font.instances[index].customParameters["InterpolationWeightY"] = int(self.w.sliderY.get())
 				self.w.editY.set(int(self.w.sliderY.get()))
 				uiList[index]["WeightY"] = int(self.w.sliderY.get())
@@ -327,7 +327,7 @@ class InstanceSlider( object ):
 			self.w.slider3.set(int(insList[index]["Custom"]))
 
 			if insList[index]["WeightY"] != None: # if it had WeightY
-				if font.instances[index].customParameters["InterpolationWeightY"]: # if it still has WeightY
+				if font.instances[index].customParameters["InterpolationWeightY"] != None: # if it still has WeightY
 					font.instances[index].customParameters["InterpolationWeightY"] = insList[index]["WeightY"]
 				else: # if it doesn't have it now
 					font.instances[index].addCustomParameter_(GSCustomParameter("InterpolationWeightY", insList[index]["WeightY"]))
@@ -336,7 +336,7 @@ class InstanceSlider( object ):
 				self.w.editY.set(insList[index]["WeightY"])
 				self.w.sliderY.set(int(insList[index]["WeightY"]))
 			else: # if it had no WeightY
-				if font.instances[index].customParameters["InterpolationWeightY"]: # if it does now
+				if font.instances[index].customParameters["InterpolationWeightY"] != None: # if it does now
 					# Glyphs does not redraw after custom parameter deletion,
 					# so you need to fake the result and then delete it
 					font.instances[index].customParameters["InterpolationWeightY"] = uiList[index]["Weight"]
