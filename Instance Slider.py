@@ -16,7 +16,8 @@ for ins in font.instances:
 		"Instance" : "%s %s" % (ins.familyName, ins.name),
 		"Weight" : int(ins.interpolationWeight()),
 		"Width" : int(ins.interpolationWidth()),
-		"Custom" : int(ins.interpolationCustom())
+		"Custom" : int(ins.interpolationCustom()),
+		"WeightY" : ins.customParameters["InterpolationWeightY"]
 		}
 	insList.append(insParameters)
 
@@ -42,8 +43,8 @@ class InstanceSlider( object ):
 		# Window 'self.w':
 		edX = 40
 		edY = 22
-		txX  = 50
-		sliderY = 23
+		txX  = 70
+		sliderY = 18
 		spX = 10
 		spY = 10
 		btnX = 80
@@ -61,12 +62,13 @@ class InstanceSlider( object ):
 		)
 
 		# UI elements:
-		self.w.list = vanilla.List( (0, 0, -0, -spY*5-sliderY*3-40), insList, selectionCallback=self.listClick, allowsMultipleSelection=False, allowsEmptySelection=False,
+		self.w.list = vanilla.List( (0, 0, -0, -spY*6-sliderY*4-40), insList, selectionCallback=self.listClick, allowsMultipleSelection=False, allowsEmptySelection=False,
 			columnDescriptions=[
-				{"title":"Instance", "width":self.w.getPosSize()[2]-180},
-				{"title":"Weight", "width":60},
-				{"title":"Width", "width":60},
-				{"title":"Custom", "width":70},
+				{"title":"Instance", "width":self.w.getPosSize()[2]-215},
+				{"title":"Weight", "width":50},
+				{"title":"Width", "width":50},
+				{"title":"Custom", "width":50},
+				{"title":"WeightY", "width":50}
 				]
 			)
 		tableView = self.w.list._tableView
@@ -85,18 +87,23 @@ class InstanceSlider( object ):
 # 3 Autoresize each table column sequentially, from the first auto-resizable column to the last auto-resizable column; proceed to the next column when the current column has reached its minimum or maximum size.
 # 4 Autoresize only the last table column. When that table column can no longer be resized, stop autoresizing. Normally you should use one of the sequential autoresizing modes instead.
 # 5 Autoresize only the first table column. When that table column can no longer be resized, stop autoresizing. Normally you should use one of the sequential autoresizing modes instead.
-		self.w.add = vanilla.SquareButton((0, -spY*5-sliderY*3-41, 30, 20), "+", sizeStyle = 'regular', callback=self.addDelButtons)
-		self.w.delete = vanilla.SquareButton((29, -spY*5-sliderY*3-41, 30, 20), u"–", sizeStyle = 'regular', callback=self.addDelButtons)
+		self.w.add = vanilla.SquareButton((0, -spY*6-sliderY*4-41, 30, 20), "+", sizeStyle = 'regular', callback=self.addDelButtons)
+		self.w.delete = vanilla.SquareButton((29, -spY*6-sliderY*4-41, 30, 20), u"–", sizeStyle = 'regular', callback=self.addDelButtons)
 
-		self.w.text1 = vanilla.TextBox( (spX, -spY*4-sliderY*3-btnY, txX, 14), "Weight", sizeStyle='small' )
-		self.w.text2 = vanilla.TextBox( (spX, -spY*3-sliderY*2-btnY, txX, 14), "Width", sizeStyle='small' )
-		self.w.text3 = vanilla.TextBox( (spX, -spY*2-sliderY-btnY, txX, 14), "Custom", sizeStyle='small' )
-		self.w.slider1 = vanilla.Slider((spX+txX, -spY*4-sliderY*3-btnY, -spX*2-edX, sliderY), minValue=slider1Min, maxValue=slider1Max,  tickMarkCount=5, sizeStyle="regular", callback=self.slide, continuous=True)
-		self.w.slider2 = vanilla.Slider((spX+txX, -spY*3-sliderY*2-btnY, -spX*2-edX, sliderY), minValue=slider2Min, maxValue=slider2Max, tickMarkCount=5, sizeStyle="regular", callback=self.slide, continuous=True)
-		self.w.slider3 = vanilla.Slider((spX+txX, -spY*2-sliderY-btnY, -spX*2-edX, sliderY), minValue=slider3Min, maxValue=slider3Max, tickMarkCount=5, sizeStyle="regular", callback=self.slide, continuous=True)
-		self.w.edit1 = vanilla.EditText( (-spX-edX, -spY*4-sliderY*3-btnY, edX, sliderY), "0", sizeStyle = 'regular', callback=self.typeValue)
-		self.w.edit2 = vanilla.EditText( (-spX-edX, -spY*3-sliderY*2-btnY, edX, sliderY), "0", sizeStyle = 'regular', callback=self.typeValue)
-		self.w.edit3 = vanilla.EditText( (-spX-edX, -spY*2-sliderY-btnY, edX, sliderY), "0", sizeStyle = 'regular', callback=self.typeValue)
+		self.w.text1 = vanilla.TextBox( (spX, -spY*5-sliderY*4-btnY, txX, 14), "Weight", sizeStyle='small' )
+		self.w.text2 = vanilla.TextBox( (spX, -spY*4-sliderY*3-btnY, txX, 14), "Width", sizeStyle='small' )
+		self.w.text3 = vanilla.TextBox( (spX, -spY*3-sliderY*2-btnY, txX, 14), "Custom", sizeStyle='small' )
+		self.w.textY = vanilla.TextBox( (spX, -spY*2-sliderY-btnY, txX, 14), "WeightY", sizeStyle='small' )
+		self.w.checkY = vanilla.CheckBox((txX-spX, -spY*2-sliderY-btnY-3, -10, 18), "", sizeStyle='small', callback=self.checkboxY, value=False)
+		self.w.slider1 = vanilla.Slider((spX+txX, -spY*5-sliderY*4-btnY, -spX*2-edX, sliderY), minValue=slider1Min, maxValue=slider1Max,  tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.slider2 = vanilla.Slider((spX+txX, -spY*4-sliderY*3-btnY, -spX*2-edX, sliderY), minValue=slider2Min, maxValue=slider2Max, tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.slider3 = vanilla.Slider((spX+txX, -spY*3-sliderY*2-btnY, -spX*2-edX, sliderY), minValue=slider3Min, maxValue=slider3Max, tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.sliderY = vanilla.Slider((spX+txX, -spY*2-sliderY-btnY, -spX*2-edX, sliderY), minValue=slider1Min, maxValue=slider1Max, tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.edit1 = vanilla.EditText( (-spX-edX, -spY*5-sliderY*4-btnY, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+		self.w.edit2 = vanilla.EditText( (-spX-edX, -spY*4-sliderY*3-btnY, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+		self.w.edit3 = vanilla.EditText( (-spX-edX, -spY*3-sliderY*2-btnY, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+		self.w.editY = vanilla.EditText( (-spX-edX, -spY*2-sliderY-btnY, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+
 		
 		# Run Button:
 		self.w.revert = vanilla.Button((spX, -btnY-spY, btnX, -spY), "Revert", sizeStyle='regular', callback=self.revert )
@@ -121,18 +128,26 @@ class InstanceSlider( object ):
 		# redraw
 		uiList = self.w.list
 		if font.instances:
-			self.w.edit1.set(int(uiList[0]["Weight"]))
-			self.w.edit2.set(int(uiList[0]["Width"]))
-			self.w.edit3.set(int(uiList[0]["Custom"]))
 			self.w.slider1.set(uiList[0]["Weight"])
 			self.w.slider2.set(uiList[0]["Width"])
 			self.w.slider3.set(uiList[0]["Custom"])
+			self.w.edit1.set(int(uiList[0]["Weight"]))
+			self.w.edit2.set(int(uiList[0]["Width"]))
+			self.w.edit3.set(int(uiList[0]["Custom"]))
 			if not font.tabs:
 				font.newTab("HALOGEN halogen 0123")
 			font.currentTab.previewInstances = 'live'
 			font.currentTab.previewInstances = font.instances[0]
 			if font.currentTab.previewHeight == 1.0:
 				font.currentTab.previewHeight = 150
+			if font.instances[0].customParameters["InterpolationWeightY"]:
+				self.w.checkY.set(True)
+				self.w.sliderY.set(uiList[0]["WeightY"])
+				self.w.editY.set(int(uiList[0]["WeightY"]))
+			else:
+				self.w.checkY.set(False)
+				self.w.sliderY.show(False)
+				self.w.editY.show(False)
 			Glyphs.redraw()
 	def listClick(self, sender):
 		try:
@@ -149,6 +164,17 @@ class InstanceSlider( object ):
 				self.w.slider1.set(uiList[index]["Weight"])
 				self.w.slider2.set(uiList[index]["Width"])
 				self.w.slider3.set(uiList[index]["Custom"])
+				if font.instances[index].customParameters["InterpolationWeightY"]:
+					self.w.checkY.set(True)
+					self.w.sliderY.show(True)
+					self.w.editY.show(True)
+					self.w.sliderY.set(uiList[0]["WeightY"])
+					self.w.editY.set(int(uiList[0]["WeightY"]))
+				else:
+					self.w.checkY.set(False)
+					self.w.sliderY.show(False)
+					self.w.editY.show(False)
+
 				Glyphs.redraw()
 
 		except Exception, e:
@@ -172,8 +198,8 @@ class InstanceSlider( object ):
 				newInstance.isItalic = False
 				newInstance.isBold = False
 				font.addInstance_(newInstance)
-				insList.append({"Instance": newInsName, "Weight": weMin, "Width": wiMin, "Custom": csMin})
-				uiList.append({"Instance": newInsName, "Weight": weMin, "Width": wiMin, "Custom": csMin})
+				insList.append({"Instance": "%s %s" % (ins.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin})
+				uiList.append({"Instance": "%s %s" % (ins.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin})
 			elif sender == self.w.delete:
 				if askYesNo("Deleting Instance", 'Are you sure you want to delete the selected instance?', alertStyle=1, parentWindow=None, resultCallback=None):
 					index = uiList.getSelection()[0]
@@ -187,23 +213,26 @@ class InstanceSlider( object ):
 			Glyphs.showMacroWindow()
 			print "Instance Slider Error (addDelButtons): %s" % e
 
-
 	def slide(self, sender):
 		try:
 			# pick the value and send it to the edit text and instance value
 			# redraw the preview
 			uiList = self.w.list
 			index = uiList.getSelection()[0]
-			self.w.edit1.set(int(self.w.slider1.get()))
-			self.w.edit2.set(int(self.w.slider2.get()))
-			self.w.edit3.set(int(self.w.slider3.get()))
-
 			font.instances[index].setInterpolationWeight_(int(self.w.slider1.get()))
 			font.instances[index].setInterpolationWidth_(int(self.w.slider2.get()))
 			font.instances[index].setInterpolationCustom_(int(self.w.slider3.get()))
+			self.w.edit1.set(int(self.w.slider1.get()))
+			self.w.edit2.set(int(self.w.slider2.get()))
+			self.w.edit3.set(int(self.w.slider3.get()))
 			uiList[index]["Weight"] = int(self.w.slider1.get())
 			uiList[index]["Width"] = int(self.w.slider2.get())
 			uiList[index]["Custom"] = int(self.w.slider3.get())
+
+			if font.instances[index].customParameters["InterpolationWeightY"]:
+				font.instances[index].customParameters["InterpolationWeightY"] = int(self.w.sliderY.get())
+				self.w.editY.set(int(self.w.sliderY.get()))
+				uiList[index]["WeightY"] = int(self.w.sliderY.get())
 
 			Glyphs.redraw()
 
@@ -224,16 +253,22 @@ class InstanceSlider( object ):
 				int(self.w.edit1.get())
 				int(self.w.edit2.get())
 				int(self.w.edit3.get())
+				int(self.w.editY.get())
 
-				uiList[index]["Weight"] = int(self.w.edit1.get())
-				uiList[index]["Width"] = int(self.w.edit2.get())
-				uiList[index]["Custom"] = int(self.w.edit3.get())
-				self.w.slider1.set(int(self.w.edit1.get()))
-				self.w.slider2.set(int(self.w.edit2.get()))
-				self.w.slider3.set(int(self.w.edit3.get()))
 				font.instances[index].setInterpolationWeight_(uiList[index]["Weight"])
 				font.instances[index].setInterpolationWidth_(uiList[index]["Width"])
 				font.instances[index].setInterpolationCustom_(uiList[index]["Custom"])
+				self.w.slider1.set(int(self.w.edit1.get()))
+				self.w.slider2.set(int(self.w.edit2.get()))
+				self.w.slider3.set(int(self.w.edit3.get()))
+				uiList[index]["Weight"] = int(self.w.edit1.get())
+				uiList[index]["Width"] = int(self.w.edit2.get())
+				uiList[index]["Custom"] = int(self.w.edit3.get())
+
+				if font.instances[index].customParameters["InterpolationWeightY"]:
+					font.instances[index].customParameters["InterpolationWeightY"]
+					self.w.sliderY.set(int(self.w.editY.get()))
+					uiList[index]["WeightY"] = int(self.w.editY.get())
 
 				Glyphs.redraw()
 			except:
@@ -243,6 +278,33 @@ class InstanceSlider( object ):
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
 			print "Instance Slider Error (typeValue): %s" % e
+
+	def checkboxY(self, sender):
+		try:
+			uiList = self.w.list
+			index = uiList.getSelection()[0]
+			if sender.get(): # When checked
+				uiList[index]["WeightY"] = uiList[index]["Weight"]
+				self.w.sliderY.set(uiList[index]["Weight"])
+				self.w.editY.set(uiList[index]["Weight"])
+				self.w.sliderY.show(True)
+				self.w.editY.show(True)
+				font.instances[index].addCustomParameter_(GSCustomParameter("InterpolationWeightY", uiList[index]["Weight"]))
+				Glyphs.redraw()
+			else: # When unchecked
+				# Glyphs does not redraw after custom parameter deletion,
+				# so you need to fake the result and then delete it
+				font.instances[index].customParameters["InterpolationWeightY"] = uiList[index]["Weight"]
+				Glyphs.redraw()
+				del font.instances[index].customParameters["InterpolationWeightY"]
+				uiList[index]["WeightY"] = None
+				self.w.sliderY.show(False)
+				self.w.editY.show(False)
+
+		except Exception, e:
+			# brings macro window to front and reports error:
+			Glyphs.showMacroWindow()
+			print "Instance Slider Error (checkboxY): %s" % e
 
 	def revert( self, sender ):
 		try:
@@ -264,6 +326,25 @@ class InstanceSlider( object ):
 			self.w.slider2.set(int(insList[index]["Width"]))
 			self.w.slider3.set(int(insList[index]["Custom"]))
 
+			if insList[index]["WeightY"] != None: # if it had WeightY
+				if font.instances[index].customParameters["InterpolationWeightY"]: # if it still has WeightY
+					font.instances[index].customParameters["InterpolationWeightY"] = insList[index]["WeightY"]
+				else: # if it doesn't have it now
+					font.instances[index].addCustomParameter_(GSCustomParameter("InterpolationWeightY", insList[index]["WeightY"]))
+				uiList[index]["WeightY"] = insList[index]["WeightY"]
+				self.w.checkY.set(True)
+				self.w.editY.set(insList[index]["WeightY"])
+				self.w.sliderY.set(int(insList[index]["WeightY"]))
+			else: # if it had no WeightY
+				if font.instances[index].customParameters["InterpolationWeightY"]: # if it does now
+					# Glyphs does not redraw after custom parameter deletion,
+					# so you need to fake the result and then delete it
+					font.instances[index].customParameters["InterpolationWeightY"] = uiList[index]["Weight"]
+				Glyphs.redraw()
+				del font.instances[index].customParameters["InterpolationWeightY"]
+				uiList[index]["WeightY"] = None
+				self.w.sliderY.show(False)
+				self.w.editY.show(False)
 			Glyphs.redraw()
 			
 		except Exception, e:
