@@ -131,14 +131,12 @@ class NudgeMoveWindow( object ):
 							if (nodeBefore != None) and (not nodeBefore in thisLayer.selection):
 								if nodeBefore.type == GSOFFCURVE: # if on-curve is the edge of selection
 									if thisPath.nodes[i-2].type == GSOFFCURVE:
-										print 1
 										oncurveMv = node
 										offcurve1 = nodeBefore
 										offcurve2 = thisPath.nodes[i-2]
 										oncurveSt = thisPath.nodes[i-3]
 										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
 									elif thisPath.nodes[i-2].type == GSCURVE: # if off-curve is the edge of selection
-										print 2
 										oncurveMv = thisPath.nodes[i+1]
 										offcurve1 = node
 										offcurve2 = nodeBefore
@@ -151,14 +149,12 @@ class NudgeMoveWindow( object ):
 							if (nodeAfter != None) and (not nodeAfter in thisLayer.selection):
 								if nodeAfter.type == GSOFFCURVE: # if on-curve is the edge of selection
 									if thisPath.nodes[i+2].type == GSOFFCURVE:
-										print 3
 										oncurveMv = node
 										offcurve1 = nodeAfter
 										offcurve2 = thisPath.nodes[i+2]
 										oncurveSt = thisPath.nodes[i+3]
 										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
 									elif thisPath.nodes[i+2].type == GSCURVE: # if off-curve is the edge of selection
-										print 4
 										thisPath.nodes[i-1].x -= offsetX
 										thisPath.nodes[i-1].y -= offsetY
 										oncurveMv = thisPath.nodes[i-1]

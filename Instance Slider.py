@@ -120,7 +120,7 @@ class InstanceSlider( object ):
 # 4 Autoresize only the last table column. When that table column can no longer be resized, stop autoresizing. Normally you should use one of the sequential autoresizing modes instead.
 # 5 Autoresize only the first table column. When that table column can no longer be resized, stop autoresizing. Normally you should use one of the sequential autoresizing modes instead.
 
-	#	self.w.line = vanilla.HorizontalLine((0, -(YOffset - 18), -0, 1))
+		self.w.line = vanilla.HorizontalLine((0, -(YOffset - 18), -0, 1))
 		# Open window and focus on it:
 		self.w.open()
 		self.w.makeKey()
