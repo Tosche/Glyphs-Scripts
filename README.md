@@ -19,7 +19,8 @@ For some scripts, you will also need to install Tal Leming's *Vanilla* and may n
 * **Permutation Text Generator:** (GUI) Outputs glyph permutation text for kerning. *Vanilla required.*
 * **Rename Kerning Groups:** (GUI) Lets you rename kerning names and pairs associated with them. *Vanilla required.*
 * **Report Metrics Keys:** (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. *Vanilla required.*
-* **Split Cross-Script Kerning:** Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly. Kern once, split later.
+* **Set Kerning Groups (Lat-Grk-Cyr):** (GUI) Sets kerning groups. Groups Latin Greek and Cyrillic together. I advise you use Split Lat-Grk-Cyr Kerning script later. *Vanilla required.*
+* **Split Lat-Grk-Cyr Kerning:** Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly. Kern once, split later.
 
 ### Path
 * **Delete Diagonal Nodes Between Extremes:** Good for cleaning TTF curve. It removes Diagonal Node Between Extremes, after placing the current outline in the background.

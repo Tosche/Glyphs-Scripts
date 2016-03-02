@@ -1,4 +1,4 @@
-#MenuTitle: Split Cross-Script Kerning
+#MenuTitle: Split Lat-Grk-Cyr Kerning
 # -*- coding: utf-8 -*-
 __doc__="""
 Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly.
