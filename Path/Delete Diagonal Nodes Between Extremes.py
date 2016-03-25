@@ -10,7 +10,7 @@ import math
 thisFont = Glyphs.font # frontmost font
 thisFontMaster = thisFont.selectedFontMaster # active master
 listOfSelectedLayers = thisFont.selectedLayers # active layers of selected glyphs
-selection = listOfSelectedLayers[0].selection() # node selection in edit mode
+selection = listOfSelectedLayers[0].selection # node selection in edit mode
 thisDoc = Glyphs.currentDocument
 
 def process( thisLayer ):
@@ -21,8 +21,8 @@ def process( thisLayer ):
 				hNode = thisPath.nodes[i-1]
 				iNode = thisPath.nodes[i]
 				jNode = thisPath.nodes[i+1]
-				if iNode.type != 65: #if thisNode is on-curve
-					if hNode.type == 65 and jNode.type==65:
+				if iNode.type != GSCURVE: #if thisNode is on-curve
+					if hNode.type == GSCURVE and jNode.type==GSCURVE:
 						#diagonal cleaner
 						try:
 							if thisPath.nodes[i+3].x == thisPath.nodes[i+4].x or thisPath.nodes[i+3].y == thisPath.nodes[i+4].y or thisPath.nodes[i-3].x == thisPath.nodes[i-4].x or thisPath.nodes[i-3].y == thisPath.nodes[i-4].y:
