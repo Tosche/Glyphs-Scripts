@@ -6,6 +6,7 @@ __doc__="""
 
 import vanilla
 import GlyphsApp
+import traceback
 
 class TransformImages( object ):
 	def __init__( self ):
@@ -76,16 +77,23 @@ class TransformImages( object ):
 			Font = Glyphs.font
 			selectedLayers = Font.selectedLayers
 			for thisLayer in selectedLayers:
-				thisImage = thisLayer.backgroundImage()
+				thisImage = thisLayer.backgroundImage
 				if thisImage:
 					curPosX, curPosY, curSclX, curSclY = thisImage.transformStruct()[4], thisImage.transformStruct()[5], thisImage.transformStruct()[0], thisImage.transformStruct()[3]
 					print curPosX, curPosY, curSclX, curSclY
+
+					moveXfix, moveYfix, scaleXfix, scaleYfix  = self.w.move_X.get(), self.w.move_Y.get(), self.w.scale_X.get(), self.w.scale_Y.get()
+					if moveXfix == "": moveXfix = 0
+					if moveYfix == "": moveYfix = 0
+					if scaleXfix == "": scaleXfix = 0
+					if scaleYfix == "": scaleYfix = 0
+
 					if self.w.checkAbsolute.get() == True:
-						moveX, moveY = float(self.w.move_X.get()), float(self.w.move_Y.get())
-						scaleX, scaleY = float(self.w.scale_X.get())/100, float(self.w.scale_Y.get())/100
+						moveX, moveY = float(moveXfix), float(moveYfix)
+						scaleX, scaleY = float(scaleXfix)/100, float(scaleYfix)/100
 					else:
-						moveX, moveY = curPosX+float(self.w.move_X.get()), curPosY+float(self.w.move_Y.get())
-						scaleX, scaleY = curSclX+float(self.w.scale_X.get())/100, curSclY+float(self.w.scale_Y.get())/100
+						moveX, moveY = curPosX+float(moveXfix), curPosY+float(moveYfix)
+						scaleX, scaleY = curSclX+float(scaleXfix)/100, curSclY+float(scaleYfix)/100
 					print moveX, moveY, scaleX, scaleY
 					thisImage.setTransformStruct_( (scaleX, 0.0, 0.0, scaleY, moveX, moveY) )
 
@@ -94,6 +102,6 @@ class TransformImages( object ):
 			
 			# self.w.close()
 		except Exception, e:
-			raise e
+			print traceback.format_exc()
 
 TransformImages()
