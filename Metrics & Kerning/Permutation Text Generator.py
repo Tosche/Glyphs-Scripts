@@ -11,14 +11,14 @@ import re
 class PermutationTextGenerator( object ):
 	def __init__( self ):
 		# Window 'self.w':
-		editY = 22
-		textY  = 17
-		spaceX = 10
-		spaceY = 10
-		buttonX = 120
-		buttonY = 20
+		edY = 22
+		txY  = 17
+		spX = 10
+		spY = 10
+		btnX = 120
+		btnY = 20
 		windowWidth = 400
-		windowHeight = spaceY*7+editY*2+textY*2+buttonY+20
+		windowHeight = spY*7+edY*2+txY*2+btnY+20
 		windowWidthResize  = 600 # user can resize width by this value
 		windowHeightResize = 0   # user can resize height by this value
 		self.w = vanilla.FloatingWindow(
@@ -30,18 +30,19 @@ class PermutationTextGenerator( object ):
 		)
 		
 		# UI elements:
-		self.w.text_1 = vanilla.TextBox( (spaceX, spaceY+2, 40, textY), "List A", sizeStyle='regular' )
-		self.w.edit_1 = vanilla.EditText( (spaceX*2+40, spaceY, -15, editY), "", sizeStyle = 'small')
-		self.w.text_2 = vanilla.TextBox( (spaceX, spaceY*2+editY+2, 40, textY), "List B", sizeStyle='regular' )
-		self.w.edit_2 = vanilla.EditText( (spaceX*2+40, spaceY*2+editY, -15, editY), "", sizeStyle = 'small')
-		self.w.text_3 = vanilla.TextBox( (spaceX*2+40, spaceY*3+editY*2, 85, textY), "Pattern:", sizeStyle='regular' )
-		self.w.radio  = vanilla.RadioGroup((spaceX*2+100, spaceY*3+editY*2, 250, textY), ["BABABAB", "AB AB AB", "BA BA BA"], isVertical = False, sizeStyle='regular')
-		self.w.edit_3 = vanilla.EditText( (spaceX*2+40, spaceY*4+editY*2+textY-2, 40, editY), "0", sizeStyle = 'regular')
-		self.w.text_4 = vanilla.TextBox( (spaceX*2+85, spaceY*4+editY*2+textY, 200, textY), "pairs per line", sizeStyle='regular' )
+		self.w.text_1 = vanilla.TextBox( (spX, spY+2, 40, txY), "List A", sizeStyle='regular' )
+		self.w.edit_1 = vanilla.EditText( (spX*2+40, spY, -15, edY), "", sizeStyle = 'small')
+		self.w.text_2 = vanilla.TextBox( (spX, spY*2+edY+2, 40, txY), "List B", sizeStyle='regular' )
+		self.w.edit_2 = vanilla.EditText( (spX*2+40, spY*2+edY, -15, edY), "", sizeStyle = 'small')
+		self.w.text_3 = vanilla.TextBox( (spX*2+40, spY*3+edY*2, 85, txY), "Pattern:", sizeStyle='regular' )
+		self.w.radio  = vanilla.RadioGroup((spX*2+100, spY*3+edY*2, 260, txY), ["BABABAB", "AB AB AB", "BA BA BA"], isVertical = False, sizeStyle='regular', callback=self.dupeControl)
+		self.w.edit_3 = vanilla.EditText( (spX*2+40, spY*4+edY*2+txY-2, 40, edY), "0", sizeStyle = 'regular')
+		self.w.text_4 = vanilla.TextBox( (spX*2+85, spY*4+edY*2+txY, 200, txY), "pairs per line", sizeStyle='regular' )
+		self.w.dupe = vanilla.CheckBox( (spX*3+180, spY*4+edY*2+txY, 200, txY), "Remove Duplicates", sizeStyle='regular', value=False)
 
 		# Run Button:
-		self.w.outputButton = vanilla.Button((spaceX*2+40, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Macro Panel", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
-		self.w.viewButton = vanilla.Button((spaceX*3+40+buttonX, spaceY*6+editY*2+textY*2, buttonX, buttonY), "Edit View", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
+		self.w.outputButton = vanilla.Button((spX*2+40, spY*6+edY*2+txY*2, btnX, btnY), "Macro Panel", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
+		self.w.viewButton = vanilla.Button((spX*3+40+btnX, spY*6+edY*2+txY*2, btnX, btnY), "Edit View", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
 		self.w.setDefaultButton( self.w.viewButton )
 		
 		# Load Settings:
@@ -52,7 +53,7 @@ class PermutationTextGenerator( object ):
 		# Open window and focus on it:
 		self.w.open()
 		self.w.makeKey()
-		self.w.radio.set(0)
+		self.dupeControl(self.w.radio)
 		
 	def SavePreferences( self, sender ):
 		try:
@@ -60,6 +61,7 @@ class PermutationTextGenerator( object ):
 			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] = self.w.edit_2.get()
 			Glyphs.defaults["com.Tosche.PermutationTextGenerator.radio"] = self.w.radio.get()
 			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_3"] = self.w.edit_3.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.dupe"] = self.w.dupe.get()
 		except:
 			return False
 			
@@ -71,10 +73,22 @@ class PermutationTextGenerator( object ):
 			self.w.edit_2.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] )
 			self.w.radio.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.radio"] )
 			self.w.edit_3.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_3"] )
+			self.w.dupe.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.dupe"] )
 		except:
 			return False
 			
 		return True
+
+	def dupeControl( self, sender ):
+		try:
+			if self.w.radio.get() == 0:
+				self.w.dupe.enable(True)
+			else:
+				self.w.dupe.enable(False)
+				self.w.dupe.set(False)
+		except Exception, e:
+			Glyphs.showMacroWindow()
+			print "Permutation Text Generator Error (dupeControl): %s" % e
 
 	def makeList(self, string):
 		try:
@@ -114,18 +128,18 @@ class PermutationTextGenerator( object ):
 				newList1 = self.makeList(string1)
 				newList2 = self.makeList(string2)
 				finalRow = []
+				item2past = []
 				for item2 in newList2:
 					if item2[0] == "/":
 						item2 = item2 + " "
 					row = ""
 
 					if self.w.radio.get() ==1: # if AB AB AB
-						if int(self.w.edit_3.get()) != 0:
+						if int(self.w.edit_3.get()) != 0: # pairs per line
 							i = 1
 							for item1 in newList1:
 								if item1[0] == "/":
 									item1 = item1 + " "
-								
 								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
 									row = row + item1 + item2+ "\n"
 									i = 0
@@ -141,12 +155,11 @@ class PermutationTextGenerator( object ):
 						finalRow.append(row)
 
 					elif self.w.radio.get() ==2: # if BA BA BA
-						if int(self.w.edit_3.get()) != 0:
+						if int(self.w.edit_3.get()) != 0: # pairs per line
 							i = 0
 							for item1 in newList1:
 								if item1[0] == "/":
 									item1 = item1 + " "
-								
 								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
 									row = row + "\n" + item2 + item1
 									i = 0
@@ -161,19 +174,23 @@ class PermutationTextGenerator( object ):
 						row = row[1:]
 						finalRow.append(row)
 
-					else: # if Both
-						if int(self.w.edit_3.get()) != 0:
+					else: # if BABABAB
+						item2past.append(item2)
+						if int(self.w.edit_3.get()) != 0: # pairs per line
 							i = 1
 							row = row + item2
 							for item1 in newList1:
 								if item1[0] == "/":
 									item1 = item1 + " "
-								
 								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
 									row = row + item1 + item2+ "\n" + item2
 									i = 0
 								else:
-									row = row + item1 + item2
+									if self.w.dupe.get() == True: # if duplicates are forbidden
+										if not item1 in item2past or item1 == item2:
+											row = row + item1 + item2
+									else:
+										row = row + item1 + item2
 								i = i+1
 						else:
 							row = row + item2
