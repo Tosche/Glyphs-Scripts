@@ -15,7 +15,7 @@ class AnalyseManuscript( object ):
 		txY  = 14
 		spX = 10
 		spY = 5
-		btnX = 260
+		btnX = 250
 		btnY = 20
 		windowWidth  = 350
 		windowHeight = edY*2+spY*6+txY*2+btnY+14
@@ -38,11 +38,19 @@ class AnalyseManuscript( object ):
 		self.w.dump._textView.setAutomaticQuoteSubstitutionEnabled_(False)
 
 		# Run Button:
-		self.w.runButton = vanilla.Button((-btnX-spX, -btnY-spY-7, -spX, -spY-7), "Add missing characters to the Font", sizeStyle='regular', callback=self.AnalyseManuscriptMain )
+		self.w.markPopup = vanilla.PopUpButton((spX, -btnY-spY-7, 70, -spY-7),
+			["Mark", "Red", "Orange", "Brown", "Yellow", "Light Green", "Dark Green", "Cyan", "Blue", "Purple", "Pink", "Light Grey", "Dark Grey"],
+			callback=self.markGlyphs)
+		self.w.runButton = vanilla.Button((-btnX-spX, -btnY-spY-7, -spX, -spY-7), "Add missing characters", sizeStyle='regular', callback=self.AnalyseManuscriptMain )
 		self.w.setDefaultButton( self.w.runButton )
 		
 		# Open window and focus on it:
 		self.w.open()
+		menu = self.w.markPopup._nsObject.menu()
+		menu.setAutoenablesItems_(False)
+		menu.itemAtIndex_(0).setEnabled_(False)
+		divider = NSMenuItem.separatorItem()
+		menu.insertItem_atIndex_(divider, 1)
 		self.w.makeKey()
 	
 	def updateChar( self, sender ):
@@ -57,13 +65,26 @@ class AnalyseManuscript( object ):
 				self.w.chars.set(' '.join(niceNameList))
 				plural = "s" if len(niceNameList) != 1 else ""
 				self.w.text2.set("%s Unicode character%s" % (len(niceNameList), plural) )
-			elif sender == self.w.runButton:
+			elif sender == self.w.runButton or sender == self.w.markPopup:
 				return niceNameList
 
 		except Exception, e:
-			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
 			print "Analyse Manuscript Error (updateChar): %s" % e
+
+	def markGlyphs( self, sender ):
+		try:
+			codeList = [Glyphs.glyphInfoForName(a).unicode for a in self.updateChar(sender)]
+			niceNameList = self.updateChar(sender)
+			font = Glyphs.font
+			colour = self.w.markPopup.get()-2
+			self.w.markPopup.set(0)
+			for g in font.glyphs:
+				if g.unicode in codeList:
+					g.color = colour
+		except Exception, e:
+			Glyphs.showMacroWindow()
+			print "Analyse Manuscript Error (markGlyphs): %s" % e
 
 	def AnalyseManuscriptMain( self, sender ):
 		try:
@@ -74,7 +95,6 @@ class AnalyseManuscript( object ):
 					font.glyphs.append(GSGlyph(niceName))
 
 		except Exception, e:
-			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
 			print "Analyse Manuscript Error (AnalyseManuscriptMain): %s" % e
 
