@@ -34,6 +34,7 @@ class SyncEditViews( object ):
 			thisScale = thisTab.graphicView().scale()
 			doKern = thisTab.graphicView().doKerning()
 			doSpace = thisTab.graphicView().doSpacing()
+			thisSelection = thisTab.graphicView().textStorage().selectedRange()
 			try:
 				for i in range(len(Glyphs.orderedDocuments())):
 					if i != 0:
@@ -45,12 +46,13 @@ class SyncEditViews( object ):
 						iTab.text = thisText
 						iTab.graphicView().setDoKerning_(doKern)
 						iTab.graphicView().setDoSpacing_(doSpace)
+						iTab.graphicView().textStorage().setSelectedRange_(thisSelection)
 			except Exception, e:
-				Glyphs.showMacroWindow()
+				 # Glyphs.showMacroWindow() # This is a bit annoying :)
 				print "Sync Edit views Error (Inside Loop): %s" % e
 
 		except Exception, e:
-			Glyphs.showMacroWindow()
+			# Glyphs.showMacroWindow() # This is a bit annoying :)
 			print "Sync Edit views Error: %s" % e
 
 SyncEditViews()
