@@ -39,6 +39,7 @@ class SyncEditViews( object ):
 				for i in range(len(Glyphs.orderedDocuments())):
 					if i != 0:
 						iFont = Glyphs.orderedDocuments()[i].font
+						iFontLastTool = iFont.tool
 						iTab = Glyphs.orderedDocuments()[i].font.tabs[-1]
 						if mindex <= len(iFont.masters):
 							iTab.setMasterIndex_(mindex)
@@ -46,7 +47,11 @@ class SyncEditViews( object ):
 						iTab.text = thisText
 						iTab.graphicView().setDoKerning_(doKern)
 						iTab.graphicView().setDoSpacing_(doSpace)
+
+						# SET CARET INTO POSITION
+						iFont.tool = "TextTool"
 						iTab.graphicView().textStorage().setSelectedRange_(thisSelection)
+						iFont.tool = iFontLastTool
 			except Exception, e:
 				 # Glyphs.showMacroWindow() # This is a bit annoying :)
 				print "Sync Edit views Error (Inside Loop): %s" % e
