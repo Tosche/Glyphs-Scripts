@@ -8,17 +8,20 @@ import vanilla
 import GlyphsApp
 import re
 
+surrogate_pairs = re.compile(u'[\ud800-\udbff][\udc00-\udfff]', re.UNICODE)
+surrogate_start = re.compile(u'[\ud800-\udbff]', re.UNICODE)
+emoji_variation_selector = re.compile(u'[\ufe00-\ufe0f]', re.UNICODE)
+
 class PermutationTextGenerator( object ):
 	def __init__( self ):
 		# Window 'self.w':
 		edY = 22
 		txY  = 17
-		spX = 10
-		spY = 10
+		sp = 10
 		btnX = 120
 		btnY = 20
-		windowWidth = 400
-		windowHeight = spY*7+edY*2+txY*2+btnY+20
+		windowWidth = 430
+		windowHeight = sp*8+edY*3+txY*2+btnY+20
 		windowWidthResize  = 600 # user can resize width by this value
 		windowHeightResize = 0   # user can resize height by this value
 		self.w = vanilla.FloatingWindow(
@@ -30,19 +33,21 @@ class PermutationTextGenerator( object ):
 		)
 		
 		# UI elements:
-		self.w.text_1 = vanilla.TextBox( (spX, spY+2, 40, txY), "List A", sizeStyle='regular' )
-		self.w.edit_1 = vanilla.EditText( (spX*2+40, spY, -15, edY), "", sizeStyle = 'small')
-		self.w.text_2 = vanilla.TextBox( (spX, spY*2+edY+2, 40, txY), "List B", sizeStyle='regular' )
-		self.w.edit_2 = vanilla.EditText( (spX*2+40, spY*2+edY, -15, edY), "", sizeStyle = 'small')
-		self.w.text_3 = vanilla.TextBox( (spX*2+40, spY*3+edY*2, 85, txY), "Pattern:", sizeStyle='regular' )
-		self.w.radio  = vanilla.RadioGroup((spX*2+100, spY*3+edY*2, 260, txY), ["BABABAB", "AB AB AB", "BA BA BA"], isVertical = False, sizeStyle='regular', callback=self.dupeControl)
-		self.w.edit_3 = vanilla.EditText( (spX*2+40, spY*4+edY*2+txY-2, 40, edY), "0", sizeStyle = 'regular')
-		self.w.text_4 = vanilla.TextBox( (spX*2+85, spY*4+edY*2+txY, 200, txY), "pairs per line", sizeStyle='regular' )
-		self.w.dupe = vanilla.CheckBox( (spX*3+180, spY*4+edY*2+txY, 200, txY), "Remove Duplicates", sizeStyle='regular', value=False)
+		self.w.text_A = vanilla.TextBox( (sp, sp+2, 70, txY), "List A", sizeStyle='regular' )
+		self.w.edit_A = vanilla.EditText( (sp*2+70, sp, -15, edY), "", sizeStyle = 'small')
+		self.w.text_C = vanilla.TextBox( (sp, sp*2+edY+2, 70, txY), "between c", sizeStyle='regular' )
+		self.w.edit_C = vanilla.EditText( (sp*2+70, sp*2+edY, -15, edY), "", sizeStyle = 'small')
+		self.w.text_B = vanilla.TextBox( (sp, sp*3+edY*2+2, 70, txY), "List B", sizeStyle='regular' )
+		self.w.edit_B = vanilla.EditText( (sp*2+70, sp*3+edY*2, -15, edY), "", sizeStyle = 'small')
+		self.w.text_3 = vanilla.TextBox( (sp, sp*4+edY*3, 85, txY), "Pattern:", sizeStyle='regular' )
+		self.w.radio  = vanilla.RadioGroup((sp*2+70, sp*4+edY*3, 320, txY), ["BABABAB", "AcB AcB AcB", "BcA BcA BcA"], isVertical = False, sizeStyle='regular', callback=self.dupeControl)
+		self.w.edit_3 = vanilla.EditText( (sp*2+70, sp*5+edY*3+txY-2, 40, edY), "0", sizeStyle = 'regular')
+		self.w.text_4 = vanilla.TextBox( (sp*2+115, sp*5+edY*3+txY, 200, txY), "pairs per line", sizeStyle='regular' )
+		self.w.dupe = vanilla.CheckBox( (sp*3+210, sp*5+edY*3+txY, 200, txY), "Remove Duplicates", sizeStyle='regular', value=False)
 
 		# Run Button:
-		self.w.outputButton = vanilla.Button((spX*2+40, spY*6+edY*2+txY*2, btnX, btnY), "Macro Panel", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
-		self.w.viewButton = vanilla.Button((spX*3+40+btnX, spY*6+edY*2+txY*2, btnX, btnY), "Edit View", sizeStyle='regular', callback=self.PermutationTextGeneratorMain )
+		self.w.outputButton = vanilla.Button((sp*2+70, -sp*2-btnY, btnX, btnY), "Macro Panel", sizeStyle='regular', callback=self.Main )
+		self.w.viewButton = vanilla.Button((sp*3+70+btnX, -sp*2-btnY, btnX, btnY), "Edit View", sizeStyle='regular', callback=self.Main )
 		self.w.setDefaultButton( self.w.viewButton )
 		
 		# Load Settings:
@@ -57,8 +62,9 @@ class PermutationTextGenerator( object ):
 		
 	def SavePreferences( self, sender ):
 		try:
-			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_1"] = self.w.edit_1.get()
-			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] = self.w.edit_2.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_1"] = self.w.edit_A.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_C"] = self.w.edit_C.get()
+			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] = self.w.edit_B.get()
 			Glyphs.defaults["com.Tosche.PermutationTextGenerator.radio"] = self.w.radio.get()
 			Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_3"] = self.w.edit_3.get()
 			Glyphs.defaults["com.Tosche.PermutationTextGenerator.dupe"] = self.w.dupe.get()
@@ -69,8 +75,9 @@ class PermutationTextGenerator( object ):
 
 	def LoadPreferences( self ):
 		try:
-			self.w.edit_1.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_1"] )
-			self.w.edit_2.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] )
+			self.w.edit_A.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_1"] )
+			self.w.edit_C.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_C"] )
+			self.w.edit_B.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_2"] )
 			self.w.radio.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.radio"] )
 			self.w.edit_3.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.edit_3"] )
 			self.w.dupe.set( Glyphs.defaults["com.Tosche.PermutationTextGenerator.dupe"] )
@@ -111,93 +118,128 @@ class PermutationTextGenerator( object ):
 				else:
 					newList.append(string[0])
 					string = string[1:]
-			return newList
+			if newList:
+				filtered = []
+				skip = 0
+				for i, c in enumerate(newList):
+					if i < skip:
+						continue
+					if surrogate_start.match(c):
+						codepoint = surrogate_pairs.findall(c+newList[i+1])[0]
+						# skip over emoji skin tone modifiers
+						if codepoint in [u'🏻', u'🏼', u'🏽', u'🏾', u'🏿']:
+							continue
+						filtered.append(codepoint)
+					elif surrogate_start.match(newList[i-1]):
+						continue
+					elif emoji_variation_selector.match(newList[i]):
+						continue
+					else:
+						if c == "/":
+							if i+1 > len(newList)-1:
+								filtered.append(c)
+								continue
+							j = i
+							longest = ''.join(newList[i+1:])
+							while True:
+								if Glyphs.font.glyphs[longest]:
+									filtered.append(longest)
+									skip = j + len(longest) + 1
+									break
+								longest = longest[:-1]
+								if len(longest) <= 1:
+									break
+						else:
+							filtered.append(c)
+
+			return filtered
 
 		except Exception, e:
 			Glyphs.showMacroWindow()
-			print "Permutation Text Generator Error: %s" % e
+			print "Permutation Text Generator Error (MakeList): %s" % e
 
-	def PermutationTextGeneratorMain( self, sender ):
+	def Main( self, sender ):
 		try:
-			string1 = self.w.edit_1.get()
-			string2 = self.w.edit_2.get()
-			if string1 == "" or string2 == "":
+			stringA = self.w.edit_A.get()
+			stringB = self.w.edit_B.get()
+			insert = self.w.edit_C.get()
+			if stringA == "" or stringB == "":
 				Glyphs.showMacroWindow()
 				print "There needs to be something in both fields."
 			else:
-				newList1 = self.makeList(string1)
-				newList2 = self.makeList(string2)
+				newListA = self.makeList(stringA)
+				newListB = self.makeList(stringB)
 				finalRow = []
-				item2past = []
-				for item2 in newList2:
-					if item2[0] == "/":
-						item2 = item2 + " "
+				itemBpast = []
+				for itemB in newListB:
+					if itemB[0] == "/":
+						itemB += " "
 					row = ""
 
 					if self.w.radio.get() ==1: # if AB AB AB
 						if int(self.w.edit_3.get()) != 0: # pairs per line
 							i = 1
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
+							for itemA in newListA:
+								if itemA[0] == "/":
+									itemA += " "
 								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
-									row = row + item1 + item2+ "\n"
+									row += itemA + insert + itemB + "\n"
 									i = 0
 								else:
-									row = row + item1 + item2 + " "
+									row += itemA + insert + itemB + " "
 								i = i+1
 						else:
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
-								row = row + item1 + item2 + " "
+							for itemA in newListA:
+								if itemA[0] == "/":
+									itemA += " "
+								row += itemA + insert + itemB + " "
 						row=re.sub(r"\n$", "", row)
 						finalRow.append(row)
 
 					elif self.w.radio.get() ==2: # if BA BA BA
 						if int(self.w.edit_3.get()) != 0: # pairs per line
 							i = 0
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
+							for itemA in newListA:
+								if itemA[0] == "/":
+									itemA += " "
 								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
-									row = row + "\n" + item2 + item1
+									row += "\n" + itemB + insert + itemA
 									i = 0
 								else:
-									row = row + " " + item2 + item1
+									row += " " + itemB + insert + itemA
 								i = i+1
 						else:
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
-								row = row + " "+ item2 + item1
+							for itemA in newListA:
+								if itemA[0] == "/":
+									itemA += " "
+								row += " " + itemB + insert + itemA
 						row = row[1:]
 						finalRow.append(row)
 
 					else: # if BABABAB
-						item2past.append(item2)
+						itemBpast.append(itemB)
 						if int(self.w.edit_3.get()) != 0: # pairs per line
 							i = 1
-							row = row + item2
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
+							row = row + itemB
+							for itemA in newListA:
+								if itemA[0] == "/":
+									itemA += " "
 								if i == int(self.w.edit_3.get()): # line break at every 'i'th pair
-									row = row + item1 + item2+ "\n" + item2
+									row += itemA + itemB+ "\n" + itemB
 									i = 0
 								else:
 									if self.w.dupe.get() == True: # if duplicates are forbidden
-										if not item1 in item2past or item1 == item2:
-											row = row + item1 + item2
+										if not itemA in itemBpast or itemA == itemB:
+											row += itemA + itemB
 									else:
-										row = row + item1 + item2
+										row += itemA + itemB
 								i = i+1
 						else:
-							row = row + item2
-							for item1 in newList1:
-								if item1[0] == "/":
-									item1 = item1 + " "
-								row = row + item1 + item2
+							row += itemB
+							for itemA in newListA:
+								if itemA[0] == "/":
+									itemA += " "
+								row += itemA + itemB
 						row=re.sub(r"\n.$", "", row)
 						finalRow.append(row)
 
@@ -225,6 +267,6 @@ class PermutationTextGenerator( object ):
 		except Exception, e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Permutation Text Generator Error: %s" % e
+			print "Permutation Text Generator Error (Main): %s" % e
 
 PermutationTextGenerator()
