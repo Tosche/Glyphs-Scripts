@@ -7,26 +7,23 @@ Good for cleaning TTF curve. It removes Diagonal Node Between Extremes, after pl
 import GlyphsApp
 import math
 
-thisFont = Glyphs.font # frontmost font
-thisFontMaster = thisFont.selectedFontMaster # active master
-listOfSelectedLayers = thisFont.selectedLayers # active layers of selected glyphs
-selection = listOfSelectedLayers[0].selection # node selection in edit mode
-thisDoc = Glyphs.currentDocument
+f = Glyphs.font # frontmost font
+sel = f.selectedLayers # active layers of selected glyphs
 
-def process( thisLayer ):
-	for thisPath in thisLayer.paths:
-		numOfNodes = len(thisPath.nodes)
+def deleteDiagonals( thisLayer ):
+	for p in thisLayer.paths:
+		numOfNodes = len(p.nodes)
 		for i in range( -1, numOfNodes):
 			try:
-				hNode = thisPath.nodes[i-1]
-				iNode = thisPath.nodes[i]
-				jNode = thisPath.nodes[i+1]
+				hNode = p.nodes[i-1]
+				iNode = p.nodes[i]
+				jNode = p.nodes[i+1]
 				if iNode.type != GSOFFCURVE: #if thisNode is on-curve
 					if hNode.type == GSOFFCURVE and jNode.type == GSOFFCURVE:
 						# on-curve now found
 						# diagonal cleaner
 						try:
-							if thisPath.nodes[i+2].x == thisPath.nodes[i+3].x or thisPath.nodes[i+2].y == thisPath.nodes[i+3].y or thisPath.nodes[i-2].x == thisPath.nodes[i-3].x or thisPath.nodes[i-2].y == thisPath.nodes[i-3].y:
+							if p.nodes[i+2].x == p.nodes[i+3].x or p.nodes[i+2].y == p.nodes[i+3].y or p.nodes[i-2].x == p.nodes[i-3].x or p.nodes[i-2].y == p.nodes[i-3].y:
 								if hNode.x == jNode.x or hNode.y == jNode.y:
 									pass # because the node is extreme
 								else:
@@ -38,22 +35,20 @@ def process( thisLayer ):
 										atan2hi = math.atan2(iNode.y-hNode.y,iNode.x-hNode.x)
 										atan2ij = math.atan2(jNode.y-iNode.y,jNode.x-iNode.x)
 										if abs(atan2ij-atan2hi) < 0.1:
-											thisPath.removeNodeCheckKeepShape_(iNode)
+											p.removeNodeCheckKeepShape_(iNode)
 						except:
 							pass
 			except:
 				pass
 
-thisFont.disableUpdateInterface() # suppresses UI updates in Font View
+f.disableUpdateInterface() # suppresses UI updates in Font View
 
-for thisLayer in listOfSelectedLayers:
-	thisGlyph = thisLayer.parent
-	thisGlyph.beginUndo() # begin undo grouping
-	for thisMaster in thisFont.masters:
-		layer = thisGlyph.layers[thisMaster.id]
-		layer.setBackground_(layer)
-		process( layer )
-		process( layer ) # run the process again, just to make sure
-	thisGlyph.endUndo()   # end undo grouping
+for l in sel:
+	g = l.parent
+	g.beginUndo() # begin undo grouping
+	l.setBackground_(l)
+	deleteDiagonals( l )
+	deleteDiagonals( l ) # run the process again, just to make sure
+	g.endUndo()   # end undo grouping
 
-thisFont.enableUpdateInterface() # re-enables UI updates in Font View
+f.enableUpdateInterface() # re-enables UI updates in Font View
