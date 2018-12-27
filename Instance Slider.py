@@ -74,7 +74,6 @@ class InstanceSlider( object ):
 		LineHeight = 26
 		YOffset += LineHeight
 		axisCount = len([v for v in av if v[0] != ""])
-		print axisCount
 
 		self.w.textY = vanilla.TextBox( (spX, -YOffset, txX, 14), "WeightY", sizeStyle='small' )
 		self.w.checkY = vanilla.CheckBox((txX-spX, -YOffset-3, -10, 18), "", sizeStyle='small', callback=self.checkboxY, value=False)
@@ -82,7 +81,9 @@ class InstanceSlider( object ):
 		self.w.editY = vanilla.EditText( (-spX-edX, -YOffset, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
 		YOffset += LineHeight
 
-		move = -YOffset if axisCount >= 6 else 0
+		move = -LineHeight*2
+
+		move -= LineHeight if axisCount == 6 else 0
 		self.w.text5 = vanilla.TextBox( (spX, move, txX, 14), av[5][0], sizeStyle='small' )
 		self.w.slider5 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[5][1], maxValue=av[5][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
 		self.w.edit5 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
@@ -107,7 +108,7 @@ class InstanceSlider( object ):
 		self.w.slider1 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[1][1], maxValue=av[1][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
 		self.w.edit1 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
 
-		move = -YOffset if axisCount == 1 else 0
+		move -= LineHeight if axisCount >= 1 else 0
 		self.w.text0 = vanilla.TextBox( (spX, move, txX, 14), av[0][0], sizeStyle='small' )
 		self.w.slider0 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[0][1], maxValue=av[0][2],  tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
 		self.w.edit0 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
@@ -123,14 +124,17 @@ class InstanceSlider( object ):
 			[self.w.text4, self.w.slider4, self.w.edit4],
 			[self.w.text5, self.w.slider5, self.w.edit5],
 		]
-		yOffsetCorrection = 0
+
+		for els in axisElements:
+			print els[0], els[0].getPosSize()
+
 		for els in axisElements[len(av):]:
 			els[0].show(False)
 			els[1].show(False)
 			els[2].show(False)
 
 		self.usedAxisElements = axisElements[:len(av)]
-		print self.usedAxisElements
+		print len(self.usedAxisElements)
 
 		# TODO: disable WeightY if Weight doesn't exist
 		if "Weight" not in [a[0] for a in av]:
@@ -173,11 +177,10 @@ class InstanceSlider( object ):
 		uiList = self.w.list
 		
 		if len(f.instances) > 0:
-			if not f.tabs:
+			if f.currentTab == None:
 				f.newTab("HALOGEN halogen 0123")
 			if f.currentTab.previewHeight <= 20.0:
 				f.currentTab.previewHeight = 150
-			# self.setupSliders(f.instances[0], uiList[0]) # send index, not instance
 			self.setupSliders(0, uiList[0])
 	
 	def setupSliders(self, insIndex, uiList):
@@ -186,38 +189,20 @@ class InstanceSlider( object ):
 			f.currentTab.previewInstances = instance
 			axisCount = len(av)
 
-			for els in self.usedAxisElements:
-				pass
+			for i, els in enumerate(self.usedAxisElements):
+				els[1].set(int(insList[insIndex][av[i][0]]))
+				els[2].set(int(insList[insIndex][av[i][0]]))
 
-			if axisCount >= 1:
-				self.w.edit0.set(int(insList[insIndex][av[0][0]]))
-				self.w.slider0.set(int(insList[insIndex][av[0][0]]))
-				if instance.customParameters["InterpolationWeightY"] != None:
-					self.w.checkY.set(True)
-					self.w.sliderY.show(True)
-					self.w.editY.show(True)
-					self.w.sliderY.set(uiList["WeightY"])
-					self.w.editY.set(int(uiList["WeightY"]))
-				else:
-					self.w.checkY.set(False)
-					self.w.sliderY.show(False)
-					self.w.editY.show(False)
-
-			if axisCount >= 2:
-				self.w.edit1.set(int(insList[insIndex][av[1][0]]))
-				self.w.slider1.set(int(insList[insIndex][av[1][0]]))
-			if axisCount >= 3:
-				self.w.edit2.set(int(insList[insIndex][av[2][0]]))
-				self.w.slider2.set(int(insList[insIndex][av[2][0]]))
-			if axisCount >= 4:
-				self.w.edit3.set(int(insList[insIndex][av[3][0]]))
-				self.w.slider3.set(int(insList[insIndex][av[3][0]]))
-			if axisCount >= 5:
-				self.w.edit4.set(int(insList[insIndex][av[4][0]]))
-				self.w.slider4.set(int(insList[insIndex][av[4][0]]))
-			if axisCount >= 6:
-				self.w.edit5.set(int(insList[insIndex][av[5][0]]))
-				self.w.slider5.set(int(insList[insIndex][av[5][0]]))
+			if instance.customParameters["InterpolationWeightY"] != None:
+				self.w.checkY.set(True)
+				self.w.sliderY.show(True)
+				self.w.editY.show(True)
+				self.w.sliderY.set(uiList["WeightY"])
+				self.w.editY.set(int(uiList["WeightY"]))
+			else:
+				self.w.checkY.set(False)
+				self.w.sliderY.show(False)
+				self.w.editY.show(False)
 			Glyphs.redraw()
 		except Exception as e:
 			print "setupSliders error:", e
@@ -256,7 +241,6 @@ class InstanceSlider( object ):
 					newInsParameters[self.usedAxisElements[i][0].get()] = int((av[i][1] + av[i][2])/2)
 				insList.append(newInsParameters)
 				uiList.append(newInsParameters)
-				print insList
 			elif sender == self.w.delete:
 				if askYesNo("Deleting Instance", 'Are you sure you want to delete the selected instance?', alertStyle=1, parentWindow=None, resultCallback=None):
 					index = uiList.getSelection()[0]
@@ -337,7 +321,6 @@ class InstanceSlider( object ):
 		try:
 			uiList = self.w.list
 			index = uiList.getSelection()[0]
-			print uiList[index]
 			if sender.get(): # When checked
 				# add the "InterpolationWeightY" custom parameter
 				# apply the same value as Weight
