@@ -1,7 +1,7 @@
 #MenuTitle: Instance Slider...
 # -*- coding: utf-8 -*-
 __doc__="""
-(GUI) Lets you define interpolation values of instances more graphically, using sliders and preview.
+(GUI) Lets you define interpolation values of instances more graphically, using sliders and preview. It supports up to 10 axes.
 """
 
 import vanilla
@@ -10,42 +10,49 @@ from vanilla.dialogs import askYesNo
 from robofab.interface.all.dialogs import AskString
 from AppKit import NSNoBorder
 
-font = Glyphs.font
+f = Glyphs.font
+GLYPHSAPPVERSION = NSBundle.bundleForClass_(GSMenu).infoDictionary().objectForKey_("CFBundleShortVersionString")
+if GLYPHSAPPVERSION.startswith("2.5"):
+	av = [[], [], [], [], [], []] # Axis Values, up to six supported in Glyphs 2.5
+	# the list contains axis name, minimum, and maximum.
+	for i in range(len(f.axes)):
+		values = sorted([ m.axes[i] for m in f.masters ])
+		av[i] += [ f.axes[i]["Name"], min(values), max(values) ]
+	av = [a for a in av if len(a)>0]
+
+while len(av) < 6:
+	av.append(["",0,10])
+
 insList = []
-for ins in font.instances:
+for ins in f.instances:
 	insParameters = {
-		"Instance" : "%s %s" % (ins.familyName, ins.name),
-		"Weight" : int(ins.interpolationWeight()),
-		"Width" : int(ins.interpolationWidth()),
-		"Custom" : int(ins.interpolationCustom()),
+		"Instance" : " ".join((f.familyName, ins.name)),
 		"WeightY" : ins.customParameters["InterpolationWeightY"]
 		}
+	try:
+		insParameters[ av[0][0] ] = int(ins.interpolationWeight())
+		insParameters[ av[1][0] ] = int(ins.interpolationWidth())
+		insParameters[ av[2][0] ] = int(ins.interpolationCustom())
+		insParameters[ av[3][0] ] = int(ins.interpolationCustom1())
+		insParameters[ av[4][0] ] = int(ins.interpolationCustom2())
+		insParameters[ av[5][0] ] = int(ins.interpolationCustom3())
+	except:
+		pass
 	insList.append(insParameters)
 
-masterWeights = [x.weightValue for x in font.masters]
-masterWidths = [x.widthValue for x in font.masters]
-masterCustoms = [x.customValue for x in font.masters]
-weMin = sorted(masterWeights)[0]
-weMax = sorted(masterWeights)[-1]
-wiMin = sorted(masterWidths)[0]
-wiMax = sorted(masterWidths)[-1]
-csMin = sorted(masterCustoms)[0]
-csMax = sorted(masterCustoms)[-1]
-
-slider1Min = weMin-(weMax-weMin)/2
-slider1Max = weMax+(weMax-weMin)/2
-slider2Min = wiMin-(wiMax-wiMin)/2
-slider2Max = wiMax+(wiMax-wiMin)/2
-slider3Min = csMin-(csMax-csMin)/2
-slider3Max = csMax+(csMax-csMin)/2
+# replacing av minimum and maximum to slider minimum and maximum
+for i in range(len(av)):
+	mini, maxi = av[i][1], av[i][2]
+	av[i][1] = mini-(maxi-mini)/2
+	av[i][2] = maxi+(maxi-mini)/2
 
 class InstanceSlider( object ):
 	def __init__( self ):
-		
 		edX = 40
 		txX  = 70
 		sliderY = 18
 		spX = 10
+		axisX = 60
 		windowWidth  = 350
 		windowHeight = 260
 		windowWidthResize  = 3000          # user can resize width by this value
@@ -57,60 +64,94 @@ class InstanceSlider( object ):
 			maxSize = ( windowWidth + windowWidthResize, windowHeight + windowHeightResize ), # maximum size (for resizing)
 			autosaveName = "com.Tosche.InstanceSlider.mainwindow" # stores last window position and size
 		)
-		
-		# UI elements:
-		
+
 		YOffset = 27
 		self.w.add = vanilla.Button((6, -YOffset, 24, 20), "+", callback=self.addDelButtons)
 		self.w.delete = vanilla.Button((34, -YOffset, 24, 20), u"–", callback=self.addDelButtons)
 		self.w.revert = vanilla.Button((62, -YOffset, 60, 20), "Revert", callback=self.revert )
-		
+
+		global av
 		LineHeight = 26
 		YOffset += LineHeight
-		
-		if slider1Min != slider1Max:
-			self.w.textY = vanilla.TextBox( (spX, -YOffset, txX, 14), "WeightY", sizeStyle='small' )
-			self.w.checkY = vanilla.CheckBox((txX-spX, -YOffset-3, -10, 18), "", sizeStyle='small', callback=self.checkboxY, value=False)
-			self.w.sliderY = vanilla.Slider((spX+txX, -YOffset, -spX*2-edX, sliderY), minValue=slider1Min, maxValue=slider1Max, tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
-			self.w.editY = vanilla.EditText( (-spX-edX, -YOffset, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
-			YOffset += LineHeight
-		
-		if slider3Min != slider3Max:
-			self.w.text3 = vanilla.TextBox( (spX, -YOffset, txX, 14), "Custom", sizeStyle='small' )
-			self.w.slider3 = vanilla.Slider((spX+txX, -YOffset, -spX*2-edX, sliderY), minValue=slider3Min, maxValue=slider3Max, tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
-			self.w.edit3 = vanilla.EditText( (-spX-edX, -YOffset, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
-			YOffset += LineHeight
-		
-		if slider2Min != slider2Max:
-			self.w.text2 = vanilla.TextBox( (spX, -YOffset, txX, 14), "Width", sizeStyle='small' )
-			self.w.slider2 = vanilla.Slider((spX+txX, -YOffset, -spX*2-edX, sliderY), minValue=slider2Min, maxValue=slider2Max, tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
-			self.w.edit2 = vanilla.EditText( (-spX-edX, -YOffset, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
-			YOffset += LineHeight
-			
-		if slider1Min != slider1Max:
-			self.w.text1 = vanilla.TextBox( (spX, -YOffset, txX, 14), "Weight", sizeStyle='small' )
-			self.w.slider1 = vanilla.Slider((spX+txX, -YOffset, -spX*2-edX, sliderY), minValue=slider1Min, maxValue=slider1Max,  tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
-			self.w.edit1 = vanilla.EditText( (-spX-edX, -YOffset, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
-			YOffset += LineHeight
-		
-		self.w.list = vanilla.List( (0, 0, -0, -(YOffset - 18)), insList, selectionCallback=self.listClick, allowsMultipleSelection=False, allowsEmptySelection=False,
-			columnDescriptions=[
-				{"title":"Instance", "width":self.w.getPosSize()[2]-215},
-				{"title":"Weight", "width":50},
-				{"title":"Width", "width":50},
-				{"title":"Custom", "width":50},
-				{"title":"WeightY", "width":50}
-				]
-			)
+		axisCount = len([v for v in av if v[0] != ""])
+		print axisCount
+
+		self.w.textY = vanilla.TextBox( (spX, -YOffset, txX, 14), "WeightY", sizeStyle='small' )
+		self.w.checkY = vanilla.CheckBox((txX-spX, -YOffset-3, -10, 18), "", sizeStyle='small', callback=self.checkboxY, value=False)
+		self.w.sliderY = vanilla.Slider((spX+txX, -YOffset, -spX*2-edX, sliderY), minValue=av[0][1], maxValue=av[0][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.editY = vanilla.EditText( (-spX-edX, -YOffset, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+		YOffset += LineHeight
+
+		move = -YOffset if axisCount >= 6 else 0
+		self.w.text5 = vanilla.TextBox( (spX, move, txX, 14), av[5][0], sizeStyle='small' )
+		self.w.slider5 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[5][1], maxValue=av[5][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.edit5 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+
+		move -= LineHeight if axisCount >= 5 else 0
+		self.w.text4 = vanilla.TextBox( (spX, move, txX, 14), av[4][0], sizeStyle='small' )
+		self.w.slider4 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[4][1], maxValue=av[4][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.edit4 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+
+		move -= LineHeight if axisCount >= 4 else 0
+		self.w.text3 = vanilla.TextBox( (spX, move, txX, 14), av[3][0], sizeStyle='small' )
+		self.w.slider3 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[3][1], maxValue=av[3][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.edit3 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+
+		move -= LineHeight if axisCount >= 3 else 0
+		self.w.text2 = vanilla.TextBox( (spX, move, txX, 14), av[2][0], sizeStyle='small' )
+		self.w.slider2 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[2][1], maxValue=av[2][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.edit2 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+
+		move -= LineHeight if axisCount >= 2 else 0
+		self.w.text1 = vanilla.TextBox( (spX, move, txX, 14), av[1][0], sizeStyle='small' )
+		self.w.slider1 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[1][1], maxValue=av[1][2], tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.edit1 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+
+		move = -YOffset if axisCount == 1 else 0
+		self.w.text0 = vanilla.TextBox( (spX, move, txX, 14), av[0][0], sizeStyle='small' )
+		self.w.slider0 = vanilla.Slider((spX+txX, move, -spX*2-edX, sliderY), minValue=av[0][1], maxValue=av[0][2],  tickMarkCount=5, sizeStyle="small", callback=self.slide, continuous=True)
+		self.w.edit0 = vanilla.EditText( (-spX-edX, move, edX, sliderY), "0", sizeStyle = 'small', callback=self.typeValue)
+
+		YOffset += LineHeight*axisCount
+
+		av = [v for v in av if v[0] != ""]
+		axisElements = [
+			[self.w.text0, self.w.slider0, self.w.edit0],
+			[self.w.text1, self.w.slider1, self.w.edit1],
+			[self.w.text2, self.w.slider2, self.w.edit2],
+			[self.w.text3, self.w.slider3, self.w.edit3],
+			[self.w.text4, self.w.slider4, self.w.edit4],
+			[self.w.text5, self.w.slider5, self.w.edit5],
+		]
+		yOffsetCorrection = 0
+		for els in axisElements[len(av):]:
+			els[0].show(False)
+			els[1].show(False)
+			els[2].show(False)
+
+		self.usedAxisElements = axisElements[:len(av)]
+		print self.usedAxisElements
+
+		# TODO: disable WeightY if Weight doesn't exist
+		if "Weight" not in [a[0] for a in av]:
+			self.w.checkY.enable(False)
+
+		columnTitles = [{"title":"Instance", "width":self.w.getPosSize()[2]-axisX*(len(av)+1) }]
+		for i in range(len(av)):
+			columnTitles += [{"title":av[i][0], "width":axisX}]
+
+		self.w.list = vanilla.List( (0, 0, -0, -(YOffset-18)), insList, selectionCallback=self.listClick, allowsMultipleSelection=False, allowsEmptySelection=False, columnDescriptions=columnTitles)
 		self.w.list._nsObject.setBorderType_(NSNoBorder)
 		tableView = self.w.list._tableView
 		tableView.setAllowsColumnReordering_(False)
 		tableView.unbind_("sortDescriptors") # Disables sorting by clicking the title bar
-		tableView.tableColumns()[0].setResizingMask_(1)
-		tableView.tableColumns()[1].setResizingMask_(0)
-		tableView.tableColumns()[2].setResizingMask_(0)
-		tableView.tableColumns()[3].setResizingMask_(0)
-# setResizingMask_() 0=Fixed, 1=Auto-Resizable (Not user-resizable). There may be more options?
+		for i in range(len(av)):
+			if i == 0:
+				tableView.tableColumns()[i].setResizingMask_(1)
+			else:
+				tableView.tableColumns()[i].setResizingMask_(0)
+			# setResizingMask_() 0=Fixed, 1=Auto-Resizable (Not user-resizable). There may be more options?
+
 		tableView.setColumnAutoresizingStyle_(5)
 # AutoresizingStyle:
 # 0 Disable table column autoresizing.
@@ -120,8 +161,7 @@ class InstanceSlider( object ):
 # 4 Autoresize only the last table column. When that table column can no longer be resized, stop autoresizing. Normally you should use one of the sequential autoresizing modes instead.
 # 5 Autoresize only the first table column. When that table column can no longer be resized, stop autoresizing. Normally you should use one of the sequential autoresizing modes instead.
 
-		self.w.line = vanilla.HorizontalLine((0, -(YOffset - 18), -0, 1))
-		# Open window and focus on it:
+		self.w.line = vanilla.HorizontalLine((0, -(YOffset-18), -0, 1))
 		self.w.open()
 		self.w.makeKey()
 
@@ -132,37 +172,55 @@ class InstanceSlider( object ):
 		# redraw
 		uiList = self.w.list
 		
-		if len(font.instances) > 0:
-			if not font.tabs:
-				font.newTab("HALOGEN halogen 0123")
-			if font.currentTab.previewHeight <= 1.0:
-				font.currentTab.previewHeight = 150
-			self.setupSliders(font.instances[0], uiList[0])
+		if len(f.instances) > 0:
+			if not f.tabs:
+				f.newTab("HALOGEN halogen 0123")
+			if f.currentTab.previewHeight <= 20.0:
+				f.currentTab.previewHeight = 150
+			# self.setupSliders(f.instances[0], uiList[0]) # send index, not instance
+			self.setupSliders(0, uiList[0])
 	
-	def setupSliders(self, instance, uiList):
-		font.currentTab.previewInstances = instance
-		if slider1Min != slider1Max:
-			self.w.edit1.set(int(uiList["Weight"]))
-			self.w.slider1.set(uiList["Weight"])
-		if slider2Min != slider2Max:
-			self.w.edit2.set(int(uiList["Width"]))
-			self.w.slider2.set(uiList["Width"])
-		if slider3Min != slider3Max:
-			self.w.edit3.set(int(uiList["Custom"]))
-			self.w.slider3.set(uiList["Custom"])
-		
-		if slider1Min != slider1Max:
-			if instance.customParameters["InterpolationWeightY"] != None:
-				self.w.checkY.set(True)
-				self.w.sliderY.show(True)
-				self.w.editY.show(True)
-				self.w.sliderY.set(uiList["WeightY"])
-				self.w.editY.set(int(uiList["WeightY"]))
-			else:
-				self.w.checkY.set(False)
-				self.w.sliderY.show(False)
-				self.w.editY.show(False)
-		Glyphs.redraw()
+	def setupSliders(self, insIndex, uiList):
+		try:
+			instance = f.instances[insIndex]
+			f.currentTab.previewInstances = instance
+			axisCount = len(av)
+
+			for els in self.usedAxisElements:
+				pass
+
+			if axisCount >= 1:
+				self.w.edit0.set(int(insList[insIndex][av[0][0]]))
+				self.w.slider0.set(int(insList[insIndex][av[0][0]]))
+				if instance.customParameters["InterpolationWeightY"] != None:
+					self.w.checkY.set(True)
+					self.w.sliderY.show(True)
+					self.w.editY.show(True)
+					self.w.sliderY.set(uiList["WeightY"])
+					self.w.editY.set(int(uiList["WeightY"]))
+				else:
+					self.w.checkY.set(False)
+					self.w.sliderY.show(False)
+					self.w.editY.show(False)
+
+			if axisCount >= 2:
+				self.w.edit1.set(int(insList[insIndex][av[1][0]]))
+				self.w.slider1.set(int(insList[insIndex][av[1][0]]))
+			if axisCount >= 3:
+				self.w.edit2.set(int(insList[insIndex][av[2][0]]))
+				self.w.slider2.set(int(insList[insIndex][av[2][0]]))
+			if axisCount >= 4:
+				self.w.edit3.set(int(insList[insIndex][av[3][0]]))
+				self.w.slider3.set(int(insList[insIndex][av[3][0]]))
+			if axisCount >= 5:
+				self.w.edit4.set(int(insList[insIndex][av[4][0]]))
+				self.w.slider4.set(int(insList[insIndex][av[4][0]]))
+			if axisCount >= 6:
+				self.w.edit5.set(int(insList[insIndex][av[5][0]]))
+				self.w.slider5.set(int(insList[insIndex][av[5][0]]))
+			Glyphs.redraw()
+		except Exception as e:
+			print "setupSliders error:", e
 		
 	def listClick(self, sender):
 		try:
@@ -172,7 +230,7 @@ class InstanceSlider( object ):
 			uiList = self.w.list
 			if sender.getSelection():
 				index = sender.getSelection()[0]
-				self.setupSliders(font.instances[index], uiList[index])
+				self.setupSliders(index, uiList[index])
 		except Exception, e:
 			Glyphs.showMacroWindow()
 			print "Instance Slider Error (listClick): %s" % e
@@ -182,23 +240,28 @@ class InstanceSlider( object ):
 			# If it's an add button, ask for its name, and add an instance
 			# if it's a delete button, give a warning, and delete the instance
 			uiList = self.w.list
+			values = [int((v[1]+v[2])/2) for v in av]
+
 			if sender == self.w.add:
 				newInstance = GSInstance()
 				newInsName = AskString("Please name the new instance.", title="Creating New Instance")
 				newInstance.active = True
 				newInstance.name = newInsName
-				newInstance.weightValue = weMin
-				newInstance.widthValue = wiMin
-				newInstance.customValue = csMin
 				newInstance.isItalic = False
 				newInstance.isBold = False
-				font.addInstance_(newInstance)
-				insList.append({"Instance": "%s %s" % (font.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin, "WeightY": None})
-				uiList.append({"Instance": "%s %s" % (font.familyName, newInsName), "Weight": weMin, "Width": wiMin, "Custom": csMin, "WeightY": None})
+				f.addInstance_(newInstance)
+				newInstance.axes = values
+				newInsParameters = { "Instance": "%s %s" % (f.familyName, newInsName), "WeightY": None }
+				for i in range(len(self.usedAxisElements)):
+					newInsParameters[self.usedAxisElements[i][0].get()] = int((av[i][1] + av[i][2])/2)
+				insList.append(newInsParameters)
+				uiList.append(newInsParameters)
+				print insList
 			elif sender == self.w.delete:
 				if askYesNo("Deleting Instance", 'Are you sure you want to delete the selected instance?', alertStyle=1, parentWindow=None, resultCallback=None):
 					index = uiList.getSelection()[0]
-					font.removeInstanceAtIndex_(index)
+					f.removeInstance_
+					f.removeInstanceAtIndex_(index)
 					del insList[index]
 					del uiList[index]
 				else:
@@ -211,29 +274,22 @@ class InstanceSlider( object ):
 		try:
 			# pick the value and use it for instance value, edit text and vanilla List
 			# redraw
-			uiList = self.w.list
-			index = uiList.getSelection()[0]
-			if hasattr(self.w, 'slider1'):
-				font.instances[index].setInterpolationWeight_(int(self.w.slider1.get()))
-				self.w.edit1.set(int(self.w.slider1.get()))
-				uiList[index]["Weight"] = int(self.w.slider1.get())
-			
-			if hasattr(self.w, 'slider2'):
-				font.instances[index].setInterpolationWidth_(int(self.w.slider2.get()))
-				self.w.edit2.set(int(self.w.slider2.get()))
-				uiList[index]["Width"] = int(self.w.slider2.get())
+			uiList = self.w.list # just a short name
+			index = self.w.list.getSelection()[0] # selected instance
+			values = []
 
-			if hasattr(self.w, 'slider3'):
-				font.instances[index].setInterpolationCustom_(int(self.w.slider3.get()))
-				self.w.edit3.set(int(self.w.slider3.get()))
-				uiList[index]["Custom"] = int(self.w.slider3.get())
+			for els in self.usedAxisElements:
+				value = int(els[1].get())
+				els[2].set(value)
+				self.w.list[index][ els[0].get() ] = value
+				values += [ value ]
 
-			if hasattr(self.w, 'sliderY'):
-				if font.instances[index].customParameters["InterpolationWeightY"] != None:
-					font.instances[index].customParameters["InterpolationWeightY"] = int(self.w.sliderY.get())
-					self.w.editY.set(int(self.w.sliderY.get()))
-					uiList[index]["WeightY"] = int(self.w.sliderY.get())
+			if f.instances[index].customParameters["InterpolationWeightY"] != None:
+				f.instances[index].customParameters["InterpolationWeightY"] = int(self.w.sliderY.get())
+				self.w.editY.set(int(self.w.sliderY.get()))
+				self.w.list[index]["WeightY"] = int(self.w.sliderY.get())
 
+			f.instances[index].axes = values
 			Glyphs.redraw()
 
 		except Exception, e:
@@ -247,34 +303,31 @@ class InstanceSlider( object ):
 			# redraw as you type the number
 			uiList = self.w.list
 			index = uiList.getSelection()[0]
+			axesNames = [key for key, item in uiList[0].items() if key != "Instance"]
+			values = []
 			try:
-				# check if the input is a number
-				if hasattr(self.w, 'edit1'):
-					int(self.w.edit1.get())
-					font.instances[index].setInterpolationWeight_(uiList[index]["Weight"])
-					self.w.slider1.set(int(self.w.edit1.get()))
-					uiList[index]["Weight"] = int(self.w.edit1.get())
-				if hasattr(self.w, 'edit2'):
-					int(self.w.edit2.get())
-					font.instances[index].setInterpolationWidth_(uiList[index]["Width"])
-					self.w.slider2.set(int(self.w.edit2.get()))
-					uiList[index]["Width"] = int(self.w.edit2.get())
-				if hasattr(self.w, 'edit3'):
-					int(self.w.edit3.get())
-					font.instances[index].setInterpolationCustom_(uiList[index]["Custom"])
-					self.w.slider3.set(int(self.w.edit3.get()))
-					uiList[index]["Custom"] = int(self.w.edit3.get())
+				int(sender.get()) # check if the input is a number, else go to error handling
 
-				if hasattr(self.w, 'sliderY'):
-					int(self.w.editY.get())
-					if font.instances[index].customParameters["InterpolationWeightY"]:
-						font.instances[index].customParameters["InterpolationWeightY"]
-						self.w.sliderY.set(int(self.w.editY.get()))
-						uiList[index]["WeightY"] = int(self.w.editY.get())
+				for els in self.usedAxisElements:
+					value = int(els[2].get())
+					els[1].set( value )
+					uiList[index][ els[0].get() ] = value
+					values += [ value ]
 
+				int(self.w.editY.get())
+				if f.instances[index].customParameters["InterpolationWeightY"]:
+					f.instances[index].customParameters["InterpolationWeightY"]
+					self.w.sliderY.set(int(self.w.editY.get()))
+					uiList[index]["WeightY"] = int(self.w.editY.get())
+
+				f.instances[index].axes = values
 				Glyphs.redraw()
 			except:
+				correctValue = ''.join([i for i in sender.get() if i.isdigit()])
+				if sender.get()[0] == '-':
+					correctValue = '-' + correctValue
 				Glyphs.displayDialog_("You can only type numerals here!")
+				sender.set(correctValue)
 
 		except Exception, e:
 			Glyphs.showMacroWindow()
@@ -284,6 +337,7 @@ class InstanceSlider( object ):
 		try:
 			uiList = self.w.list
 			index = uiList.getSelection()[0]
+			print uiList[index]
 			if sender.get(): # When checked
 				# add the "InterpolationWeightY" custom parameter
 				# apply the same value as Weight
@@ -292,15 +346,15 @@ class InstanceSlider( object ):
 				self.w.editY.set(uiList[index]["Weight"])
 				self.w.sliderY.show(True)
 				self.w.editY.show(True)
-				font.instances[index].addCustomParameter_(GSCustomParameter("InterpolationWeightY", uiList[index]["Weight"]))
+				f.instances[index].addCustomParameter_(GSCustomParameter("InterpolationWeightY", uiList[index]["Weight"]))
 				Glyphs.redraw()
 			else: # When unchecked
 				# Glyphs does not redraw after custom parameter deletion,
 				# so you need to fake the result as weightY=weight and then delete it
-				font.instances[index].customParameters["InterpolationWeightY"] = uiList[index]["Weight"]
+				f.instances[index].customParameters["InterpolationWeightY"] = uiList[index]["Weight"]
 				Glyphs.redraw()
-				del font.instances[index].customParameters["InterpolationWeightY"]
-				uiList[index]["WeightY"] = None
+				del f.instances[index].customParameters["InterpolationWeightY"]
+				# uiList[index]["WeightY"] = None
 				self.w.sliderY.show(False)
 				self.w.editY.show(False)
 
@@ -314,43 +368,36 @@ class InstanceSlider( object ):
 			# set slider and edit text to current
 			uiList = self.w.list
 			index = self.w.list.getSelection()[0]
+			values = []
 
-			if slider1Min != slider1Max: # same as hasattr() but checked in a different way
-				font.instances[index].setInterpolationWeight_(insList[index]["Weight"])
-				uiList[index]["Weight"] = insList[index]["Weight"]
-				self.w.edit1.set(insList[index]["Weight"])
-				self.w.slider1.set(int(insList[index]["Weight"]))
-			if slider2Min != slider2Max:
-				font.instances[index].setInterpolationWidth_(insList[index]["Width"])
-				uiList[index]["Width"] = insList[index]["Width"]
-				self.w.edit2.set(insList[index]["Width"])
-				self.w.slider2.set(int(insList[index]["Width"]))
-			if slider3Min != slider3Max:
-				font.instances[index].setInterpolationCustom_(insList[index]["Custom"])
-				uiList[index]["Custom"] = insList[index]["Custom"]
-				self.w.edit3.set(insList[index]["Custom"])
-				self.w.slider3.set(int(insList[index]["Custom"]))
+			for els in self.usedAxisElements:
+				originalValue = insList[index][els[0].get()]
+				values += [originalValue]
+				els[1].set( originalValue )
+				els[2].set( originalValue )
+				uiList[index][els[0].get()] = originalValue
 
-			if slider1Min != slider1Max:
-				if insList[index]["WeightY"] != None: # if it had WeightY
-					if font.instances[index].customParameters["InterpolationWeightY"] != None: # if it still has WeightY
-						font.instances[index].customParameters["InterpolationWeightY"] = insList[index]["WeightY"]
-					else: # if it doesn't have it now
-						font.instances[index].addCustomParameter_(GSCustomParameter("InterpolationWeightY", insList[index]["WeightY"]))
-					uiList[index]["WeightY"] = insList[index]["WeightY"]
-					self.w.checkY.set(True)
-					self.w.editY.set(insList[index]["WeightY"])
-					self.w.sliderY.set(int(insList[index]["WeightY"]))
-				else: # if it had no WeightY
-					if font.instances[index].customParameters["InterpolationWeightY"] != None: # if it does now
-						# Glyphs does not redraw after custom parameter deletion,
-						# so you need to fake the result and then delete it
-						font.instances[index].customParameters["InterpolationWeightY"] = uiList[index]["Weight"]
-					Glyphs.redraw()
-					del font.instances[index].customParameters["InterpolationWeightY"]
-					uiList[index]["WeightY"] = None
-					self.w.sliderY.show(False)
-					self.w.editY.show(False)
+			f.instances[index].axes = values
+
+			if insList[index]["WeightY"] != None: # if it had WeightY
+				if f.instances[index].customParameters["InterpolationWeightY"] != None: # if it still has WeightY
+					f.instances[index].customParameters["InterpolationWeightY"] = insList[index]["WeightY"]
+				else: # if it doesn't have it now
+					f.instances[index].addCustomParameter_(GSCustomParameter("InterpolationWeightY", insList[index]["WeightY"]))
+				uiList[index]["WeightY"] = insList[index]["WeightY"]
+				self.w.checkY.set(True)
+				self.w.editY.set(insList[index]["WeightY"])
+				self.w.sliderY.set(int(insList[index]["WeightY"]))
+			else: # if it had no WeightY
+				if f.instances[index].customParameters["InterpolationWeightY"] != None: # if it does now
+					# Glyphs does not redraw after custom parameter deletion,
+					# so you need to fake the result and then delete it
+					f.instances[index].customParameters["InterpolationWeightY"] = uiList[index]["Weight"]
+				Glyphs.redraw()
+				del f.instances[index].customParameters["InterpolationWeightY"]
+				uiList[index]["WeightY"] = None
+				self.w.sliderY.show(False)
+				self.w.editY.show(False)
 			Glyphs.redraw()
 			
 		except Exception, e:
