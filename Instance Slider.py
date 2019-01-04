@@ -11,8 +11,7 @@ from robofab.interface.all.dialogs import AskString
 from AppKit import NSNoBorder
 
 f = Glyphs.font
-GLYPHSAPPVERSION = NSBundle.bundleForClass_(GSMenu).infoDictionary().objectForKey_("CFBundleShortVersionString")
-if GLYPHSAPPVERSION.startswith("2.5"):
+if Glyphs.versionNumber > 2.5:
 	av = [[], [], [], [], [], []] # Axis Values, up to six supported in Glyphs 2.5
 	# the list contains axis name, minimum, and maximum.
 	for i in range(len(f.axes)):
@@ -125,16 +124,12 @@ class InstanceSlider( object ):
 			[self.w.text5, self.w.slider5, self.w.edit5],
 		]
 
-		for els in axisElements:
-			print els[0], els[0].getPosSize()
-
 		for els in axisElements[len(av):]:
 			els[0].show(False)
 			els[1].show(False)
 			els[2].show(False)
 
 		self.usedAxisElements = axisElements[:len(av)]
-		print len(self.usedAxisElements)
 
 		# TODO: disable WeightY if Weight doesn't exist
 		if "Weight" not in [a[0] for a in av]:
