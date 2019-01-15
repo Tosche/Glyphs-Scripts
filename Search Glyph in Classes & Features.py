@@ -1,7 +1,7 @@
 #MenuTitle: Search Glyph In Class Features
 # -*- coding: utf-8 -*-
 __doc__="""
-Create effect for selected glyphs.
+Searches glyphs in OpenType classes and features if they are used.
 """
 
 import vanilla
