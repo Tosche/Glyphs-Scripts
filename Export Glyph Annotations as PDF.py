@@ -1,11 +1,12 @@
 #MenuTitle: Export Glyph Annotations as PDF
 # -*- coding: utf-8 -*-
 __doc__="""
-Create effect for selected glyphs.
+Generates Glyphs annotations as PDF on Desktop.
 """
 
 import drawBot as d
 import GlyphsApp
+import subprocess
 from datetime import date
 today = date.today()
 f = Glyphs.font
@@ -33,11 +34,8 @@ def new(layer, totalPages):
 	d.text("%s    %s" % (layer.parent.name, layer.name),(margin, margin))
 	d.text("%s/%s" % (d.pageCount(), totalPages-1), (w-margin, margin), align="right")
 	ma, md, mx, mc = m.ascender, m.descender, m.xHeight, m.capHeight
-	zones = [az.position+az.size for az in m.alignmentZones]
-	if len(zones) == 0:
-		boundsTop, boundsBtm = ma, md
-	else:
-		boundsTop, boundsBtm = max(zones), min(zones)
+	zones = [az.position+az.size for az in m.alignmentZones] + [ma, md]
+	boundsTop, boundsBtm = max(zones), min(zones)
 	sf = float(h-margin*3)/(boundsTop-boundsBtm) #scalefactor
 	d.scale(sf)
 	wNew = w/sf # scaled paper size
@@ -108,7 +106,10 @@ def new(layer, totalPages):
 
 def drawText(sf, ma, md, texts):
 	if len(texts) != 0:
-		columnX = (texts[0].parent().width+20/sf)
+		try: # this depends on Glyphs versions?
+			columnX = texts[0].parent().width+20/sf
+		except:
+			columnX = texts[0].parent.width+20/sf
 		d.stroke(None)
 		d.fill(1,0,0,1)
 		d.font(".SF Compact Text", 10/sf)
@@ -191,5 +192,7 @@ for g in f.glyphs:
 					drawPlusMinus(sf, a)
 			drawText(sf, ma, md, texts)
 
-d.saveImage(["~/Desktop/A.pdf"])
+filePath = "~/Desktop/%s Per-Glyph Comments.pdf" % f.familyName
+d.saveImage([ filePath ])
 d.endDrawing()
+subprocess.call(["open", "-R", os.path.expanduser(filePath)]) # show the tagged text in the Finder
