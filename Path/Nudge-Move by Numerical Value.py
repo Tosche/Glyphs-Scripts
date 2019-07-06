@@ -7,60 +7,102 @@ __doc__="""
 import vanilla
 import GlyphsApp
 
-class NudgeMoveWindow( object ):
+GSSteppingTextField = objc.lookUpClass("GSSteppingTextField")
+class ArrowEditText (vanilla.EditText):
+	nsTextFieldClass = GSSteppingTextField
+	def _setCallback(self, callback):
+		super(ArrowEditText, self)._setCallback(callback)
+		if callback is not None and self._continuous:
+			self._nsObject.setContinuous_(True)
+			self._nsObject.setAction_(self._target.action_)
+			self._nsObject.setTarget_(self._target)
+
+class ParametricEstimated( object ):
 	def __init__( self ):
-		spaceX = 14
-		spaceY = 14
-		textSizeX = 16
-		buttonSizeX = 60
-		fieldSizeX = 60
-		elementSizeY = 20
 		# Window 'self.w':
-		windowWidth  = spaceX+textSizeX+spaceX+buttonSizeX+spaceX+fieldSizeX+spaceX+buttonSizeX+spaceX
-		windowHeight = spaceY+elementSizeY+spaceY+elementSizeY+spaceY
+		edX = 40
+		edY = 17
+		txX = 20
+		txY = 17
+		slX = 200
+		spX = 10
+		spY = 10
+		btnY = 17
+		btnX = 60
+		windowWidth  = spX*3+txX+edX+slX
+		windowHeight = spY*6+txY*2+btnY*4
+		windowWidthResize = 500
 		self.w = vanilla.FloatingWindow(
 			( windowWidth, windowHeight ), # default window size
 			"Nudge-Move", # window title
-			autosaveName = "com.tosche.Nudge-movebyNumericalValue(GUI).mainwindow" # stores last window position and size
+			minSize = ( windowWidth, windowHeight ), # minimum size (for resizing)
+			maxSize = ( windowWidth + windowWidthResize, windowHeight ), # maximum size (for resizing)
+			autosaveName = "com.Tosche.Nudge-movebyNumericalValue(GUI).mainwindow" # stores last window position and size
 		)
 		
-		# Text:
-		self.w.textX = vanilla.TextBox( ( spaceX, spaceY+2, textSizeX, elementSizeY), "X:", sizeStyle='small' )
-		self.w.textY = vanilla.TextBox( ( spaceX, spaceY+elementSizeY+spaceY+2, textSizeX, elementSizeY), "Y:", sizeStyle='small' )
-		# Field
-		self.w.fieldX = vanilla.EditText( (spaceX+textSizeX+spaceX+buttonSizeX+spaceX, spaceY, fieldSizeX, elementSizeY), "0", sizeStyle = 'small')
-		self.w.fieldY = vanilla.EditText( (spaceX+textSizeX+spaceX+buttonSizeX+spaceX, spaceY+elementSizeY+spaceY, fieldSizeX, elementSizeY), "0", sizeStyle = 'small')
+		# UI elements:
+		self.w.txX = vanilla.TextBox( (spX, spY, txX, txY), "X:", sizeStyle='small')
+		self.w.txY = vanilla.TextBox( (spX, spY*2+txY, txX, txY), "Y:", sizeStyle='small')
+
+		self.w.edX = ArrowEditText( (spX+txX, spY, edX, edY), "10", sizeStyle='small', callback=self.textChange)
+		self.w.edY = ArrowEditText( (spX+txX, spY*2+txY, edX, edY), "10", sizeStyle='small', callback=self.textChange)
+	
+		self.w.slX = vanilla.Slider( (spX*2+txX+edX, spY, -spX, edY), sizeStyle='small', minValue=0, maxValue=50, value=10, callback=self.sliderChange)
+		self.w.slY = vanilla.Slider( (spX*2+txX+edX, spY*2+txY, -spX, edY), sizeStyle='small', minValue=0, maxValue=50, value=10, callback=self.sliderChange)
+
 		# Run Button:
-		self.w.leftButton = vanilla.SquareButton((spaceX+textSizeX+spaceX, spaceY, buttonSizeX, elementSizeY), "Left", sizeStyle='small', callback=self.nudgeMove )
-		self.w.rightButton = vanilla.SquareButton((spaceX+textSizeX+spaceX+buttonSizeX+spaceX+fieldSizeX+spaceX, spaceY, buttonSizeX, elementSizeY), "Right", sizeStyle='small', callback=self.nudgeMove )
-		self.w.downButton = vanilla.SquareButton((spaceX+textSizeX+spaceX, spaceY+elementSizeY+spaceY, buttonSizeX, elementSizeY), "Down", sizeStyle='small', callback=self.nudgeMove )
-		self.w.upButton = vanilla.SquareButton((spaceX+textSizeX+spaceX+buttonSizeX+spaceX+fieldSizeX+spaceX, spaceY+elementSizeY+spaceY, buttonSizeX, elementSizeY), "Up", sizeStyle='small', callback=self.nudgeMove )
-		
-		# Load Settings:
-		if not self.LoadPreferences():
-			print "Note: 'Nudge-move by Numerical Value (GUI)' could not load preferences. Will resort to defaults"
-		
+		self.w.tl = vanilla.SquareButton((spX, spY*3+txY*2, btnX, btnY), u"↖", sizeStyle='small', callback=self.nudgeMove )
+		self.w.l = vanilla.SquareButton((spX, spY*4+txY*2+btnY, btnX, btnY), u"←", sizeStyle='small', callback=self.nudgeMove )
+		self.w.dl = vanilla.SquareButton((spX, spY*5+txY*2+btnY*2, btnX, btnY), u"↙", sizeStyle='small', callback=self.nudgeMove )
+
+		self.w.t = vanilla.SquareButton((spX*2+btnX, spY*3+txY*2, btnX, btnY), u"↑", sizeStyle='small', callback=self.nudgeMove )
+		self.w.d = vanilla.SquareButton((spX*2+btnX, spY*5+txY*2+btnY*2, btnX, btnY), u"↓", sizeStyle='small', callback=self.nudgeMove )
+
+		self.w.tr = vanilla.SquareButton((spX*3+btnX*2, spY*3+txY*2, btnX, btnY), u"↗", sizeStyle='small', callback=self.nudgeMove )
+		self.w.r = vanilla.SquareButton((spX*3+btnX*2, spY*4+txY*2+btnY, btnX, btnY), u"→", sizeStyle='small', callback=self.nudgeMove )
+		self.w.dr = vanilla.SquareButton((spX*3+btnX*2, spY*5+txY*2+btnY*2, btnX, btnY), u"↘", sizeStyle='small', callback=self.nudgeMove )
+
+		self.LoadPreferences()
+
 		# Open window and focus on it:
 		self.w.open()
 		self.w.makeKey()
 		
 	def SavePreferences( self, sender ):
 		try:
-			Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldX"] = self.w.fieldX.get()
-			Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldY"] = self.w.fieldY.get()
+			Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldX"] = self.w.edX.get()
+			Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldY"] = self.w.edY.get()
 		except:
 			return False
-			
 		return True
 
 	def LoadPreferences( self ):
 		try:
-			self.w.fieldX.set( Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldX"] )
-			self.w.fieldY.set( Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldY"] )
+			self.w.edX.set( Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldX"] )
+			self.w.edY.set( Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldY"] )
+			self.w.slX.set( int(Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldX"]) )
+			self.w.slY.set( int(Glyphs.defaults["com.tosche.Nudge-movebyNumericalValue(GUI).fieldY"]) )
 		except:
 			return False
-			
 		return True
+
+	def sliderChange(self, sender):
+		try:
+			self.w.edX.set(int(self.w.slX.get()))
+			self.w.edY.set(int(self.w.slY.get()))
+		except Exception, e:
+			Glyphs.showMacroWindow()
+			print "Nudge-Move By Numerical Value... Error (sliderChange): %s" % e
+
+	def textChange( self, sender ):
+		try:
+			edXvalue = int(self.w.edX.get()) if self.w.edX.get() != "" else 0
+			self.w.slX.set(edXvalue)
+			edYvalue = int(self.w.edY.get()) if self.w.edY.get() != "" else 0
+			self.w.slY.set(edYvalue)
+		except Exception, e:
+			Glyphs.showMacroWindow()
+			print "Nudge-Move By Numerical Value... Error (textChange): %s" % e
 
 	def nudge(self, onMv, off1, off2, onSt, offsetX, offsetY):
 		try:
@@ -94,24 +136,25 @@ class NudgeMoveWindow( object ):
 			if distanceY2 != 0:
 				off2.y += (distanceY2/distanceY)*offsetY
 		except Exception, e:
-			# brings macro window to front and reports error:
-			Glyphs.showMacroWindow()
-			print "Nudge-move by Numerical Value Error (nudge): %s" % e
+			pass
+			# Glyphs.showMacroWindow()
+			# print "Nudge-move by Numerical Value Error (nudge): %s" % e
 
 	def nudgeMove( self, sender ):
 		try:
-			if sender is self.w.leftButton:
-				offsetX = -float(self.w.fieldX.get())
-				offsetY = 0.0
-			elif sender is self.w.rightButton:
-				offsetX = float(self.w.fieldX.get())
-				offsetY = 0.0
-			elif sender is self.w.upButton:
+			if sender in [self.w.tl, self.w.l, self.w.dl]:
+				offsetX = -float(self.w.edX.get())
+			elif sender in [self.w.tr, self.w.r, self.w.dr]:
+				offsetX = float(self.w.edX.get())
+			else:
 				offsetX = 0.0
-				offsetY = float(self.w.fieldY.get())
-			elif sender is self.w.downButton:
-				offsetX = 0.0
-				offsetY = -float(self.w.fieldY.get())
+
+			if sender in [self.w.tl, self.w.t, self.w.tr]:
+				offsetY = float(self.w.edY.get())
+			elif sender in [self.w.dl, self.w.d, self.w.dr]:
+				offsetY = -float(self.w.edY.get())
+			else:
+				offsetY = 0.0
 		except:
 			Glyphs.displayDialog_withTitle_("You seem to have entered a value that is not a number. Period is fine.", "Numbers only!")
 
@@ -179,7 +222,4 @@ class NudgeMoveWindow( object ):
 			Glyphs.showMacroWindow()
 			print "Nudge-move by Numerical Value Error: %s" % e
 
-
-
-
-NudgeMoveWindow()
+ParametricEstimated()
