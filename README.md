@@ -33,7 +33,8 @@ For some scripts, you will also need to install Tal Leming's *Vanilla* and may n
 * **Analyse Manuscript:** (GUI) Calculates the minimal character set required for the pasted text. Ideal for starting a font for specific text (e.g. book). *Vanilla required.*
 * **Create .case alternate:** Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
 * **Duplicate Glyph with Component:** Duplicates selected glyphs but as components, giving them 001 suffix or above depending on availability.
-* **Export Tagged Text with All Glyphs for InDesign:** Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID.
+* **Export Glyph Annotations as PDF:** Generates Glyphs annotations as PDF on Desktop.
+* **Export InDesign Tagged Text with All Glyphs:** (GUI) Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID.
 * **Guideline Locker:** (GUI) Locks selected guidelines and unlocks all global guidelines. *Vanilla required.*
 * **Instance Slider:** (GUI) Lets you define interpolation values of instances more graphically, using sliders and preview. *Vanilla and Robofab required.*
 * **Search Glyph In Class Features:** Searches glyphs in OpenType classes and features if they are used.*
