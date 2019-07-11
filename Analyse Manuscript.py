@@ -1,12 +1,12 @@
 #MenuTitle: Analyse Manuscript...
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+import vanilla, GlyphsApp
+
 __doc__="""
 (GUI) Calculates the minimal character set required for the pasted text.
 Ideal for starting a font for specific text (e.g. book).
 """
-
-import vanilla
-import GlyphsApp
 
 class AnalyseManuscript( object ):
 	def __init__( self ):
@@ -70,7 +70,7 @@ class AnalyseManuscript( object ):
 
 		except Exception, e:
 			Glyphs.showMacroWindow()
-			print "Analyse Manuscript Error (updateChar): %s" % e
+			print( "Analyse Manuscript Error (updateChar): %s" % e )
 
 	def markGlyphs( self, sender ):
 		try:
@@ -84,7 +84,7 @@ class AnalyseManuscript( object ):
 					g.color = colour
 		except Exception, e:
 			Glyphs.showMacroWindow()
-			print "Analyse Manuscript Error (markGlyphs): %s" % e
+			print( "Analyse Manuscript Error (markGlyphs): %s" % e )
 
 	def AnalyseManuscriptMain( self, sender ):
 		try:
@@ -96,6 +96,6 @@ class AnalyseManuscript( object ):
 
 		except Exception, e:
 			Glyphs.showMacroWindow()
-			print "Analyse Manuscript Error (AnalyseManuscriptMain): %s" % e
+			print( "Analyse Manuscript Error (AnalyseManuscriptMain): %s" % e )
 
 AnalyseManuscript()
