@@ -1,12 +1,12 @@
 #MenuTitle: Analyse Manuscript...
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+import vanilla, GlyphsApp
+
 __doc__="""
 (GUI) Calculates the minimal character set required for the pasted text.
 Ideal for starting a font for specific text (e.g. book).
 """
-
-from __future__ import print_function
-import vanilla, GlyphsApp
 
 class AnalyseManuscript( object ):
 	def __init__( self ):
