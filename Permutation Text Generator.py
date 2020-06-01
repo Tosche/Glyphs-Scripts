@@ -1,5 +1,6 @@
 #MenuTitle: Permutation Text Generator...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Outputs glyph permutation text for kerning.
 """
@@ -8,9 +9,9 @@ import vanilla
 import GlyphsApp
 import re
 
-surrogate_pairs = re.compile(u'[\ud800-\udbff][\udc00-\udfff]', re.UNICODE)
-surrogate_start = re.compile(u'[\ud800-\udbff]', re.UNICODE)
-emoji_variation_selector = re.compile(u'[\ufe00-\ufe0f]', re.UNICODE)
+surrogate_pairs = re.compile('[\ud800-\udbff][\udc00-\udfff]', re.UNICODE)
+surrogate_start = re.compile('[\ud800-\udbff]', re.UNICODE)
+emoji_variation_selector = re.compile('[\ufe00-\ufe0f]', re.UNICODE)
 
 class PermutationTextGenerator( object ):
 	def __init__( self ):
@@ -52,7 +53,7 @@ class PermutationTextGenerator( object ):
 		
 		# Load Settings:
 		if not self.LoadPreferences():
-			print "Note: 'Permutation Text Generator' could not load preferences. Will resort to defaults"
+			print("Note: 'Permutation Text Generator' could not load preferences. Will resort to defaults")
 			
 		
 		# Open window and focus on it:
@@ -93,9 +94,9 @@ class PermutationTextGenerator( object ):
 			else:
 				self.w.dupe.enable(False)
 				self.w.dupe.set(False)
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Permutation Text Generator Error (dupeControl): %s" % e
+			print("Permutation Text Generator Error (dupeControl): %s" % e)
 
 	def makeList(self, string):
 		try:
@@ -127,7 +128,7 @@ class PermutationTextGenerator( object ):
 					if surrogate_start.match(c):
 						codepoint = surrogate_pairs.findall(c+newList[i+1])[0]
 						# skip over emoji skin tone modifiers
-						if codepoint in [u'🏻', u'🏼', u'🏽', u'🏾', u'🏿']:
+						if codepoint in ['🏻', '🏼', '🏽', '🏾', '🏿']:
 							continue
 						filtered.append(codepoint)
 					elif surrogate_start.match(newList[i-1]):
@@ -154,9 +155,9 @@ class PermutationTextGenerator( object ):
 
 			return filtered
 
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Permutation Text Generator Error (MakeList): %s" % e
+			print("Permutation Text Generator Error (MakeList): %s" % e)
 
 	def Main( self, sender ):
 		try:
@@ -165,7 +166,7 @@ class PermutationTextGenerator( object ):
 			insert = self.w.edit_C.get()
 			if stringA == "" or stringB == "":
 				Glyphs.showMacroWindow()
-				print "There needs to be something in both fields."
+				print("There needs to be something in both fields.")
 			else:
 				newListA = self.makeList(stringA)
 				newListB = self.makeList(stringB)
@@ -246,7 +247,7 @@ class PermutationTextGenerator( object ):
 				if sender == self.w.outputButton: # Show in Macro Window
 					Glyphs.showMacroWindow()
 					for thisRow in finalRow:
-						print thisRow
+						print(thisRow)
 
 				else:
 					if int(self.w.edit_3.get()) != 0:
@@ -261,12 +262,12 @@ class PermutationTextGenerator( object ):
 						Glyphs.currentDocument.windowController().addTabWithString_(finalText)
 			
 			if not self.SavePreferences( self ):
-				print "Note: 'Permutation Text Generator' could not write preferences."
+				print("Note: 'Permutation Text Generator' could not write preferences.")
 			
 			
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Permutation Text Generator Error (Main): %s" % e
+			print("Permutation Text Generator Error (Main): %s" % e)
 
 PermutationTextGenerator()

@@ -1,5 +1,6 @@
-#MenuTitle: Search Glyph In Class Features
+#MenuTitle: Search Glyph In Class Features...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Searches glyphs in OpenType classes and features if they are used.
 """
@@ -27,7 +28,7 @@ class SearchGlyphInClassFeatures( object ):
 			autosaveName = "com.Tosche.SearchGlyphInClassFeatures.mainwindow" # stores last window position and size
 		)
 		
-		listOfOptions = [ "Check which alternates are unused", "Check if/where the selected glyph is used", "Same as the above, but by name" ]
+		listOfOptions = [ "Check which alternates are unused", "Check if/where the selected glyph is used", "Any keyword" ]
 		self.w.radioButtons = vanilla.RadioGroup( (sp, sp, -sp, edY*len(listOfOptions) ), listOfOptions, sizeStyle = 'regular', callback=self.radio )
 		self.w.edit_1 = vanilla.EditText( (sp+20, sp*1.5+edY*len(listOfOptions), -sp, edY), "", sizeStyle = 'regular')
 		
@@ -49,7 +50,7 @@ class SearchGlyphInClassFeatures( object ):
 
 	def showMacro(self, theText):
 		Glyphs.clearLog()
-		print theText
+		print(theText)
 		Glyphs.showMacroWindow()
 
 	def Search( self, sender ):
@@ -70,14 +71,14 @@ class SearchGlyphInClassFeatures( object ):
 								used = True
 								break
 						if used == False:
-							unusedGlyphs.append(g.name)
+							gName = g.name if g.export else "Non-export: %s" % g.name
+							unusedGlyphs.append(gName)
 				if len(unusedGlyphs) > 0:
 					self.showMacro("The following alternate glyphs are not used in any OpenType classes or features:\n"+"\n".join([g for g in unusedGlyphs]) )
 				else:
 					self.showMacro("All alternates are being used!")
 
 			else:
-				proceed = False
 				if option == 1:
 					if len(f.selectedLayers) != 0:
 						proceed = True
@@ -86,29 +87,24 @@ class SearchGlyphInClassFeatures( object ):
 						Glyphs.showAlert_message_OKButton_("SEARCH ERROR", "Nothing is selected.", "OK")
 				else:
 					gname = self.w.edit_1.get()
-					if f.glyphs[gname]:
-						proceed = True
-					else:
-						Glyphs.showAlert_message_OKButton_("SEARCH ERROR", "There is no glyph with that name.", "OK")
 
-				if proceed:
-					usedFeas = []
-					for cla in f.classes:
-						if gname in cla.code:
-							usedFeas.append("@"+cla.name)
-					for fea in f.features:
-						if gname in fea.code:
-							usedFeas.append(fea.name)
+				usedFeas = []
+				for cla in f.classes:
+					if gname in cla.code:
+						usedFeas.append("@"+cla.name)
+				for fea in f.features:
+					if gname in fea.code:
+						usedFeas.append(fea.name)
 
-					if len(usedFeas) != 0:
-						self.showMacro("The glyph is used in the follwing classes and features:\n"+"\n".join([fea for fea in usedFeas]))
-					else:
-						self.showMacro("The glyph is not being used anywhere!")
+				if len(usedFeas) != 0:
+					self.showMacro("The glyph is used in the follwing classes and features:\n"+"\n".join([fea for fea in usedFeas]))
+				else:
+					self.showMacro("The searched word is not being used anywhere!")
 
 
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Search Glyph In Class Features Error: %s" % e
+			print("Search Glyph In Class Features Error: %s" % e)
 
 SearchGlyphInClassFeatures()

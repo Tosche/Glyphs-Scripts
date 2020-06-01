@@ -1,5 +1,6 @@
 #MenuTitle: Export Glyph Annotations as PDF
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Generates Glyphs annotations as PDF on Desktop.
 """
@@ -91,7 +92,7 @@ def new(layer, totalPages):
 	nodeSize = 4/sf
 	hf = nodeSize * 0.7
 	for a in layer.anchors:
-		# print a, (ma, md, mc, mx, 0)
+		# print(a, (ma, md, mc, mx, 0))
 		if a.y in (ma, md, mc, mx, 0):
 			d.polygon((a.x-hf, a.y),(a.x, a.y-hf),(a.x+hf,a.y), (a.x,a.y+hf), close=True)
 		else:

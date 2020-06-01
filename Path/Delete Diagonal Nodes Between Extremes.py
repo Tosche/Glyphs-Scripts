@@ -1,5 +1,6 @@
 #MenuTitle: Delete Diagonal Nodes Between Extremes
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Good for cleaning TTF curve. It removes Diagonal Node Between Extremes, after placing the current outline in the background.
 """

@@ -1,5 +1,6 @@
 #MenuTitle: Close Tabs with Few Glyphs...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Closes the tabs that have certain number of glyphs or fewer.
 """
@@ -26,7 +27,7 @@ class CloseTabswithFewGlyphs( object ):
 		)
 
 		# UI elements:
-		self.w.text = vanilla.TextBox( (sp, sp, -sp, txY), "Close tabs with 3 glyphs or fewer")
+		self.w.text = vanilla.TextBox( (sp, sp, 230, txY), "Close tabs with 3 glyphs or fewer")
 		self.w.glyphsCount = vanilla.Slider( (sp, sp*2+edY, -sp, edY),
 				tickMarkCount = 10,
 				stopOnTickMarks = True,
@@ -41,7 +42,7 @@ class CloseTabswithFewGlyphs( object ):
 
 		# Load Settings:
 		if not self.LoadPreferences():
-			print "Note: 'Close Tabs with Few Glyphs' could not load preferences. Will resort to defaults"
+			print("Note: 'Close Tabs with Few Glyphs' could not load preferences. Will resort to defaults")
 		
 		# Open window and focus on it:
 		self.w.open()
@@ -72,7 +73,7 @@ class CloseTabswithFewGlyphs( object ):
 				plural = "s" if glyphs > 1 else ""
 				self.w.text.set( "Close tabs with %s glyph%s or fewer" % (glyphs, plural) )
 			else:
-				self.w.text.set( "Close ALL tabs!" )
+				self.w.text.set( "Send ALL tabs to heaven" )
 		except:
 			pass
 
@@ -92,12 +93,12 @@ class CloseTabswithFewGlyphs( object ):
 					f.tabs[-1].close()
 			
 			if not self.SavePreferences( self ):
-				print "Note: 'Close Tabs with Few Glyphs' could not write preferences."
+				print("Note: 'Close Tabs with Few Glyphs' could not write preferences.")
 			
 			self.w.close() # delete if you want window to stay open
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Close Tabs with Few Glyphs Error (CloseTabs): %s" % e
+			print("Close Tabs with Few Glyphs Error (CloseTabs): %s" % e)
 
 CloseTabswithFewGlyphs()

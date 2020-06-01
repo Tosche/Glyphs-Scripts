@@ -1,5 +1,6 @@
 #MenuTitle: Duplicate Glyph with Component
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Duplicates selected glyphs but as components, giving them 001 suffix or above depending on availability.
 """
@@ -49,7 +50,7 @@ def process( sourceLayer ):
 	for thisMaster in Font.masters:
 		targetGlyph.layers[thisMaster.id].components.append(sourceComponent)
 		targetGlyph.layers[thisMaster.id].width = Font.glyphs[sourceGlyphName].layers[thisMaster.id].width
-	print "Added", targetGlyphName 
+	print("Added", targetGlyphName )
 	return Font.glyphs[targetGlyphName].layers[Font.selectedFontMaster.id]
 
 targetLayers =[]

@@ -1,5 +1,6 @@
 #MenuTitle: Un-Round Corners
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Removes corners of outlines of the selected letters (current master only).
 1. It doesn't do perfect job at curved segments, but does keep the original in the background. Please fine-tune by hand.
@@ -13,7 +14,7 @@ import GlyphsApp
 thisFont = Glyphs.font # frontmost font
 listOfSelectedLayers = thisFont.selectedLayers # active layers of selected glyphs
 
-roundness = 20
+roundness = 30
 
 thisFont.disableUpdateInterface() # suppresses UI updates in Font View
 
@@ -28,8 +29,8 @@ def intersection(L1, L2):
     Dx = L1[2] * L2[1] - L1[1] * L2[2]
     Dy = L1[0] * L2[2] - L1[2] * L2[0]
     if D != 0:
-        x = float(Dx) / float(D)
-        y = float(Dy) / float(D)
+        x = Dx / D
+        y = Dy / D
         return x,y
     else:
         return False
@@ -129,9 +130,9 @@ def unRound( thisLayer ):
 				elif sharpen(thisPath, i):
 					nodeTotal -= 3
 
-	except Exception, e:
+	except Exception as e:
 		Glyphs.showMacroWindow()
-		print "Un-Round Corners Error (unRound): %s" % e
+		print("Un-Round Corners Error (unRound): %s" % e)
 
 for thisLayer in listOfSelectedLayers:
 	thisGlyph = thisLayer.parent

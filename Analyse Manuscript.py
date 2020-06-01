@@ -1,12 +1,14 @@
 #MenuTitle: Analyse Manuscript...
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-import vanilla, GlyphsApp
-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Calculates the minimal character set required for the pasted text.
 Ideal for starting a font for specific text (e.g. book).
 """
+
+import vanilla
+import GlyphsApp
+from AppKit import NSFont
 
 class AnalyseManuscript( object ):
 	def __init__( self ):
@@ -68,9 +70,9 @@ class AnalyseManuscript( object ):
 			elif sender == self.w.runButton or sender == self.w.markPopup:
 				return niceNameList
 
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print( "Analyse Manuscript Error (updateChar): %s" % e )
+			print("Analyse Manuscript Error (updateChar): %s" % e)
 
 	def markGlyphs( self, sender ):
 		try:
@@ -82,9 +84,9 @@ class AnalyseManuscript( object ):
 			for g in font.glyphs:
 				if g.unicode in codeList:
 					g.color = colour
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print( "Analyse Manuscript Error (markGlyphs): %s" % e )
+			print("Analyse Manuscript Error (markGlyphs): %s" % e)
 
 	def AnalyseManuscriptMain( self, sender ):
 		try:
@@ -94,8 +96,8 @@ class AnalyseManuscript( object ):
 				if not font.glyphs[niceName]:
 					font.glyphs.append(GSGlyph(niceName))
 
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print( "Analyse Manuscript Error (AnalyseManuscriptMain): %s" % e )
+			print("Analyse Manuscript Error (AnalyseManuscriptMain): %s" % e)
 
 AnalyseManuscript()

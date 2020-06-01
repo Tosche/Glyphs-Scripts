@@ -1,5 +1,6 @@
 #MenuTitle: Instance Slider...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Lets you define interpolation values of instances more graphically, using sliders and preview. It supports up to 10 axes.
 """
@@ -24,8 +25,9 @@ while len(av) < 6:
 
 insList = []
 for ins in f.instances:
+	fn = ins.customParameters["familyName"] if ins.customParameters["familyName"] else f.familyName
 	insParameters = {
-		"Instance" : " ".join((f.familyName, ins.name)),
+		"Instance" : " ".join((fn, ins.name)),
 		"WeightY" : ins.customParameters["InterpolationWeightY"]
 		}
 	try:
@@ -66,7 +68,7 @@ class InstanceSlider( object ):
 
 		YOffset = 27
 		self.w.add = vanilla.Button((6, -YOffset, 24, 20), "+", callback=self.addDelButtons)
-		self.w.delete = vanilla.Button((34, -YOffset, 24, 20), u"–", callback=self.addDelButtons)
+		self.w.delete = vanilla.Button((34, -YOffset, 24, 20), "–", callback=self.addDelButtons)
 		self.w.revert = vanilla.Button((62, -YOffset, 60, 20), "Revert", callback=self.revert )
 
 		global av
@@ -200,7 +202,7 @@ class InstanceSlider( object ):
 				self.w.editY.show(False)
 			Glyphs.redraw()
 		except Exception as e:
-			print "setupSliders error:", e
+			print("setupSliders error:", e)
 		
 	def listClick(self, sender):
 		try:
@@ -211,9 +213,9 @@ class InstanceSlider( object ):
 			if sender.getSelection():
 				index = sender.getSelection()[0]
 				self.setupSliders(index, uiList[index])
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Instance Slider Error (listClick): %s" % e
+			print("Instance Slider Error (listClick): %s" % e)
 
 	def addDelButtons(self, sender):
 		try:
@@ -245,9 +247,9 @@ class InstanceSlider( object ):
 					del uiList[index]
 				else:
 					pass
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Instance Slider Error (addDelButtons): %s" % e
+			print("Instance Slider Error (addDelButtons): %s" % e)
 
 	def slide(self, sender):
 		try:
@@ -271,9 +273,9 @@ class InstanceSlider( object ):
 			f.instances[index].axes = values
 			Glyphs.redraw()
 
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Instance Slider Error (slide): %s" % e
+			print("Instance Slider Error (slide): %s" % e)
 
 	def typeValue(self, sender):
 		try:
@@ -308,9 +310,9 @@ class InstanceSlider( object ):
 				Glyphs.displayDialog_("You can only type numerals here!")
 				sender.set(correctValue)
 
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Instance Slider Error (typeValue): %s" % e
+			print("Instance Slider Error (typeValue): %s" % e)
 
 	def checkboxY(self, sender):
 		try:
@@ -336,9 +338,9 @@ class InstanceSlider( object ):
 				self.w.sliderY.show(False)
 				self.w.editY.show(False)
 
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Instance Slider Error (checkboxY): %s" % e
+			print("Instance Slider Error (checkboxY): %s" % e)
 
 	def revert( self, sender ):
 		try:
@@ -378,8 +380,8 @@ class InstanceSlider( object ):
 				self.w.editY.show(False)
 			Glyphs.redraw()
 			
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Instance Slider Error (revert): %s" % e
+			print("Instance Slider Error (revert): %s" % e)
 
 InstanceSlider()

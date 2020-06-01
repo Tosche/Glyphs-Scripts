@@ -1,5 +1,6 @@
 #MenuTitle: Kerning Exception...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Makes an kerning exception of the current pair. Note: Current glyph is considered the RIGHT side of the glyph.
 """
@@ -24,10 +25,10 @@ class KerningException( object ):
 		
 
 		# Run Button:
-		self.w.runButton1 = vanilla.Button((spaceX, spaceY, buttonSizeX, buttonSizeY), u"1 🔒 🔓 Unlock Right (Ta→Tà)", sizeStyle='regular', callback=self.KerningExceptionMain )
-		self.w.runButton2 = vanilla.Button((spaceX, spaceY*2+buttonSizeY, buttonSizeX, buttonSizeY), u"2 🔓 🔒 Unlock Left (aT→áT)", sizeStyle='regular', callback=self.KerningExceptionMain )
-		self.w.runButton3 = vanilla.Button((spaceX, spaceY*3+buttonSizeY*2, buttonSizeX, buttonSizeY), u"3 🔓 🔓 Unlock Both ", sizeStyle='regular', callback=self.KerningExceptionMain )
-		self.w.runButton4 = vanilla.Button((spaceX, spaceY*4+buttonSizeY*3, buttonSizeX, buttonSizeY), u"4 🔒 🔒 Lock Both ", sizeStyle='regular', callback=self.KerningExceptionMain )
+		self.w.runButton1 = vanilla.Button((spaceX, spaceY, buttonSizeX, buttonSizeY), "1 🔒 🔓 Unlock Right (Ta→Tà)", sizeStyle='regular', callback=self.KerningExceptionMain )
+		self.w.runButton2 = vanilla.Button((spaceX, spaceY*2+buttonSizeY, buttonSizeX, buttonSizeY), "2 🔓 🔒 Unlock Left (aT→áT)", sizeStyle='regular', callback=self.KerningExceptionMain )
+		self.w.runButton3 = vanilla.Button((spaceX, spaceY*3+buttonSizeY*2, buttonSizeX, buttonSizeY), "3 🔓 🔓 Unlock Both ", sizeStyle='regular', callback=self.KerningExceptionMain )
+		self.w.runButton4 = vanilla.Button((spaceX, spaceY*4+buttonSizeY*3, buttonSizeX, buttonSizeY), "4 🔒 🔒 Lock Both ", sizeStyle='regular', callback=self.KerningExceptionMain )
 
 		# Assign keyboard shortcuts
 		self.w.runButton1.bind('1', [])
@@ -70,9 +71,9 @@ class KerningException( object ):
 				Glyphs.displayDialog_('Text cursor should be between the pair you want to make an exception!')
 
 			self.w.close() # delete if you want window to stay open
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Kerning Exception Error: %s" % e
+			print("Kerning Exception Error: %s" % e)
 
 KerningException()

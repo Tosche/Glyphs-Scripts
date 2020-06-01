@@ -1,5 +1,6 @@
 #MenuTitle: Report Glyphs with Acute-angled Node
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Reports glyphs that have nodes with very acute angle (default: less than 15 degrees).
 """
@@ -41,7 +42,7 @@ def compareAngle(node1, node2, node3):
 		return False
 
 Glyphs.clearLog()
-print "Following glyphs have a very acute corner point, at less than %s degrees:" % checkAngle
+print("Following glyphs have a very acute corner point, at less than %s degrees:" % checkAngle)
 
 def process(thisLayer):
 	for thisPath in thisLayer.paths:
@@ -53,7 +54,7 @@ def process(thisLayer):
 					nodeBefore = thisPath.nodes[i-1]
 					nodeAfter = thisPath.nodes[i+1]
 					if compareAngle(nodeBefore, node, nodeAfter):
-						print "%s in %s" % (thisLayer.parent.name, thisMaster.name)
+						print("%s in %s" % (thisLayer.parent.name, thisMaster.name))
 						return
 
 for thisGlyph in thisFont.glyphs:

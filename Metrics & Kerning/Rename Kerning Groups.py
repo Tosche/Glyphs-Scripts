@@ -1,5 +1,6 @@
 #MenuTitle: Rename Kerning Groups...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Lets you rename kerning names and pairs associated with them. 
 """
@@ -74,8 +75,8 @@ class RenameKerningGroups( object ):
 				self.w.popup.setItems(sorted(groupsL))
 			elif self.w.radio.get() == 1:
 				self.w.popup.setItems(sorted(groupsR))
-		except Exception, e:
-			print "Rename Kerning Group Error (switchList): %s" % e
+		except Exception as e:
+			print("Rename Kerning Group Error (switchList): %s" % e)
 
 	def RenameKerningGroupsMain( self, sender ):
 		try:
@@ -119,9 +120,9 @@ class RenameKerningGroups( object ):
 						if thisPair[0] == "@MMK_L_"+popup:
 							thisPair[0] = "@MMK_L_"+newName
 	
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Rename Kerning Group Error (RenameKerningGroupsMain): %s" % e
+			print("Rename Kerning Group Error (RenameKerningGroupsMain): %s" % e)
 
 RenameKerningGroups()

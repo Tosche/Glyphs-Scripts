@@ -1,5 +1,6 @@
 #MenuTitle: Set Kerning Groups (Lat-Grk-Cyr)
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Sets kerning groups. Groups Latin Greek and Cyrillic together. I advise you use Split Cross-Script Kerning script later.
 """
@@ -177,9 +178,9 @@ class SetKernPairs ( object ):
 				"Gje-cy" : ["UC_Stem", "UC_T"],
 				"Gheupturn-cy" : ["UC_Stem", "UC_T"],
 				"De-cy" : ["", "UC_StemTooth"],
-				"Ie-cy" : ["UC_Stem", "Stem_E"],
-				"Iegrave-cy" : ["UC_Stem", "Stem_E"],
-				"Io-cy" : ["UC_Stem", "Stem_E"],
+				"Ie-cy" : ["UC_Stem", "UC_E"],
+				"Iegrave-cy" : ["UC_Stem", "UC_E"],
+				"Io-cy" : ["UC_Stem", "UC_E"],
 				"Zhe-cy" : ["UC_Zhe", "UC_K"],
 				"Ze-cy" : ["UC_Ze", "UC_B"],
 				"Ii-cy" : ["UC_Stem", "UC_Stem"],
@@ -221,7 +222,7 @@ class SetKernPairs ( object ):
 				"Dje-cy" : ["UC_T", "UC_Softsign"],
 				"Fita-cy" : ["UC_Round", "UC_Round"],
 				"Izhitsa-cy" : ["UC_V", ""],
-				"Ghestroke-cy" : ["UC_Eth", "UC_Te"],
+				"Ghestroke-cy" : ["UC_Eth", "UC_T"],
 				"Ghemiddlehook-cy" : ["UC_Stem", ""],
 				"Zhedescender-cy" : ["UC_Zhe", "UC_K"],
 				"Zedescender-cy" : ["UC_Ze", "UC_B"],
@@ -423,17 +424,17 @@ class SetKernPairs ( object ):
 				"tcaron" : ["lc_t", "lc_t"],
 				"tcedilla" : ["lc_t", "lc_t"],
 				"tcommaaccent" : ["lc_t", "lc_t"],
-				"u" : ["lc_u", "lc_u"],
-				"uacute" : ["lc_u", "lc_u"],
-				"ubreve" : ["lc_u", "lc_u"],
-				"ucircumflex" : ["lc_u", "lc_u"],
-				"udieresis" : ["lc_u", "lc_u"],
-				"ugrave" : ["lc_u", "lc_u"],
-				"uhungarumlaut" : ["lc_u", "lc_u"],
-				"umacron" : ["lc_u", "lc_u"],
-				"uogonek" : ["lc_u", "lc_u"],
-				"uring" : ["lc_u", "lc_u"],
-				"utilde" : ["lc_u", "lc_u"],
+				"u" : ["lc_u", "lc_ShortStem"],
+				"uacute" : ["lc_u", "lc_ShortStem"],
+				"ubreve" : ["lc_u", "lc_ShortStem"],
+				"ucircumflex" : ["lc_u", "lc_ShortStem"],
+				"udieresis" : ["lc_u", "lc_ShortStem"],
+				"ugrave" : ["lc_u", "lc_ShortStem"],
+				"uhungarumlaut" : ["lc_u", "lc_ShortStem"],
+				"umacron" : ["lc_u", "lc_ShortStem"],
+				"uogonek" : ["lc_u", "lc_ShortStem"],
+				"uring" : ["lc_u", "lc_ShortStem"],
+				"utilde" : ["lc_u", "lc_ShortStem"],
 				"v" : ["lc_vwy", "lc_vwy"],
 				"w" : ["lc_vwy", "lc_vwy"],
 				"wacute" : ["lc_vwy", "lc_vwy"],
@@ -685,7 +686,7 @@ class SetKernPairs ( object ):
 				"oslashacute" : ["lc_Round", "lc_Round"],
 				"otilde" : ["lc_Round", "lc_Round"],
 				"oe" : ["lc_Round", "lc_e"],
-				"p" : ["", "lc_Round"],
+				"p" : ["lc_p", "lc_Round"],
 				"thorn" : ["", "lc_Round"],
 				"q" : ["lc_Round", ""],
 				"r" : ["lc_ShortStem", "lc_r"],
@@ -756,8 +757,8 @@ class SetKernPairs ( object ):
 				"er-cy" : ["lc_p", "lc_Round"],
 				"es-cy" : ["lc_Round", "lc_c"],
 				"te-cy" : ["lc_ShortStem", "lc_Shoulder"],
-				"u-cy" : ["lc_vwy", "lc_vwy"],
-				"ushort-cy" : ["lc_vwy", "lc_vwy"],
+				"u-cy" : ["lc_y", "lc_y"],
+				"ushort-cy" : ["lc_y", "lc_y"],
 				"ef-cy" : ["lc_Round", "lc_Round"],
 				"ha-cy" : ["lc_x", "lc_x"],
 				"che-cy" : ["lc_che", "lc_ShortStem"],
@@ -771,9 +772,11 @@ class SetKernPairs ( object ):
 				"yeru-cy" : ["lc_i", "lc_ShortStem"],
 				"lje-cy" : ["lc_el", "lc_softsign"],
 				"nje-cy" : ["lc_ShortStem", "lc_softsign"],
+				"dze-cy" : ["lc_s", "lc_s"],
 				"ereversed-cy" : ["lc_ereversed", "lc_Round"],
 				"e-cy" : ["lc_Round", "lc_c"],
 				"yi-cy" : ["lc_i", "lc_ShortStem"],
+				"je-cy" : ["lc_j", "lc_j"],
 				"i-cy" : ["lc_i", "lc_ShortStem"],
 				"tshe-cy" : ["lc_LongStem", "lc_Shoulder"],
 				"iu-cy" : ["lc_ShortStem", "lc_Round"],
@@ -794,8 +797,8 @@ class SetKernPairs ( object ):
 				"haabkhasian-cy" : ["lc_Round", ""],
 				"esdescender-cy" : ["lc_Round", "lc_c"],
 				"tedescender-cy" : ["lc_ShortStem", "lc_ShoulderTooth"],
-				"ustrait-cy" : ["lc_ustait", "lc_ustait"],
-				"ustraitstroke-cy" : ["lc_ustait", "lc_ustait"],
+				"ustrait-cy" : ["lc_ustrait", "lc_ustrait"],
+				"ustraitstroke-cy" : ["lc_ustrait", "lc_ustrait"],
 				"hadescender-cy" : ["lc_x", "lc_x"],
 				"chedescender-cy" : ["lc_che", "lc_StemTooth"],
 				"cheverticalstroke-cy" : ["lc_che", "lc_ShortStem"],
@@ -848,8 +851,8 @@ class SetKernPairs ( object ):
 				"comma" : ["MSC_period", "MSC_period"],
 				"ellipsis" : ["MSC_period", "MSC_period"],
 				"period" : ["MSC_period", "MSC_period"],
-				"exclam" : ["MSC_exclam", "MSC_eclam"],
-				"exclamdouble" : ["MSC_exclam", "MSC_eclam"],
+				"exclam" : ["MSC_exclam", "MSC_exclam"],
+				"exclamdouble" : ["MSC_exclam", "MSC_exclam"],
 				"quotedbl" : ["MSC_VertQuote", "MSC_VertQuote"],
 				"quotesingle" : ["MSC_VertQuote", "MSC_VertQuote"],
 				"semicolon" : ["MSC_colon", "MSC_colon"],
@@ -918,7 +921,7 @@ class SetKernPairs ( object ):
 							thisFont.glyphs[key.lower()].setLeftKerningGroup_(groupsUC[key][0])
 							thisFont.glyphs[key.lower()].setRightKerningGroup_(groupsUC[key][1])
 						except:
-							print key.lower()
+							print(key.lower())
 
 			for key in groupsMS:
 				if thisFont.glyphs[key] and isNeeded[key]:
@@ -943,9 +946,9 @@ class SetKernPairs ( object ):
 					
 			
 			self.w.close() # delete if you want window to stay open
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print " SetKernPairsMain Error: %s" % e
+			print(" SetKernPairsMain Error: %s" % e)
 
 SetKernPairs()

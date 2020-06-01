@@ -1,5 +1,6 @@
 #MenuTitle: Export InDesign Tagged Text with All Glyphs...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID. This is a better solution than generating ss20 feature.
 """
@@ -32,7 +33,7 @@ class ExportInDesignTaggedText( object ):
 		except:
 			location = "Documents folder"
 
-		instruction = u'''Instruction:
+		instruction = '''Instruction:
 
 1. Export button will save the text file(s) in %s (overwites existing ones).
 
@@ -59,7 +60,7 @@ class ExportInDesignTaggedText( object ):
 		
 		# Load Settings:
 		if not self.LoadPreferences():
-			print "Note: 'Export InDesign Tagged Text.py' could not load preferences. Will resort to defaults"
+			print("Note: 'Export InDesign Tagged Text.py' could not load preferences. Will resort to defaults")
 		
 		self.checkBoxes(self.w.unicodeCheck)
 
@@ -95,7 +96,7 @@ class ExportInDesignTaggedText( object ):
 				self.w.breakCheck.enable(False)
 				self.w.breakCheck.set(False)
 		if not self.SavePreferences( self ):
-			print "Note: 'Export InDesign Tagged Text' could not write preferences."
+			print("Note: 'Export InDesign Tagged Text' could not write preferences.")
 
 	def ExportInDesignTaggedTextMain( self, sender ):
 		try:
@@ -178,11 +179,11 @@ class ExportInDesignTaggedText( object ):
 			subprocess.call(["open", "-R", filePath]) # show the tagged text in the Finder
 
 			if not self.SavePreferences( self ):
-				print "Note: 'Export InDesign Tagged Text' could not write preferences."
+				print("Note: 'Export InDesign Tagged Text' could not write preferences.")
 			
 			self.w.close()
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Export InDesign Tagged Text .py Error: %s" % e
+			print("Export InDesign Tagged Text .py Error: %s" % e)
 
 ExportInDesignTaggedText()

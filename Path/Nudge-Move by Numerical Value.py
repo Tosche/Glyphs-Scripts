@@ -1,5 +1,6 @@
 #MenuTitle: Nudge-move by Numerical Value...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Nudge-moves selected nodes by the values specified in the window. Vanilla required.
 """
@@ -51,16 +52,16 @@ class ParametricEstimated( object ):
 		self.w.slY = vanilla.Slider( (spX*2+txX+edX, spY*2+txY, -spX, edY), sizeStyle='small', minValue=0, maxValue=50, value=10, callback=self.sliderChange)
 
 		# Run Button:
-		self.w.tl = vanilla.SquareButton((spX, spY*3+txY*2, btnX, btnY), u"↖", sizeStyle='small', callback=self.nudgeMove )
-		self.w.l = vanilla.SquareButton((spX, spY*4+txY*2+btnY, btnX, btnY), u"←", sizeStyle='small', callback=self.nudgeMove )
-		self.w.dl = vanilla.SquareButton((spX, spY*5+txY*2+btnY*2, btnX, btnY), u"↙", sizeStyle='small', callback=self.nudgeMove )
+		self.w.tl = vanilla.SquareButton((spX, spY*3+txY*2, btnX, btnY), "↖", sizeStyle='small', callback=self.nudgeMove )
+		self.w.l = vanilla.SquareButton((spX, spY*4+txY*2+btnY, btnX, btnY), "←", sizeStyle='small', callback=self.nudgeMove )
+		self.w.dl = vanilla.SquareButton((spX, spY*5+txY*2+btnY*2, btnX, btnY), "↙", sizeStyle='small', callback=self.nudgeMove )
 
-		self.w.t = vanilla.SquareButton((spX*2+btnX, spY*3+txY*2, btnX, btnY), u"↑", sizeStyle='small', callback=self.nudgeMove )
-		self.w.d = vanilla.SquareButton((spX*2+btnX, spY*5+txY*2+btnY*2, btnX, btnY), u"↓", sizeStyle='small', callback=self.nudgeMove )
+		self.w.t = vanilla.SquareButton((spX*2+btnX, spY*3+txY*2, btnX, btnY), "↑", sizeStyle='small', callback=self.nudgeMove )
+		self.w.d = vanilla.SquareButton((spX*2+btnX, spY*5+txY*2+btnY*2, btnX, btnY), "↓", sizeStyle='small', callback=self.nudgeMove )
 
-		self.w.tr = vanilla.SquareButton((spX*3+btnX*2, spY*3+txY*2, btnX, btnY), u"↗", sizeStyle='small', callback=self.nudgeMove )
-		self.w.r = vanilla.SquareButton((spX*3+btnX*2, spY*4+txY*2+btnY, btnX, btnY), u"→", sizeStyle='small', callback=self.nudgeMove )
-		self.w.dr = vanilla.SquareButton((spX*3+btnX*2, spY*5+txY*2+btnY*2, btnX, btnY), u"↘", sizeStyle='small', callback=self.nudgeMove )
+		self.w.tr = vanilla.SquareButton((spX*3+btnX*2, spY*3+txY*2, btnX, btnY), "↗", sizeStyle='small', callback=self.nudgeMove )
+		self.w.r = vanilla.SquareButton((spX*3+btnX*2, spY*4+txY*2+btnY, btnX, btnY), "→", sizeStyle='small', callback=self.nudgeMove )
+		self.w.dr = vanilla.SquareButton((spX*3+btnX*2, spY*5+txY*2+btnY*2, btnX, btnY), "↘", sizeStyle='small', callback=self.nudgeMove )
 
 		self.LoadPreferences()
 
@@ -90,9 +91,9 @@ class ParametricEstimated( object ):
 		try:
 			self.w.edX.set(int(self.w.slX.get()))
 			self.w.edY.set(int(self.w.slY.get()))
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Nudge-Move By Numerical Value... Error (sliderChange): %s" % e
+			print("Nudge-Move By Numerical Value... Error (sliderChange): %s" % e)
 
 	def textChange( self, sender ):
 		try:
@@ -100,9 +101,9 @@ class ParametricEstimated( object ):
 			self.w.slX.set(edXvalue)
 			edYvalue = int(self.w.edY.get()) if self.w.edY.get() != "" else 0
 			self.w.slY.set(edYvalue)
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "Nudge-Move By Numerical Value... Error (textChange): %s" % e
+			print("Nudge-Move By Numerical Value... Error (textChange): %s" % e)
 
 	def nudge(self, onMv, off1, off2, onSt, offsetX, offsetY):
 		try:
@@ -135,10 +136,10 @@ class ParametricEstimated( object ):
 		
 			if distanceY2 != 0:
 				off2.y += (distanceY2/distanceY)*offsetY
-		except Exception, e:
+		except Exception as e:
 			pass
 			# Glyphs.showMacroWindow()
-			# print "Nudge-move by Numerical Value Error (nudge): %s" % e
+			# print("Nudge-move by Numerical Value Error (nudge): %s" % e)
 
 	def nudgeMove( self, sender ):
 		try:
@@ -215,11 +216,11 @@ class ParametricEstimated( object ):
 				Font.enableUpdateInterface()
 			
 			if not self.SavePreferences( self ):
-				print "Note: 'Nudge-move by Numerical Value' could not write preferences."
+				print("Note: 'Nudge-move by Numerical Value' could not write preferences.")
 			
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Nudge-move by Numerical Value Error: %s" % e
+			print("Nudge-move by Numerical Value Error: %s" % e)
 
 ParametricEstimated()

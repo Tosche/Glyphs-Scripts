@@ -1,11 +1,13 @@
-#MenuTitle: Display Unlocked Kerning Pairs
+ #MenuTitle: New Tab With Unlocked Kerning Pairs
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Shows unlocked kerning pairs (exceptions) in the edit view.
 String part done by Ben Jones, display part done by Toshi Omagari and Georg Seifert
 """
 
 import GlyphsApp
+from AppKit import NSAffineTransform, NSString
 
 Glyphs.clearLog()
 

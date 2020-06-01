@@ -1,5 +1,6 @@
 #MenuTitle: Split Lat-Grk-Cyr Kerning
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Splits kerning groups of LGC (Latin, Greek, Cyrillic) and reconstructs kerning accordingly.
 Kern once, split later.
@@ -46,7 +47,7 @@ groupsR_GCref = groupsR.copy()
 
 def duplicateGroup(group, left):
 	for key, item in group.iteritems():
-#		print key
+#		print(key)
 		groupCy = False
 		groupCyName = ""
 		groupGr = False
@@ -119,6 +120,8 @@ def splitToGC(givenPair, greek):
 			return None, None
 	except:
 		return None, None
+
+# print(newKernDic)
 
 for key, item in newKernDic.iteritems():
 	for thisPair in item:

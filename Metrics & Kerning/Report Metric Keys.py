@@ -1,5 +1,6 @@
 #MenuTitle: Report Metric Keys...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Reports possibly wrong keys. It reports non-existent glyphs in the keys, glyphs using different keys in each layer, and nested keys. Vanilla required.
 """
@@ -56,8 +57,8 @@ class ReportMetricKeys( object ):
 		Glyphs.clearLog()
 		thisFont.disableUpdateInterface()
 
-		print 'Following glyphs use non-existent glyphs as their metric keys.\nPlease fix it manually, or use "Find and Replace in Metric Keys" script by https://github.com/mekkablue/Glyphs-Scripts\n'
-		print "\nLeft Sidebearing\n"
+		print('Following glyphs use non-existent glyphs as their metric keys.\nPlease fix it manually, or use "Find and Replace in Metric Keys" script by https://github.com/mekkablue/Glyphs-Scripts\n')
+		print("\nLeft Sidebearing\n")
 		try:
 			for thisGlyph in thisFont.glyphs:
 				for thisLayer in thisGlyph.layers:
@@ -69,9 +70,9 @@ class ReportMetricKeys( object ):
 					else:
 						cleanKeyNameL = keyCleaner(thisLayerKeyL)
 						if not thisFont.glyphs[ cleanKeyNameL ]:
-							print "%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameL)
+							print("%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameL))
 
-			print "\nRight Sidebearing\n"
+			print("\nRight Sidebearing\n")
 			for thisGlyph in thisFont.glyphs:
 				for thisLayer in thisGlyph.layers:
 					thisLayerKeyR = thisLayer.rightMetricsKeyUI()
@@ -82,9 +83,9 @@ class ReportMetricKeys( object ):
 					else:
 						cleanKeyNameR = keyCleaner(thisLayerKeyR)
 						if not thisFont.glyphs[ cleanKeyNameR ]:
-							print "%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameR)
+							print("%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameR))
 
-			print "\nWidth\n"
+			print("\nWidth\n")
 			for thisGlyph in thisFont.glyphs:
 				for thisLayer in thisGlyph.layers:
 					thisLayerKeyW = thisLayer.widthMetricsKeyUI()
@@ -95,11 +96,11 @@ class ReportMetricKeys( object ):
 					else:
 						cleanKeyNameW = keyCleaner(thisLayerKeyW)
 						if not thisFont.glyphs[ cleanKeyNameW ]:
-							print "%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameW)
+							print("%s in %s: %s" % (thisGlyph.name, thisLayer.name, cleanKeyNameW))
 
-			print "Done."
-		except Exception, e:
-			print "reportInvalid error", e
+			print("Done.")
+		except Exception as e:
+			print("reportInvalid error", e)
 
 		thisFont.enableUpdateInterface()
 		Glyphs.showMacroWindow()
@@ -121,8 +122,8 @@ class ReportMetricKeys( object ):
 
 		thisFont.disableUpdateInterface()
 		Glyphs.clearLog()
-		print "Following glyphs use different types or logics of metric key in each master. Note that this inconsistency is not necessarily a bad thing (you might have done so for a good reason).\n"
-		print "\nLeft Sidebearing\n"
+		print("Following glyphs use different types or logics of metric key in each master. Note that this inconsistency is not necessarily a bad thing (you might have done so for a good reason).\n")
+		print("\nLeft Sidebearing\n")
 		try:
 			for thisGlyph in thisFont.glyphs:
 				thisGlyphKeyCategoryL = []
@@ -133,14 +134,14 @@ class ReportMetricKeys( object ):
 				# Removing non-master layers. A bit inefficient, but I don't know how to improve yet.
 				del thisGlyphKeyCategoryL[numberOfMasters:]
 				if not listCheck(thisGlyphKeyCategoryL):
-					print thisGlyph.name
+					print(thisGlyph.name)
 					j=0
 					for i in thisGlyphKeyCategoryL:
 						thisMaster = thisFont.masters[j]
-						print "\t%s:\t\t%s" %( thisMaster.name, i)
+						print("\t%s:\t\t%s" %( thisMaster.name, i))
 						j = j+1
 
-			print "\nRight Sidebearing\n"
+			print("\nRight Sidebearing\n")
 			for thisGlyph in thisFont.glyphs:
 				thisGlyphKeyCategoryR = []
 				for thisLayer in thisGlyph.layers:
@@ -150,14 +151,14 @@ class ReportMetricKeys( object ):
 				# Removing non-master layers. A bit inefficient, but I don't know how to improve yet.
 				del thisGlyphKeyCategoryR[numberOfMasters:]
 				if not listCheck(thisGlyphKeyCategoryR):
-					print thisGlyph.name
+					print(thisGlyph.name)
 					j=0
 					for i in thisGlyphKeyCategoryR:
 						thisMaster = thisFont.masters[j]
-						print "\t%s:\t\t%s" %( thisMaster.name, i)
+						print("\t%s:\t\t%s" %( thisMaster.name, i))
 						j = j+1
 
-			print "\nWidth\n"
+			print("\nWidth\n")
 			for thisGlyph in thisFont.glyphs:
 				thisGlyphKeyCategoryW = []
 				for thisLayer in thisGlyph.layers:
@@ -167,16 +168,16 @@ class ReportMetricKeys( object ):
 				# Removing non-master layers. A bit inefficient, but I don't know how to improve yet.
 				del thisGlyphKeyCategoryW[numberOfMasters:]
 				if not listCheck(thisGlyphKeyCategoryW):
-					print thisGlyph.name
+					print(thisGlyph.name)
 					j=0
 					for i in thisGlyphKeyCategoryW:
 						thisMaster = thisFont.masters[j]
-						print "\t%s:\t\t%s" %( thisMaster.name, i)
+						print("\t%s:\t\t%s" %( thisMaster.name, i))
 						j = j+1
 
-			print "Done."
-		except Exception, e:
-			print "reportDifference error", e
+			print("Done.")
+		except Exception as e:
+			print("reportDifference error", e)
 		thisFont.enableUpdateInterface()
 		Glyphs.showMacroWindow()
 
@@ -234,83 +235,83 @@ class ReportMetricKeys( object ):
 			thisFont.disableUpdateInterface()
 			Glyphs.clearLog()
 
-			print "Following glyphs has at least one nesting of sidebearing keys in the current layer (it doesn't check all layers). Nesting should be avoided as much as possible, because Update Metrics command does not go all the way to the origin of the nest, and you have to update as many times as its depth. To fix this, it's advisable to use the last glyph that shows up in each nest.\n\nNested calculation, however, cannot be simplified when different operator types are involved (i.e. when [+-] and [*/] are mixed in the nest), so you might have to change it depending on the situation, or leave it and don't forget to update metrics several times.\n"
-			print "\nLeft Sidebearing\n"
+			print("Following glyphs has at least one nesting of sidebearing keys in the current layer (it doesn't check all layers). Nesting should be avoided as much as possible, because Update Metrics command does not go all the way to the origin of the nest, and you have to update as many times as its depth. To fix this, it's advisable to use the last glyph that shows up in each nest.\n\nNested calculation, however, cannot be simplified when different operator types are involved (i.e. when [+-] and [*/] are mixed in the nest), so you might have to change it depending on the situation, or leave it and don't forget to update metrics several times.\n")
+			print("\nLeft Sidebearing\n")
 			for thisGlyph in thisFont.glyphs:
 				thisGlyphKeyResultL = nestCheck(thisGlyph.name, "left")
 				if thisGlyphKeyResultL[0] == "care" and not "Component" in thisGlyphKeyResultL[1]:
 					resultL = nestCheck(thisGlyphKeyResultL[2], "left")
 					if resultL[0] == "care":
-						print thisGlyph.name
+						print(thisGlyph.name)
 						indent = "  > "
-						print indent + thisGlyphKeyResultL[1]
+						print(indent + thisGlyphKeyResultL[1])
 						indent += "> "
-						print indent + resultL[1]
+						print(indent + resultL[1])
 						resultL = nestCheck(resultL[2], "left")
 						if resultL[0] == "not":
-							print "%s%s (does not exist)" % (indent, resultL[1]) 
+							print("%s%s (does not exist)" % (indent, resultL[1]) )
 						while resultL[0] == "care":
 							indent += "> "
-							print "%s%s" % (indent, resultL[1])
+							print("%s%s" % (indent, resultL[1]))
 							resultL = nestCheck(resultL[2], "left")
 							if resultL[0] == "not":
-								print "%s%s (does not exist)" % (indent, resultL[1]) 
+								print("%s%s (does not exist)" % (indent, resultL[1]) )
 								break
 							if len(indent) >= 12:
-								print "  The reporter gave up. You probably have a loop."
+								print("  The reporter gave up. You probably have a loop.")
 								break
 
-			print "\nRight Sidebearing\n"
+			print("\nRight Sidebearing\n")
 			for thisGlyph in thisFont.glyphs:
 				thisGlyphKeyResultR = nestCheck(thisGlyph.name, "right")
 				if thisGlyphKeyResultR[0] == "care" and not "Component" in thisGlyphKeyResultR[1]:
 					resultR = nestCheck(thisGlyphKeyResultR[2], "right")
 					if resultR[0] == "care":
-						print thisGlyph.name
+						print(thisGlyph.name)
 						indent = "  > "
-						print indent + thisGlyphKeyResultR[1]
+						print(indent + thisGlyphKeyResultR[1])
 						indent += "> "
-						print indent + resultR[1]
+						print(indent + resultR[1])
 						resultR = nestCheck(resultR[2], "right")
 						if resultR[0] == "not":
-							print "%s%s (does not exist)" % (indent, resultR[1]) 
+							print("%s%s (does not exist)" % (indent, resultR[1]) )
 						while resultR[0] == "care":
 							indent += "> "
-							print "%s%s" % (indent, resultR[1])
+							print("%s%s" % (indent, resultR[1]))
 							resultR = nestCheck(resultR[2], "right")
 							if resultR[0] == "not":
-								print "%s%s (does not exist)" % (indent, resultR[1]) 
+								print("%s%s (does not exist)" % (indent, resultR[1]) )
 								break
 							if len(indent) >= 12:
-								print "  The reporter gave up. You probably have a loop."
+								print("  The reporter gave up. You probably have a loop.")
 								break
 
-			print "\nWidth\n"
+			print("\nWidth\n")
 			for thisGlyph in thisFont.glyphs:
 				thisGlyphKeyResultW = nestCheck(thisGlyph.name, "width")
 				if thisGlyphKeyResultW[0] == "care" and not "Component" in thisGlyphKeyResultW[1]:
 					resultW = nestCheck(thisGlyphKeyResultW[2], "width")
 					if resultW[0] == "care":
-						print thisGlyph.name
+						print(thisGlyph.name)
 						indent = "  > "
-						print indent + thisGlyphKeyResultW[1]
+						print(indent + thisGlyphKeyResultW[1])
 						indent += "> "
-						print indent + resultW[1]
+						print(indent + resultW[1])
 						resultW = nestCheck(resultW[2], "width")
 						if resultW[0] == "not":
-							print "%s%s (does not exist)" % (indent, resultW[1]) 
+							print("%s%s (does not exist)" % (indent, resultW[1]) )
 						while resultW[0] == "care":
 							indent += "> "
-							print "%s%s" % (indent, resultW[1])
+							print("%s%s" % (indent, resultW[1]))
 							resultW = nestCheck(resultW[2], "width")
 							if resultW[0] == "not":
-								print "%s%s (does not exist)" % (indent, resultW[1]) 
+								print("%s%s (does not exist)" % (indent, resultW[1]) )
 								break
 							if len(indent) >= 12:
-								print "  The reporter gave up. You probably have a loop."
+								print("  The reporter gave up. You probably have a loop.")
 								break
-		except Exception, e:
-			print "reportNest error", e
+		except Exception as e:
+			print("reportNest error", e)
 
 		Glyphs.showMacroWindow()
 

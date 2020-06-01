@@ -1,5 +1,6 @@
 #MenuTitle: Create .case alternate
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 Duplicates selected glyphs but as components, giving them .case suffix and the sidebearings. Ideal for making uppercase alternate signs. Modified from Mekkablue's "Create .ssXX glyph from current layer" script.
 """
@@ -42,7 +43,7 @@ def process( sourceLayer ):
 		targetGlyph.layers[thisMaster.id].components.append(sourceComponent)
 		targetGlyph.layers[thisMaster.id].setLeftMetricsKeyUI_(sourceGlyphName)
 		targetGlyph.layers[thisMaster.id].setRightMetricsKeyUI_(sourceGlyphName)
-	print "Created", targetGlyphName 
+	print("Created", targetGlyphName )
 	
 for thisLayer in selectedLayers:
 	process( thisLayer )

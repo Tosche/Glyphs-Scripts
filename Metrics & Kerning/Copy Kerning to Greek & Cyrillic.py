@@ -1,5 +1,6 @@
 #MenuTitle: Copy Kerning to Greek & Cyrillic...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Copies your Latin kerning to the common shapes of Greek and Cyrillic, including small caps, using predefined dictionary. Exceptions and absent glyphs are skipped. It's best used after finishing Latin kerning and before starting Cyrillic and Greek.
 """
@@ -40,7 +41,7 @@ class CopyKerningToGreekCyrillic( object ):
 
 		# Load Settings:
 		if not self.LoadPreferences():
-			print "Note: 'Copy kerning to Greek & Cyrillic (GUI)' could not load preferences. Will resort to defaults"
+			print("Note: 'Copy kerning to Greek & Cyrillic (GUI)' could not load preferences. Will resort to defaults")
 		
 		# Open window and focus on it:
 		self.w.open()
@@ -129,7 +130,7 @@ class CopyKerningToGreekCyrillic( object ):
 							elif leftKey in nonLetterGroupsL or (thisFont.glyphs[leftKey] and thisFont.glyphs[leftKey].category != "Letter"):
 								rightOfPair = leftKey
 							if isLeftLetter == True or isRightLetter == True:
-								print "  %s   %s   %s   %s" % (thisMaster.name, leftOfPair, rightOfPair, kernDic[thisMaster.id][rightKey][leftKey])
+								print("  %s   %s   %s   %s" % (thisMaster.name, leftOfPair, rightOfPair, kernDic[thisMaster.id][rightKey][leftKey]))
 								thisFont.setKerningForPair(thisMaster.id, leftOfPair, rightOfPair, kernDic[thisMaster.id][rightKey][leftKey])
 
 	def CopyKerningToGreekCyrillicMain( self, sender ):
@@ -138,7 +139,7 @@ class CopyKerningToGreekCyrillic( object ):
 			kernDic=thisFont.kerningDict()
 			thisFont.disableUpdateInterface()
 			Glyphs.clearLog()
-			print "Following pairs have been added or updated.\n"
+			print("Following pairs have been added or updated.\n")
 			# list of non-Letter kerning groups in a font.
 			nonLetterGroupsL = []
 			nonLetterGroupsR = []
@@ -150,14 +151,14 @@ class CopyKerningToGreekCyrillic( object ):
 					if thisGlyph.rightKerningGroup:
 						if not "@MMK_L_"+thisGlyph.rightKerningGroup in nonLetterGroupsR:
 							nonLetterGroupsR.append("@MMK_L_"+thisGlyph.rightKerningGroup)
-			print "Greek"
+			print("Greek")
 			for key1, value1 in Grk.iteritems():
 				try:
 					Grk[key1] = thisFont.glyphForUnicode_(value1).name
 				except:
 					pass
 			self.dupliKern(thisFont, kernDic, nonLetterGroupsL, nonLetterGroupsR, Grk)
-			print "Cyrillic"
+			print("Cyrillic")
 			if self.w.AllCapBox.get() == False:
 				if self.w.CursiveBox.get():
 					CyrDic = dict( CyrUC.items() + CyrLCCursive.items() )
@@ -177,12 +178,12 @@ class CopyKerningToGreekCyrillic( object ):
 			Glyphs.showMacroWindow()
 
 			if not self.SavePreferences( self ):
-				print "Note: 'Copy kerning to Greek & Cyrillic (GUI)' could not write preferences."
+				print("Note: 'Copy kerning to Greek & Cyrillic (GUI)' could not write preferences.")
 			
 			self.w.close() # delete if you want window to stay open
-		except Exception, e:
+		except Exception as e:
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
-			print "Copy kerning to Greek & Cyrillic (GUI) Error: %s" % e
+			print("Copy kerning to Greek & Cyrillic (GUI) Error: %s" % e)
 
 CopyKerningToGreekCyrillic()

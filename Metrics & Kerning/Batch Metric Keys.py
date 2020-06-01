@@ -1,5 +1,6 @@
 #MenuTitle: Batch Metric Keys...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Applies the specified logic of metrics key to the selected glyphs. Vanilla required.
 """
@@ -90,10 +91,10 @@ class BatchMetricKey( object ):
 		
 						# If the glyph doesn't exist:
 						else:
-							print "Found invalid LSB key while checking the key of %s" % thisGlyph.name
-					except Exception, e:
+							print("Found invalid LSB key while checking the key of %s" % thisGlyph.name)
+					except Exception as e:
 						Glyphs.showMacroWindow()
-						print "nestHuntL Error: %s" % e
+						print("nestHuntL Error: %s" % e)
 	
 				def nestHuntR( targetGlyphName ):
 					try:
@@ -130,10 +131,10 @@ class BatchMetricKey( object ):
 		
 						# If the glyph doesn't exist:
 						else:
-							print "Found invalid RSB key while checking the key of %s" % thisGlyph.name
-					except Exception, e:
+							print("Found invalid RSB key while checking the key of %s" % thisGlyph.name)
+					except Exception as e:
 						Glyphs.showMacroWindow()
-						print "nestHuntR Error: %s" % e
+						print("nestHuntR Error: %s" % e)
 	
 				# Set baseGlyphName for further nest hunting.
 				for thisLayer in thisFont.selectedLayers:
@@ -197,7 +198,7 @@ class BatchMetricKey( object ):
 								Qname = re.sub("q", "o", Qbefore)
 								glyphO = thisFont.glyphs[Qname]
 								numOfMasters = len(thisFont.masters)
-								thisGlyph.setWidth_(thisOWidth)
+								thisGlyph.setWidthMetricsKey_(Qname)
 							# Uses RSB as normal
 							elif baseGlyphName == "Q" and self.w.radioQ.get() == 1:
 								thisGlyph.setRightMetricsKey_(finalKeyR)
@@ -220,7 +221,7 @@ class BatchMetricKey( object ):
 					thisGlyph.endUndo()
 					thisFont.enableUpdateInterface()
 				self.w.close()
-		except Exception, e:
+		except Exception as e:
 			Glyphs.showMacroWindow()
-			print "BatchMetricKeyMain Error: %s" % e
+			print("BatchMetricKeyMain Error: %s" % e)
 BatchMetricKey()

@@ -1,12 +1,12 @@
 #MenuTitle: Transform Images with Proper Maths...
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, unicode_literals
 __doc__="""
 (GUI) Batch scale and move images in selected layers, using the maths you learned at school. Based on mekkablue's Transform Images script.
 """
 
 import vanilla
 import GlyphsApp
-import traceback
 
 class TransformImages( object ):
 	def __init__( self ):
@@ -79,29 +79,23 @@ class TransformImages( object ):
 			for thisLayer in selectedLayers:
 				thisImage = thisLayer.backgroundImage
 				if thisImage:
-					curPosX, curPosY, curSclX, curSclY = thisImage.transformStruct()[4], thisImage.transformStruct()[5], thisImage.transformStruct()[0], thisImage.transformStruct()[3]
-					print curPosX, curPosY, curSclX, curSclY
-
-					moveXfix, moveYfix, scaleXfix, scaleYfix  = self.w.move_X.get(), self.w.move_Y.get(), self.w.scale_X.get(), self.w.scale_Y.get()
-					if moveXfix == "": moveXfix = 0
-					if moveYfix == "": moveYfix = 0
-					if scaleXfix == "": scaleXfix = 0
-					if scaleYfix == "": scaleYfix = 0
-
+					#cur??? = current???
+					curPosX, curPosY= thisImage.transformStruct()[4], thisImage.transformStruct()[5]
+					curSclX, curSclY = thisImage.transformStruct()[0], thisImage.transformStruct()[3]
+					print(curPosX, curPosY, curSclX, curSclY)
 					if self.w.checkAbsolute.get() == True:
-						moveX, moveY = float(moveXfix), float(moveYfix)
-						scaleX, scaleY = float(scaleXfix)/100, float(scaleYfix)/100
+						moveX, moveY = self.w.move_X.get(), self.w.move_Y.get()
+						scaleX, scaleY = self.w.scale_X.get()/100, self.w.scale_Y.get()/100
 					else:
-						moveX, moveY = curPosX+float(moveXfix), curPosY+float(moveYfix)
-						scaleX, scaleY = curSclX+float(scaleXfix)/100, curSclY+float(scaleYfix)/100
-					print moveX, moveY, scaleX, scaleY
+						moveX, moveY = curPosX+self.w.move_X.get(), curPosY+self.w.move_Y.get()
+						scaleX, scaleY = curSclX+self.w.scale_X.get()/100, curSclY+self.w.scale_Y.get()/100
 					thisImage.setTransformStruct_( (scaleX, 0.0, 0.0, scaleY, moveX, moveY) )
 
 			if not self.SavePreferences( self ):
-				print "Note: could not write preferences."
+				print("Note: could not write preferences.")
 			
 			# self.w.close()
-		except Exception, e:
-			print traceback.format_exc()
+		except Exception as e:
+			raise e
 
 TransformImages()
