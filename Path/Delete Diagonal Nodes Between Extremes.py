@@ -12,7 +12,7 @@ f = Glyphs.font # frontmost font
 sel = f.selectedLayers # active layers of selected glyphs
 
 def deleteDiagonals( thisLayer ):
-	for p in thisLayer.paths:
+	for pathindex, p in enumerate(thisLayer.paths):
 		numOfNodes = len(p.nodes)
 		for i in range( -1, numOfNodes):
 			try:
@@ -36,7 +36,16 @@ def deleteDiagonals( thisLayer ):
 										atan2hi = math.atan2(iNode.y-hNode.y,iNode.x-hNode.x)
 										atan2ij = math.atan2(jNode.y-iNode.y,jNode.x-iNode.x)
 										if abs(atan2ij-atan2hi) < 0.1:
-											p.removeNodeCheckKeepShape_(iNode)
+											dupLayer = thisLayer.copy()
+											dupPath = dupLayer.paths[pathindex]
+											dupNode = dupPath.nodes[i]
+											dupPath.removeNodeCheckKeepShape_(dupNode)
+											nodesBefore = len(dupPath.nodes)
+											dupLayer.addInflectionPoints()
+											nodesAfter = len(dupPath.nodes)
+											
+											if (nodesBefore == nodesAfter):
+												p.removeNodeCheckKeepShape_(iNode)
 						except:
 							pass
 			except:
