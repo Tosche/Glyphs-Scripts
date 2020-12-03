@@ -160,60 +160,58 @@ class ParametricEstimated( object ):
 			Glyphs.displayDialog_withTitle_("You seem to have entered a value that is not a number. Period is fine.", "Numbers only!")
 
 		try:
-			Font = Glyphs.font # frontmost font
-			Font.disableUpdateInterface()
-			listOfSelectedLayers = Font.selectedLayers
-			for thisLayer in Font.selectedLayers:
-				glyph = thisLayer.parent
-				glyph.beginUndo()
-				for thisPath in thisLayer.paths:
-					numOfNodes = len(thisPath.nodes)
-					for i in range(numOfNodes):
-						node = thisPath.nodes[i]
-						if node in thisLayer.selection:
-							nodeBefore = thisPath.nodes[i-1]
-							if (nodeBefore != None) and (not nodeBefore in thisLayer.selection):
-								if nodeBefore.type == GSOFFCURVE: # if on-curve is the edge of selection
-									if thisPath.nodes[i-2].type == GSOFFCURVE:
-										oncurveMv = node
-										offcurve1 = nodeBefore
-										offcurve2 = thisPath.nodes[i-2]
-										oncurveSt = thisPath.nodes[i-3]
-										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
-									elif thisPath.nodes[i-2].type == GSCURVE: # if off-curve is the edge of selection
-										oncurveMv = thisPath.nodes[i+1]
-										offcurve1 = node
-										offcurve2 = nodeBefore
-										oncurveSt = thisPath.nodes[i-2]
-										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
+			f = Glyphs.font # frontmost font
+			f.disableUpdateInterface()
+			for l in f.selectedLayers:
+				g = l.parent
+				g.beginUndo()
+				for p in l.paths:
+					for n in p.nodes:
+						if n in l.selection:
+							nPrev = n.prevNode
+							if (nPrev != None) and (not nPrev in l.selection):
+								if nPrev.type == GSOFFCURVE: # if on-curve is the edge of selection
+									if nPrev.prevNode.type == GSOFFCURVE:
+										oncurveMv = n
+										offcurve1 = nPrev
+										offcurve2 = nPrev.prevNode
+										oncurveSt = offcurve2.prevNode
+									elif nPrev.prevNode.type == GSCURVE: # if off-curve is the edge of selection
+										oncurveMv = n.nextNode
+										offcurve1 = n
+										offcurve2 = nPrev
+										oncurveSt = nPrev.prevNode
 										node.x -= offsetX
 										node.y -= offsetY
 
-							nodeAfter = thisPath.nodes[i+1]
-							if (nodeAfter != None) and (not nodeAfter in thisLayer.selection):
-								if nodeAfter.type == GSOFFCURVE: # if on-curve is the edge of selection
-									if thisPath.nodes[i+2].type == GSOFFCURVE:
-										oncurveMv = node
-										offcurve1 = nodeAfter
-										offcurve2 = thisPath.nodes[i+2]
-										oncurveSt = thisPath.nodes[i+3]
-										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
-									elif thisPath.nodes[i+2].type == GSCURVE: # if off-curve is the edge of selection
-										thisPath.nodes[i-1].x -= offsetX
-										thisPath.nodes[i-1].y -= offsetY
-										oncurveMv = thisPath.nodes[i-1]
-										offcurve1 = node
-										offcurve2 = nodeAfter
-										oncurveSt = thisPath.nodes[i+2]
-										self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
-										thisPath.nodes[i-1].x += offsetX
-										thisPath.nodes[i-1].y += offsetY
-										node.x -= offsetX
-										node.y -= offsetY		
-							node.x += offsetX
-							node.y += offsetY
-				glyph.endUndo()
-				Font.enableUpdateInterface()
+									self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)
+
+							nNext = n.nextNode
+							if (nNext != None) and (not nNext in l.selection):
+								if nNext.type == GSOFFCURVE: # if on-curve is the edge of selection
+									if nNext.nextNode.type == GSOFFCURVE:
+										oncurveMv = n
+										offcurve1 = nNext
+										offcurve2 = nNext.nextNode
+										oncurveSt = offcurve2.nextNode
+									elif nNext.nextNode.type == GSCURVE: # if off-curve is the edge of selection
+										nPrev.x -= offsetX
+										nPrev.y -= offsetY
+										oncurveMv = nPrev
+										offcurve1 = n
+										offcurve2 = nNext
+										oncurveSt = nNext.nextNode
+										nPrev.x += offsetX
+										nPrev.y += offsetY
+										n.x -= offsetX
+										n.y -= offsetY
+
+									self.nudge(oncurveMv, offcurve1, offcurve2, oncurveSt, offsetX, offsetY)		
+							n.x += offsetX
+							n.y += offsetY
+
+				g.endUndo()
+				f.enableUpdateInterface()
 			
 			if not self.SavePreferences( self ):
 				print("Note: 'Nudge-move by Numerical Value' could not write preferences.")
