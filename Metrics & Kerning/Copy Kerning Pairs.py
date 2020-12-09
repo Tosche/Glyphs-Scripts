@@ -351,7 +351,7 @@ class CopyKerningPairs( object ):
 	def CopyKerningPairsMain( self, sender ):
 		try:
 			fMaster = f.selectedFontMaster
-			kernDic = f.kerningDict()
+			kernDic = f.kerning
 			newKernDic = {}
 			for thisMaster in f.masters:
 				kernList = []
