@@ -355,9 +355,11 @@ class CopyKerningPairs( object ):
 			newKernDic = {}
 			for thisMaster in f.masters:
 				kernList = []
-				for key1 in kernDic[thisMaster.id]: # Builing new kerning dictionary
-					for key2 in kernDic[thisMaster.id][key1]:
-						pairInList = [key1, key2, kernDic[thisMaster.id][key1][key2]]
+				masterKern = kernDic[thisMaster.id]
+				for key1 in masterKern.allKeys(): # Builing new kerning dictionary
+					leftKernDict = masterKern[key1]
+					for key2 in leftKernDict.allKeys():
+						pairInList = [key1, key2, leftKernDict[key2]]
 						kernList.append(pairInList)
 				newKernDic.update({thisMaster.id:kernList})
 
