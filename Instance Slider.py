@@ -10,35 +10,46 @@ import GlyphsApp
 from vanilla.dialogs import askYesNo
 from robofab.interface.all.dialogs import AskString
 from AppKit import NSNoBorder
+import traceback
 
 f = Glyphs.font
-if Glyphs.versionNumber > 2.5:
+if Glyphs.versionNumber >= 3:
+	av = []
+	# the list contains axis name, minimum, and maximum.
+	for i in range(len(f.axes)):
+		values = sorted([m.axes[i] for m in f.masters])
+		av.append([f.axes[i].name, min(values), max(values)])
+elif Glyphs.versionNumber > 2.5:
 	av = [[], [], [], [], [], []] # Axis Values, up to six supported in Glyphs 2.5
 	# the list contains axis name, minimum, and maximum.
 	for i in range(len(f.axes)):
 		values = sorted([ m.axes[i] for m in f.masters ])
 		av[i] += [ f.axes[i]["Name"], min(values), max(values) ]
-	av = [a for a in av if len(a)>0]
-
+	av = [a for a in av if len(a) > 0]
 while len(av) < 6:
-	av.append(["",0,10])
+	av.append(["", 0, 10])
 
 insList = []
 for ins in f.instances:
-	fn = ins.customParameters["familyName"] if ins.customParameters["familyName"] else f.familyName
 	insParameters = {
-		"Instance" : " ".join((fn, ins.name)),
+		"Instance" : ins.fullName,
 		"WeightY" : ins.customParameters["InterpolationWeightY"]
-		}
-	try:
-		insParameters[ av[0][0] ] = int(ins.interpolationWeight())
-		insParameters[ av[1][0] ] = int(ins.interpolationWidth())
-		insParameters[ av[2][0] ] = int(ins.interpolationCustom())
-		insParameters[ av[3][0] ] = int(ins.interpolationCustom1())
-		insParameters[ av[4][0] ] = int(ins.interpolationCustom2())
-		insParameters[ av[5][0] ] = int(ins.interpolationCustom3())
-	except:
-		pass
+	}
+	if Glyphs.versionNumber >= 3:
+		idx = 0
+		for a in av:
+			insParameters[a[0]] = ins.axes[idx]
+			idx += 1
+	else:
+		try:
+			insParameters[ av[0][0] ] = int(ins.interpolationWeight())
+			insParameters[ av[1][0] ] = int(ins.interpolationWidth())
+			insParameters[ av[2][0] ] = int(ins.interpolationCustom())
+			insParameters[ av[3][0] ] = int(ins.interpolationCustom1())
+			insParameters[ av[4][0] ] = int(ins.interpolationCustom2())
+			insParameters[ av[5][0] ] = int(ins.interpolationCustom3())
+		except:
+			pass
 	insList.append(insParameters)
 
 # replacing av minimum and maximum to slider minimum and maximum
@@ -225,15 +236,17 @@ class InstanceSlider( object ):
 			values = [int((v[1]+v[2])/2) for v in av]
 
 			if sender == self.w.add:
-				newInstance = GSInstance()
 				newInsName = AskString("Please name the new instance.", title="Creating New Instance")
+				if len(newInsName) == 0:
+					return
+				newInstance = GSInstance()
 				newInstance.active = True
 				newInstance.name = newInsName
 				newInstance.isItalic = False
 				newInstance.isBold = False
-				f.addInstance_(newInstance)
+				f.instances.append(newInstance)
 				newInstance.axes = values
-				newInsParameters = { "Instance": "%s %s" % (f.familyName, newInsName), "WeightY": None }
+				newInsParameters = { "Instance": newInstance.fullName, "WeightY": None }
 				for i in range(len(self.usedAxisElements)):
 					newInsParameters[self.usedAxisElements[i][0].get()] = int((av[i][1] + av[i][2])/2)
 				insList.append(newInsParameters)
@@ -241,8 +254,7 @@ class InstanceSlider( object ):
 			elif sender == self.w.delete:
 				if askYesNo("Deleting Instance", 'Are you sure you want to delete the selected instance?', alertStyle=1, parentWindow=None, resultCallback=None):
 					index = uiList.getSelection()[0]
-					f.removeInstance_
-					f.removeInstanceAtIndex_(index)
+					del f.instances[index]
 					del insList[index]
 					del uiList[index]
 				else:
