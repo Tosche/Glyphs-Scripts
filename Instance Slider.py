@@ -12,7 +12,14 @@ from robofab.interface.all.dialogs import AskString
 from AppKit import NSNoBorder
 
 f = Glyphs.font
-if Glyphs.versionNumber > 2.5:
+if Glyphs.versionNumber >= 3.0:
+	av = []
+	for i, axis in enumerate(f.axes):
+		values = [ m.axes[i] for m in f.masters ]
+		av.append( [ axis.name, min(values), max(values) ] )
+	av = [a for a in av if len(a)>0]
+	
+elif Glyphs.versionNumber > 2.5:
 	av = [[], [], [], [], [], []] # Axis Values, up to six supported in Glyphs 2.5
 	# the list contains axis name, minimum, and maximum.
 	for i in range(len(f.axes)):
@@ -31,12 +38,20 @@ for ins in f.instances:
 		"WeightY" : ins.customParameters["InterpolationWeightY"]
 		}
 	try:
-		insParameters[ av[0][0] ] = int(ins.interpolationWeight())
-		insParameters[ av[1][0] ] = int(ins.interpolationWidth())
-		insParameters[ av[2][0] ] = int(ins.interpolationCustom())
-		insParameters[ av[3][0] ] = int(ins.interpolationCustom1())
-		insParameters[ av[4][0] ] = int(ins.interpolationCustom2())
-		insParameters[ av[5][0] ] = int(ins.interpolationCustom3())
+		try:
+			# GLYPHS 3
+			for i, axis in enumerate(f.axes):
+				insParameters[ av[i][0] ] = int(ins.axes[i])
+		except:
+			# GLYPHS 2
+			insParameters[ av[0][0] ] = int(ins.interpolationWeight())
+			insParameters[ av[1][0] ] = int(ins.interpolationWidth())
+			insParameters[ av[2][0] ] = int(ins.interpolationCustom())
+			insParameters[ av[3][0] ] = int(ins.interpolationCustom1())
+			insParameters[ av[4][0] ] = int(ins.interpolationCustom2())
+			insParameters[ av[5][0] ] = int(ins.interpolationCustom3())
+			
+		
 	except:
 		pass
 	insList.append(insParameters)
@@ -182,25 +197,55 @@ class InstanceSlider( object ):
 	
 	def setupSliders(self, insIndex, uiList):
 		try:
-			instance = f.instances[insIndex]
-			f.currentTab.previewInstances = instance
-			axisCount = len(av)
+			try:
+				# GLYPHS 3
+				instance = f.instances[insIndex]
+				f.currentTab.previewInstances = instance
+				axisCount = len(av)
 
-			for i, els in enumerate(self.usedAxisElements):
-				els[1].set(int(insList[insIndex][av[i][0]]))
-				els[2].set(int(insList[insIndex][av[i][0]]))
+				for i, els in enumerate(self.usedAxisElements):
+					els[1].set(
+						int(
+							insList[insIndex][av[i][0]]
+							)
+						)
+					els[2].set(int(insList[insIndex][av[i][0]]))
 
-			if instance.customParameters["InterpolationWeightY"] != None:
-				self.w.checkY.set(True)
-				self.w.sliderY.show(True)
-				self.w.editY.show(True)
-				self.w.sliderY.set(uiList["WeightY"])
-				self.w.editY.set(int(uiList["WeightY"]))
-			else:
-				self.w.checkY.set(False)
-				self.w.sliderY.show(False)
-				self.w.editY.show(False)
-			Glyphs.redraw()
+				if instance.customParameters["InterpolationWeightY"] != None:
+					self.w.checkY.set(True)
+					self.w.sliderY.show(True)
+					self.w.editY.show(True)
+					self.w.sliderY.set(uiList["WeightY"])
+					self.w.editY.set(int(uiList["WeightY"]))
+				else:
+					self.w.checkY.set(False)
+					self.w.sliderY.show(False)
+					self.w.editY.show(False)
+				Glyphs.redraw()
+				
+			except:
+				
+				# GLYPHS 2
+				instance = f.instances[insIndex]
+				f.currentTab.previewInstances = instance
+				axisCount = len(av)
+
+				for i, els in enumerate(self.usedAxisElements):
+					els[1].set(int(insList[insIndex][av[i][0]]))
+					els[2].set(int(insList[insIndex][av[i][0]]))
+
+				if instance.customParameters["InterpolationWeightY"] != None:
+					self.w.checkY.set(True)
+					self.w.sliderY.show(True)
+					self.w.editY.show(True)
+					self.w.sliderY.set(uiList["WeightY"])
+					self.w.editY.set(int(uiList["WeightY"]))
+				else:
+					self.w.checkY.set(False)
+					self.w.sliderY.show(False)
+					self.w.editY.show(False)
+				Glyphs.redraw()
+				
 		except Exception as e:
 			print("setupSliders error:", e)
 		
