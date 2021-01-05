@@ -13,7 +13,10 @@ Glyphs.clearLog()
 
 font = Glyphs.font 
 
-kernDict = font.kerningDict()
+if Glyphs.versionNumber >= 3.0:
+	kernDict = font.kerning
+else:
+	kernDict = font.kerningDict()
 leftGroups = {}
 rightGroups = {}
 for g in font.glyphs:
