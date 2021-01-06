@@ -7,7 +7,7 @@ String part done by Ben Jones, display part done by Toshi Omagari and Georg Seif
 """
 
 import GlyphsApp
-from AppKit import NSAffineTransform, NSString
+from AppKit import NSAffineTransform, NSString, NSMutableAttributedString
 
 Glyphs.clearLog()
 
