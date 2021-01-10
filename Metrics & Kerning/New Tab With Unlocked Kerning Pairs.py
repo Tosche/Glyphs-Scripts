@@ -11,22 +11,23 @@ from AppKit import NSAffineTransform, NSString, NSMutableAttributedString
 
 Glyphs.clearLog()
 
-font = Glyphs.font 
+f = Glyphs.font
 
 if Glyphs.versionNumber >= 3.0:
-	kernDict = font.kerning
+	kernDict = f.kerning
 else:
-	kernDict = font.kerningDict()
+	kernDict = f.kerningDict()
+
+# make groupname:glyphname dictionaries.
 leftGroups = {}
 rightGroups = {}
-for g in font.glyphs:
+for g in f.glyphs:
 	if g.rightKerningGroup:
 		group_name = g.rightKerningGroupId()
 		try:
 			leftGroups[group_name].append(g.name)
 		except:
 			leftGroups[group_name] = [g.name]
-
 	if g.leftKerningGroup:
 		group_name = g.leftKerningGroupId()
 		try:
