@@ -39,23 +39,28 @@ left_members = dict((item, group) for group,sublist in leftGroups.items() for it
 right_members = dict((item, group) for group,sublist in rightGroups.items() for item in sublist)
 
 editString = NSMutableAttributedString.alloc().init()
-for m in font.masters:
+for m in f.masters:
 	pairs = set()
-	for left in kernDict[m.id].allKeys():
-		rights = kernDict[m.id][left]
-		for gn in rights:
-			if left in left_members.keys():
+	for L in kernDict[m.id].keys():
+		rights = kernDict[m.id][L]
+		if Glyphs.versionNumber >= 3.0 and L[0] != '@': # it's likely this is a glyph ID
+			L = f.glyphForId_(L).name # Glyphs 3 uses glyph ID for single glyphs, whereas 2 uses names
+		for R in rights.keys():
+			if Glyphs.versionNumber >= 3.0 and R[0] != '@':
+				R = f.glyphForId_(R).name
+			if L in left_members.keys(): # if left is a single glyph
 				try:
-					pairs.add('/{0}/{1}'.format(left, rightGroups[gn][0]))
+					pairs.add('/{0}/{1}'.format(L, rightGroups[R][0]))
 				except KeyError:
-					pairs.add('/{0}/{1}'.format(left, gn))
-			elif gn in right_members.keys():
+					pairs.add('/{0}/{1}'.format(L, R))
+			elif R in right_members.keys():
 				try:
-					pairs.add('/{0}/{1}'.format(leftGroups[left][0], gn))
+					pairs.add('/{0}/{1}'.format(leftGroups[L][0], R))
 				except KeyError:
-					pairs.add('/{0}/{1}'.format(left, gn))
+					pairs.add('/{0}/{1}'.format(L, R))
+
 	string = '  '.join(sorted(pairs))
-	charString = font.charStringFromDisplayString_(string)
+	charString = f.charStringFromDisplayString_(string)
 	string  = NSString.stringWithFormat_('%@\n%@\n\n', m.name, charString)
 	attribString = NSMutableAttributedString.alloc().initWithString_attributes_(string, { "GSLayerIdAttrib" : m.id })
 	editString.appendAttributedString_(attribString)
