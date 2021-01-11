@@ -68,7 +68,7 @@ class KerningException( object ):
 					ActiveLayer.setLeftKerningExeption_forLayer_(False, PrevLayer)
 					PrevLayer.setRightKerningExeption_forLayer_(False, ActiveLayer)
 			else:
-				Glyphs.displayDialog_('Text cursor should be between the pair you want to make an exception!')
+				Glyphs.displayDialog('Text cursor should be between the pair you want to make an exception!')
 
 			self.w.close() # delete if you want window to stay open
 		except Exception as e:
