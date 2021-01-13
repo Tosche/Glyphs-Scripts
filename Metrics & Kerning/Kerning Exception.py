@@ -48,27 +48,73 @@ class KerningException( object ):
 				else:
 					return True
 
-			font = Glyphs.font # frontmost font
+			f = Glyphs.font # frontmost font
 			View = Glyphs.currentDocument.windowController().activeEditViewController().graphicView()
-			ActiveLayer = View.activeLayer()
-			PrevLayer = View.cachedGlyphAtIndex_(View.activeIndex() - 1)
-#			HasExeption = ActiveLayer.leftKerningExeptionForLayer_(PrevLayer) # Returns 0 or 1
+			activeLayer = View.activeLayer()
+			prevLayer = View.cachedGlyphAtIndex_(View.activeIndex() - 1)
+			mID = activeLayer.associatedMasterId
 
-			if validLayer(ActiveLayer) and validLayer(PrevLayer):
+			prevGlyph = prevLayer.parent
+			activeGlyph = activeLayer.parent
+			prevGroup = "@MMK_L_" + prevLayer.parent.rightKerningGroup
+			activeGroup = "@MMK_R_" + activeLayer.parent.leftKerningGroup
+			value1, value2, value3, value4 = None, None, None, None
+
+			# if Glyphs.versionNumber >= 3.0:
+			# # kerning exception functions have been removed, so I need to check on my own
+			# # check the current state of kerning
+			# # maybe not necessary for now
+			# 	try:
+			# 		value1 = f.kerningForPair(mID, prevGroup, activeLayer)
+			# 	except:
+			# 		pass
+			# 	try:
+			# 		value2 = f.kerningForPair(m.id, prevLayer, activeGroup)
+			# 	except:
+			# 		pass
+			# 	try:
+			# 		value3 = f.kerningForPair(m.id, prevLayer, activeLayer)
+			# 	except:
+			# 		pass
+			# 	try:
+			# 		value4 = f.kerningForPair(m.id, prevGroup, activeGroup)
+			# 	except:
+			# 		pass
+
+			if validLayer(activeLayer) and validLayer(prevLayer):
 				if sender == self.w.runButton1: #Unlock Right
-					ActiveLayer.setLeftKerningExeption_forLayer_(True, PrevLayer)
-					PrevLayer.setRightKerningExeption_forLayer_(False, ActiveLayer)
+					if Glyphs.versionNumber >= 3.0:
+						print(mID, prevGroup, activeGroup)
+						f.setKerningForPair(mID, prevGroup, activeGlyph.name, 0)
+					else:
+						activeLayer.setLeftKerningExeption_forLayer_(True, prevLayer)
+						prevLayer.setRightKerningExeption_forLayer_(False, activeLayer)
 				elif sender == self.w.runButton2: #Unlock Left
-					ActiveLayer.setLeftKerningExeption_forLayer_(False, PrevLayer)
-					PrevLayer.setRightKerningExeption_forLayer_(True, ActiveLayer)
+					if Glyphs.versionNumber >= 3.0:
+						f.setKerningForPair(mID, prevGlyph.name, activeGroup, 0)
+					else:
+						activeLayer.setLeftKerningExeption_forLayer_(False, prevLayer)
+						prevLayer.setRightKerningExeption_forLayer_(True, activeLayer)
 				elif  sender == self.w.runButton3: #Unock Both
-					ActiveLayer.setLeftKerningExeption_forLayer_(True, PrevLayer)
-					PrevLayer.setRightKerningExeption_forLayer_(True, ActiveLayer)
+					if Glyphs.versionNumber >= 3.0:
+						f.setKerningForPair(mID, prevGlyph.name, activeGlyph.name, 0)
+					else:
+						activeLayer.setLeftKerningExeption_forLayer_(True, prevLayer)
+						prevLayer.setRightKerningExeption_forLayer_(True, activeLayer)
 				else: #Lock Both
-					ActiveLayer.setLeftKerningExeption_forLayer_(False, PrevLayer)
-					PrevLayer.setRightKerningExeption_forLayer_(False, ActiveLayer)
+					if Glyphs.versionNumber >= 3.0:
+						# Not sure which kern state, so try all
+						f.removeKerningForPair(mID, prevGroup, activeGlyph.name)
+						f.removeKerningForPair(mID, prevGlyph.name, activeGroup)
+						f.removeKerningForPair(mID, prevGlyph.name, activeGlyph.name)
+					else:
+						activeLayer.setLeftKerningExeption_forLayer_(False, prevLayer)
+						prevLayer.setRightKerningExeption_forLayer_(False, activeLayer)
 			else:
-				Glyphs.displayDialog_('Text cursor should be between the pair you want to make an exception!')
+				if Glyphs.versionNumber >= 3.0:
+					Glyphs.showNotification('Kerning Exception Error', 'Text cursor should be placed between two glyphs.')
+				else:
+					Glyphs.displayDialog('Text cursor should be placed between two glyphs.')
 
 			self.w.close() # delete if you want window to stay open
 		except Exception as e:
