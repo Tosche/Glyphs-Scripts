@@ -57,51 +57,50 @@ class ClearBackgroundsInSelectedLayers( object ):
 			
 	# 	return True
 
-	def clearBackground(self, sender, layer):
+	def clearBackground(self, layer):
 		try:
 			if self.w.pathCheck.get():
-				layer.background.paths = []
-		except:
-			pass
+				paths = [s for s in layer.background.shapes if type(s) == GSPath]
+				layer.background.removeShapes_(paths)
+		except Exception as e:
+			print("clearBackground error:", e)
 		try:
 			if self.w.compoCheck.get():
-				layer.background.components = []
-		except:
-			pass
+				compos = [s for s in layer.background.shapes if type(s) == GSComponent]
+				layer.background.removeShapes_(compos)
+		except Exception as e:
+			print("clearBackground error:", e)
 		try:
 			if self.w.anchorCheck.get():
 				layer.background.anchors = []
-		except:
-			pass
+		except Exception as e:
+			print("clearBackground error:", e)
 
 	def ClearBackgroundsInSelectedLayersMain( self, sender ):
 		try:
 			f = Glyphs.font # frontmost font
 			sel = f.selectedLayers # active layers of currently selected glyphs
 			where = self.w.radio.get()
-			pathCheck = self.w.pathCheck.get()
-			compoCheck = self.w.compoCheck.get()
-			anchorCheck = self.w.anchorCheck.get()
 			for l in sel: # loop through layers
 				if where == 0: # current master only
-					self.clearBackground(l)
+					self.clearBackground(gl)
 				else:
 					for gl in l.parent.layers:
 						if where == 1: # all master & special layers
-							if l.isMasterLayer or l.isSpecialLayer:
-								self.clearBackground(l)
+							if gl.isMasterLayer or gl.isSpecialLayer:
+								self.clearBackground(gl)
 						elif where == 2: # all backup layers
-							if l.isMasterLayer + l.isSpecialLayer == 0:
-								self.clearBackground(l)
-						else:
-							self.clearBackground(l)
+							if gl.isMasterLayer + gl.isSpecialLayer == 0:
+								self.clearBackground(gl)
+						else: # all layers
+							self.clearBackground(gl)
 						
 			# if not self.SavePreferences( self ):
 			# 	print("Note: 'Clear Backgrounds in Selected Layers...' could not write preferences.")
 			
 			self.w.close() # delete if you want window to stay open
-		except:
-			pass
+		except Exception as e:
+			print(e)
 			# brings macro window to front and reports error:
 			# Glyphs.showMacroWindow()/
 
