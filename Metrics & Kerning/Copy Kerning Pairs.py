@@ -216,7 +216,7 @@ class CopyKerningPairs( object ):
 			elif R0 == "":
 				if self.w.allMaster.get() == True:
 					for thisMaster in f.masters:
-						self.applyKern2(self, thisMaster, newKernDic, L0, R0, L1, R1)
+						self.applyKern2(thisMaster, newKernDic, L0, R0, L1, R1)
 				elif self.w.allMaster.get() == False:
 					self.applyKern2(f.selectedFontMaster, newKernDic, L0, R0, L1, R1)
 
@@ -351,7 +351,11 @@ class CopyKerningPairs( object ):
 	def CopyKerningPairsMain( self, sender ):
 		try:
 			fMaster = f.selectedFontMaster
-			kernDic = f.kerning
+
+			if Glyphs.versionNumber >= 3.0:
+				kernDic = f.kerningDictForDirection_(0)
+			else:
+				kernDic = f.kerningDict()
 			newKernDic = {}
 			for thisMaster in f.masters:
 				kernList = []
@@ -367,21 +371,21 @@ class CopyKerningPairs( object ):
 				editList = [self.w.tabs[0].editL0.get(), self.w.tabs[0].editR0.get(), self.w.tabs[0].editL1.get(), self.w.tabs[0].editR1.get()]
 				checkList = [self.w.tabs[0].checkL0.get(), self.w.tabs[0].checkR0.get(), self.w.tabs[0].checkL1.get(), self.w.tabs[0].checkR1.get()]
 				if editList[0] == editList[1] == "":
-					Glyphs.displayDialog_('You cannot leave both sides of the pair as "Any."')
+					Glyphs.showAlert_message_OKButton_("Invalid input", 'You cannot leave both sides of the pair as "Any."', 'OK')
 				elif (editList[0] =="" and editList[2] != "") or (editList[0] !="" and editList[2] == "") or (editList[1] =="" and editList[3] != "") or (editList[1] !="" and editList[3] == ""):
-					Glyphs.displayDialog_('"Any" should only be allowed on either side. And if the source pair consists of "Any", the same side of the destination should also be "Any".')
+					Glyphs.showAlert_message_OKButton_("Invalid input", '"Any" should only be allowed on either side. And if the source pair consists of "Any", the same side of the destination should also be "Any".', 'OK')
 				elif "?" in checkList:
-					Glyphs.displayDialog_("Please make sure the glyphs or groups exists. (Eliminate ?)")
+					Glyphs.showAlert_message_OKButton_("Invalid input", 'Please make sure the glyphs or groups exists. (Eliminate ?)', 'OK')
 				# When there's no problem in the font
 				else:
 					if editList[0] == editList[2] == "" or editList[1] == editList[3] == "":
 						if editList[1] == editList[3] !="" or editList[0] == editList[2] !="":
-							Glyphs.displayDialog_("Source and destination are the same.")
+							Glyphs.showAlert_message_OKButton_("Invalid input", 'Source and destination are the same.', 'OK')
 						else:
 							self.dupliKernPair(newKernDic, editList[0], editList[1], editList[2], editList[3])
 					else:
 						if editList[0] == editList[2] and editList[1] == editList[3]:
-							Glyphs.displayDialog_("Source and destination are the same.")
+							Glyphs.showAlert_message_OKButton_("Invalid input", 'Source and destination are the same.', 'OK')
 						else:
 							self.dupliKernPair(newKernDic, editList[0], editList[1], editList[2], editList[3])
 
@@ -463,7 +467,7 @@ class CopyKerningPairs( object ):
 
 				else: # If it's an Number preset
 					if self.w.tabs[1].popNum1.get() == self.w.tabs[1].popNum2.get():
-						Glyphs.displayDialog_("You cannot set the same group as source and destination.")
+						print("You cannot set the same group as source and destination.")
 					else:
 						numDic = {}
 						miscDic = {}
