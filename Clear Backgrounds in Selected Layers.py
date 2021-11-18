@@ -83,7 +83,7 @@ class ClearBackgroundsInSelectedLayers( object ):
 			where = self.w.radio.get()
 			for l in sel: # loop through layers
 				if where == 0: # current master only
-					self.clearBackground(gl)
+					self.clearBackground(l)
 				else:
 					for gl in l.parent.layers:
 						if where == 1: # all master & special layers
