@@ -8,76 +8,72 @@ Kern once, split later.
 
 import GlyphsApp
 
-font = Glyphs.font # frontmost font
-fontMaster = font.selectedFontMaster # active master
-selectedLayers = font.selectedLayers # active layers of selected glyphs
-thisDoc = Glyphs.currentDocument
+f = Glyphs.font # frontmost f
 
-font.disableUpdateInterface() # suppresses UI updates in Font View
+f.disableUpdateInterface() # suppresses UI updates in f View
 Glyphs.clearLog()
 
-kernDic = font.kerningDict()				
+kernDic = f.kerningDictForDirection_(0)
 newKernDic = {}
-for thisMaster in font.masters:
+for m in f.masters:
 	kernList = []
-	for key1 in kernDic[thisMaster.id]:
-		for key2 in kernDic[thisMaster.id][key1]:
-			pairInList = [key1, key2, kernDic[thisMaster.id][key1][key2]]
+	for l, rs in kernDic[m.id].items():
+		for r, v in rs.items():
+			pairInList = [l, r, v]
 			kernList.append(pairInList)
-		newKernDic[thisMaster.id] = kernList
+		newKernDic[m.id] = kernList
 
 # dictionary of groups, each value containg a list of glyphs involved.
 # groupsL/R[groupName][glyph, glyph, glyph...]
 groupsL = {}
 groupsR = {}
-for thisGlyph in font.glyphs:
-	if thisGlyph.category == "Letter":
-		if thisGlyph.leftKerningGroupId() != None:
-			if not thisGlyph.leftKerningGroupId() in groupsR:
-				groupsR[thisGlyph.leftKerningGroupId()] = []
-			groupsR[thisGlyph.leftKerningGroupId()].append(thisGlyph.name)
+for g in f.glyphs:
+	if g.category == "Letter":
+		if g.leftKerningGroupId() != None:
+			if not g.leftKerningGroupId() in groupsR:
+				groupsR[g.leftKerningGroupId()] = []
+			groupsR[g.leftKerningGroupId()].append(g.name)
 	
-		if thisGlyph.rightKerningGroupId() != None:
-			if not thisGlyph.rightKerningGroupId() in groupsL:
-				groupsL[thisGlyph.rightKerningGroupId()] = []
-			groupsL[thisGlyph.rightKerningGroupId()].append(thisGlyph.name)
+		if g.rightKerningGroupId() != None:
+			if not g.rightKerningGroupId() in groupsL:
+				groupsL[g.rightKerningGroupId()] = []
+			groupsL[g.rightKerningGroupId()].append(g.name)
 
 groupsL_GCref = groupsL.copy()
 groupsR_GCref = groupsR.copy()
 
 def duplicateGroup(group, left):
-	for key, item in group.iteritems():
-#		print(key)
+	for groupName, glyphNames in group.items():
 		groupCy = False
 		groupCyName = ""
 		groupGr = False
 		groupGrName = ""
-		for glyph in item:
-			if font.glyphs[glyph].script == "greek":
+		for gn in glyphNames:
+			if f.glyphs[gn].script == "greek":
 				if groupGr == False:
-					groupGrName = glyph
+					groupGrName = gn
 					groupGr = True
 				if left:
-					font.glyphs[glyph].setLeftKerningGroup_(groupGrName)
+					f.glyphs[gn].setLeftKerningGroup_(groupGrName)
 				else:
-					font.glyphs[glyph].setRightKerningGroup_(groupGrName)
-			elif font.glyphs[glyph].script == "cyrillic":
+					f.glyphs[gn].setRightKerningGroup_(groupGrName)
+			elif f.glyphs[gn].script == "cyrillic":
 				if groupCy == False:
-					groupCyName = glyph
+					groupCyName = gn
 					groupCy = True
 				if left:
-					font.glyphs[glyph].setLeftKerningGroup_(groupCyName)
+					f.glyphs[gn].setLeftKerningGroup_(groupCyName)
 				else:
-					font.glyphs[glyph].setRightKerningGroup_(groupCyName)
+					f.glyphs[gn].setRightKerningGroup_(groupCyName)
 		if left:
-			groupsR_GCref[key] = ["@MMK_R_"+groupGrName, "@MMK_R_"+groupCyName]
+			groupsR_GCref[groupName] = ["@MMK_R_"+groupGrName, "@MMK_R_"+groupCyName]
 		else:
-			groupsL_GCref[key] = ["@MMK_L_"+groupGrName, "@MMK_L_"+groupCyName]
+			groupsL_GCref[groupName] = ["@MMK_L_"+groupGrName, "@MMK_L_"+groupCyName]
 
 duplicateGroup(groupsL, False)
 duplicateGroup(groupsR, True)
 
-def splitToGC(givenPair, greek):
+def splitToGC(thePair, greek):
 	if greek == True: # if Greek
 		script = "greek"
 		bin = 0
@@ -85,32 +81,32 @@ def splitToGC(givenPair, greek):
 		script = "cyrillic"
 		bin = 1
 	try:
-		if givenPair[0] in groupsL_GCref or givenPair[1] in groupsR_GCref: # if either one of the pair uses group
+		if thePair[0] in groupsL_GCref or thePair[1] in groupsR_GCref: # if either one of the pair uses group
 			pairL = ""
 			pairR = ""
-			if givenPair[0] in groupsL_GCref:
-				if groupsL_GCref[givenPair[0]][bin] != "@MMK_L_":
-					pairL = groupsL_GCref[givenPair[0]][bin]
+			if thePair[0] in groupsL_GCref:
+				if groupsL_GCref[thePair[0]][bin] != "@MMK_L_":
+					pairL = groupsL_GCref[thePair[0]][bin]
 				else:
-					if font.glyphs[groupsL[givenPair[0]][0]].category != "Letter":
-						pairL = givenPair[0]
-			elif font.glyphs[givenPair[0]]:
-				if font.glyphs[givenPair[0]].script == script or font.glyphs[givenPair[0]].category != "Letter":
-					pairL = givenPair[0]
+					if f.glyphs[groupsL[thePair[0]][0]].category != "Letter":
+						pairL = thePair[0]
+			elif f.glyphs[thePair[0]]:
+				if f.glyphs[thePair[0]].script == script or f.glyphs[thePair[0]].category != "Letter":
+					pairL = thePair[0]
 			else:
-				pairL = givenPair[0]
+				pairL = thePair[0]
 
-			if givenPair[1] in groupsR_GCref:
-				if groupsR_GCref[givenPair[1]][bin] != "@MMK_R_":
-					pairR = groupsR_GCref[givenPair[1]][bin]
+			if thePair[1] in groupsR_GCref:
+				if groupsR_GCref[thePair[1]][bin] != "@MMK_R_":
+					pairR = groupsR_GCref[thePair[1]][bin]
 				else:
-					if font.glyphs[groupsR[givenPair[1]][0]].category != "Letter":
-						pairR = givenPair[1]
-			elif font.glyphs[givenPair[1]]:
-				if font.glyphs[givenPair[1]].script == script or font.glyphs[givenPair[1]].category != "Letter":
-					pairR = givenPair[1]
+					if f.glyphs[groupsR[thePair[1]][0]].category != "Letter":
+						pairR = thePair[1]
+			elif f.glyphs[thePair[1]]:
+				if f.glyphs[thePair[1]].script == script or f.glyphs[thePair[1]].category != "Letter":
+					pairR = thePair[1]
 			else:
-				pairR = givenPair[1]
+				pairR = thePair[1]
 
 			if pairL != "" and pairR != "":
 				return pairL, pairR
@@ -121,44 +117,43 @@ def splitToGC(givenPair, greek):
 	except:
 		return None, None
 
-# print(newKernDic)
 
-for key, item in newKernDic.iteritems():
-	for thisPair in item:
+for mID, pairs in newKernDic.items():
+	for thisPair in pairs:
 		newPairGL, newPairGR = splitToGC(thisPair, True) #Greek
 		newPairCL, newPairCR = splitToGC(thisPair, False) #Cyrillic
 		if newPairGL != None:
-			font.setKerningForPair(key, newPairGL, newPairGR, thisPair[2])
+			f.setKerningForPair(mID, newPairGL, newPairGR, thisPair[2])
 		if newPairCR != None:
-			font.setKerningForPair(key, newPairCL, newPairCR, thisPair[2])
+			f.setKerningForPair(mID, newPairCL, newPairCR, thisPair[2])
 		# will remove unncessary pairs, like Latin-Greek
 		necessityL = 0 # 0=Greek or Cyrillic, 1=non-letter, 2=Latin
 		necessityR = 0
 		if thisPair[0] in groupsL: # if left is some kind of letter group
-			if font.glyphs[groupsL[thisPair[0]][0]].script == "latin":
+			if f.glyphs[groupsL[thisPair[0]][0]].script == "latin":
 				necessityL = 2 # definitely Lain
-		elif font.glyphs[thisPair[0]]:
-			if font.glyphs[thisPair[0]].category == "Letter":
-				if font.glyphs[thisPair[0]].script == "latin":
+		elif f.glyphs[thisPair[0]]:
+			if f.glyphs[thisPair[0]].category == "Letter":
+				if f.glyphs[thisPair[0]].script == "latin":
 					necessityL = 2 # definitely Latin here!
-			elif font.glyphs[thisPair[0]].category != "Letter":
+			elif f.glyphs[thisPair[0]].category != "Letter":
 				necessityL = 1
 		else: # non-letter kerning group
 			necessityL = 1
 
 		if thisPair[1] in groupsR: # if right is some kind of letter group
-			if font.glyphs[groupsR[thisPair[1]][0]].script == "latin":
+			if f.glyphs[groupsR[thisPair[1]][0]].script == "latin":
 				necessityR = 2 
-		elif font.glyphs[thisPair[1]]:
-			if font.glyphs[thisPair[1]].category == "Letter":
-				if font.glyphs[thisPair[1]].script == "latin":
+		elif f.glyphs[thisPair[1]]:
+			if f.glyphs[thisPair[1]].category == "Letter":
+				if f.glyphs[thisPair[1]].script == "latin":
 					necessityR = 2
-			elif font.glyphs[thisPair[1]].category != "Letter":
+			elif f.glyphs[thisPair[1]].category != "Letter":
 				necessityR = 1
 		else:
 			necessityR = 1
 
 		if (necessityL == 0 or necessityR == 0) and (necessityL == 2 or necessityR == 2 ):
-			font.removeKerningForPair(key, thisPair[0], thisPair[1])
+			f.removeKerningForPair(mID, thisPair[0], thisPair[1])
 
-font.enableUpdateInterface() # re-enables UI updates in Font View
+f.enableUpdateInterface() # re-enables UI updates in f View
