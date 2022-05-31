@@ -295,8 +295,8 @@ class CopyKerningPairs( object ):
 						if pairList[i][0] == keyL and pairList[i][1] == keyR:
 							if int(abs(float(pairList[i][2])*scale)) >= int(skip):
 								theValue = int(round(float(pairList[i][2])*scale))
-								print("\t%s,  %s,  %s" % (dicL[keyL], dicR[keyR], theValue))
 								f.setKerningForPair(theMaster.id, dicL[keyL], dicR[keyR], theValue)
+								return "\t%s,  %s,  %s" % (dicL[keyL], dicR[keyR], theValue)
 		except Exception as e:
 			Glyphs.showMacroWindow()
 			print("Copy kerning Pairs Error (applyKernPreset): %s" % e)
@@ -304,10 +304,10 @@ class CopyKerningPairs( object ):
 	def dupliKernPreset(self, newKernDic, dic):
 		print("Following pairs have been added.\n")
 		try:
-
+			reportText = ''
 			dicL = {}
 			dicR = {}
-			for key, value in dic.iteritems():
+			for key, value in dic.items():
 				if f.glyphs[key]:
 					if f.glyphs[key].rightKerningGroup:
 						newKeyL = "@MMK_L_" + f.glyphs[key].rightKerningGroup
@@ -340,9 +340,11 @@ class CopyKerningPairs( object ):
 
 			if self.w.allMaster.get() == True:
 				for thisMaster in f.masters:
-					self.applyKernPreset(thisMaster, newKernDic, dicL, dicR)
+					newLine = self.applyKernPreset(thisMaster, newKernDic, dicL, dicR)
 			elif self.w.allMaster.get() == False:
-				self.applyKernPreset(f.selectedFontMaster, newKernDic, dicL, dicR)
+				newLine = self.applyKernPreset(f.selectedFontMaster, newKernDic, dicL, dicR)
+
+			reportText += '\n%s' % newLine
 
 		except Exception as e:
 			Glyphs.showMacroWindow()
@@ -489,7 +491,10 @@ class CopyKerningPairs( object ):
 								miscDic = self.miscSymbolDic("superscript")
 							elif self.w.tabs[1].popNum2.get() == 5:
 								miscDic = self.miscSymbolDic("subscript")
-						numFinalDic = dict(numDic.items() + miscDic.items())
+
+						numFinalDic ={}		
+						numFinalDic.update(numDic)
+						numFinalDic.update(miscDic)
 						# unfinished. at least the dictionary is done.
 						# Careful! it hasn't done glyph validity check yet!
 						self.dupliKernPreset(newKernDic, numFinalDic)
