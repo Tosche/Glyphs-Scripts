@@ -7,6 +7,7 @@ Kern once, split later.
 """
 
 import GlyphsApp
+# import traceback
 
 f = Glyphs.font # frontmost f
 

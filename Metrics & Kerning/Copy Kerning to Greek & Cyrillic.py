@@ -7,6 +7,7 @@ __doc__="""
 
 import vanilla
 import GlyphsApp
+import traceback
 
 #Stores a Latin glyph name as key and G/C glyph as unicode value, because glyph name may differ
 Grk = {"A":"0391", "B":"0392", "E":"0395", "H":"0397", "I":"0399", "K":"039A", "M":"039C", "N":"039D", "O":"039F", "P":"03A1", "T":"03A4", "X":"03A7", "Y":"03A5", "Z":"0396", "o":"03BF"}
@@ -71,6 +72,12 @@ class CopyKerningToGreekCyrillic( object ):
 			self.w.CursiveBox.enable(True)
 			self.w.CursiveBox.set(False)
 
+	def appliablePairKey(self, f, keyName):
+		if keyName[0] == '@':
+			return keyName
+		else: # if keyName is glyph ID
+			return f.glyphForId_(keyName).name
+
 	# duplication of Latin letter-to-letter pairs to the given dictionary
 	def dupliKern(self, f, kernDic, nonLetterGroupsL, nonLetterGroupsR, dic):
 		try:
@@ -115,12 +122,12 @@ class CopyKerningToGreekCyrillic( object ):
 				except:
 					pass
 
-
 			for m in f.masters:
 				for l, rightKeys in kernDic[m.id].items():
 					isLeftLetter = False
 					leftOfPair = None
-					# determine leftOfPair = new left key
+					l = self.appliablePairKey(f, l) # cleanup. glyph key becomes name
+
 					if l in kernKeysDicL:
 						leftOfPair = kernKeysDicL[l]
 						isLeftLetter = True
@@ -128,8 +135,11 @@ class CopyKerningToGreekCyrillic( object ):
 						leftOfPair = l
 					elif l[0]!='@': # if l is a glyph id = single glyph
 						try:
-							if f.glyphForId_(l).category != "Letter":
-								leftOfPair = f.glyphForId_(l).id
+							if l.category != "Letter":
+								leftOfPair = l
+								
+								# print('L', leftOfPair)
+								# leftOfPair = None
 							else: # single glyph and a letter that's irrelevant
 								pass
 						except: # glyph does not exist
@@ -138,9 +148,10 @@ class CopyKerningToGreekCyrillic( object ):
 
 					if leftOfPair is not None:
 						# print('yay', leftOfPair, rightKeys)
-						for r in rightKeys.keys():
+						for r, value in rightKeys.items():
 							isRightLetter = False
 							rightOfPair = None
+							r = self.appliablePairKey(f, r)
 							if r in kernKeysDicR:
 								rightOfPair = kernKeysDicR[r]
 								isRightLetter = True
@@ -149,21 +160,21 @@ class CopyKerningToGreekCyrillic( object ):
 							elif r[0]!='@': # if l is a glyph id = single glyph
 								try:
 									if f.glyphForId_(r).category != "Letter":
-										rightOfPair = f.glyphForId_(r).id
+										rightOfPair = r
+										# print('R', rightOfPair)
+										# rightOfPair = None
 								except: # glyph does not exist
 									pass
 							# non-Latin letters will be skipped
 
-							# if both left and right are OK
-							# and if at least one side is Letter
-							if leftOfPair and rightOfPair:
-								if isLeftLetter or isRightLetter:
+							if leftOfPair and rightOfPair: # both sides are not None
+								if isLeftLetter or isRightLetter: # if at least one side is Letter
 									try:
 										# this print function conflicts with glyph name/key
-										# print("  %s   %s   %s   %s" % (m.name, leftOfPair, rightOfPair, kernDic[m.id][l][r]))
-										f.setKerningForFontMasterID_LeftKey_RightKey_Value_(m.id, leftOfPair, rightOfPair, kernDic[m.id][l][r])
+										print("  %s   %s   %s   %s" % (m.name, leftOfPair, rightOfPair, value))
+										f.setKerningForPair(m.id, leftOfPair, rightOfPair, value)
 									except:
-										print('Failed!')
+										print('dupliKern error: ', traceback.format_exc())
 
 		except Exception as e:
 			Glyphs.showMacroWindow()
