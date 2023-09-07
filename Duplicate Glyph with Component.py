@@ -29,17 +29,19 @@ def findSuffix( glyphName ):
 	return suffix
 
 newGlyphs = []
-# make set first before iteration to avoid duplicate
+# make set first before iteration to avoid running multiple times
+# on the same glyph (that can happen if ran from Edit View)
 for l in set(f.selectedLayers):
 	originGlyph = l.parent
+
+	# prepare new glyph name
 	newGlyphNameBase = removeSuffix( originGlyph.name )
 	newSuffix = findSuffix( newGlyphNameBase )
-
-	# append suffix, create glyph:
 	newGlyphName = newGlyphNameBase + newSuffix
+
+	# add new glyph
 	newGlyph = GSGlyph( newGlyphName )
 	f.glyphs.append( newGlyph )
-	newGlyph = f.glyphs[ newGlyphName ]
 
 	# newGlyph is currently empty.
 	# Place component to all layers in it.
@@ -54,11 +56,12 @@ for l in set(f.selectedLayers):
 
 # if the script was ran from Edit view, show the added glyphs
 if f.currentTab != None:
-	theTab = Font.currentTab
+	masterID = f.selectedFontMaster.id
+	theTab = f.currentTab
 	theTabLayers = list(theTab.layers)
 	insertPos = theTab.textCursor + theTab.textRange
 	for g in newGlyphs:
-		layer = g.layers[f.masters[0].id]
+		layer = g.layers[masterID]
 		theTabLayers.insert(insertPos, layer)
 		insertPos += 1
 	theTab.layers = theTabLayers
