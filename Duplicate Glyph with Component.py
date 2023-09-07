@@ -18,7 +18,7 @@ def removeSuffix(glyphName):
 	except: # glyph name too short, passes the test without removal
 		return glyphName
 
-# returns the smallest available suffix number.
+# returns the smallest available suffix number. Tries up to .100
 def findSuffix( glyphName ):
 	glyphName = removeSuffix(glyphName)
 	for i in range(1, 100):
