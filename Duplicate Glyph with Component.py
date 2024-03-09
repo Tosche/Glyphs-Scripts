@@ -21,12 +21,15 @@ def removeSuffix(glyphName):
 # returns the smallest available suffix number. Tries up to .100
 def findSuffix( glyphName ):
 	glyphName = removeSuffix(glyphName)
-	for i in range(1, 100):
-		suffix =".%03d" % i
-		# if glyph name available, stop loop early
-		if f.glyphs[ glyphName + suffix ] == None:
-			break
-	return suffix
+	if glyphName != None:
+		for i in range(1, 100):
+			suffix =".%03d" % i
+			# if glyph name available, stop loop early
+			if f.glyphs[ glyphName + suffix ] == None:
+				break
+		return suffix
+	else:
+		return None
 
 newGlyphs = []
 # make set first before iteration to avoid running multiple times
@@ -37,22 +40,23 @@ for l in set(f.selectedLayers):
 	# prepare new glyph name
 	newGlyphNameBase = removeSuffix( originGlyph.name )
 	newSuffix = findSuffix( newGlyphNameBase )
-	newGlyphName = newGlyphNameBase + newSuffix
+	if newSuffix != None:
+		newGlyphName = newGlyphNameBase + newSuffix
 
-	# add new glyph
-	newGlyph = GSGlyph( newGlyphName )
-	f.glyphs.append( newGlyph )
+		# add new glyph
+		newGlyph = GSGlyph( newGlyphName )
+		f.glyphs.append( newGlyph )
 
-	# newGlyph is currently empty.
-	# Place component to all layers in it.
-	for m in f.masters:
-		c = GSComponent( originGlyph.name )
-		c.alignment = True
-		newGlyph.layers[m.id].components.append( c )
-		# Setting width may be unncessary since component is auto-aligned
-		newGlyph.layers[m.id].width = originGlyph.layers[m.id].width
-	print("Added", newGlyphName )
-	newGlyphs.append( newGlyph )
+		# newGlyph is currently empty.
+		# Place component to all layers in it.
+		for m in f.masters:
+			c = GSComponent( originGlyph.name )
+			c.alignment = True
+			newGlyph.layers[m.id].components.append( c )
+			# Setting width may be unncessary since component is auto-aligned
+			newGlyph.layers[m.id].width = originGlyph.layers[m.id].width
+		print("Added", newGlyphName )
+		newGlyphs.append( newGlyph )
 
 # if the script was ran from Edit view, show the added glyphs
 if f.currentTab != None:
