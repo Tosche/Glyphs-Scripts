@@ -11,10 +11,12 @@ f = Glyphs.font
 
 # returns the base glyph name without ".00X" suffix.
 # I'm doing it just in case the selected glyph already has such suffix.
-def removeSuffix(glyphName):
+def removeSuffix( glyphName ):
 	try:
 		if glyphName[-4] == "." and glyphName[-3:].isdigit:
 			return glyphName[:-4]
+		else:
+			return glyphName
 	except: # glyph name too short, passes the test without removal
 		return glyphName
 
