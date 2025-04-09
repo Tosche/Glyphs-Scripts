@@ -25,6 +25,9 @@ while len(av) < 6:
 
 insList = []
 for ins in f.instances:
+	if not ins.axes:
+		# instance is a variable font setting
+		continue
 	fn = ins.customParameters["familyName"] if ins.customParameters["familyName"] else f.familyName
 	insParameters = {
 		"Instance" : " ".join((fn, ins.name)),
