@@ -1,37 +1,42 @@
 #MenuTitle: Duplicate Glyph with Component
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, unicode_literals
-__doc__="""
+__doc__ = """
 Duplicates selected glyphs but as components, giving them 001 suffix or above depending on availability.
 """
 
-import GlyphsApp
+from GlyphsApp import Glyphs, GSGlyph, GSComponent
 
 f = Glyphs.font
 
 # returns the base glyph name without ".00X" suffix.
 # I'm doing it just in case the selected glyph already has such suffix.
-def removeSuffix( glyphName ):
+
+
+def removeSuffix(glyphName):
 	try:
 		if glyphName[-4] == "." and glyphName[-3:].isdigit:
 			return glyphName[:-4]
 		else:
 			return glyphName
-	except: # glyph name too short, passes the test without removal
+	except:  # glyph name too short, passes the test without removal
 		return glyphName
 
 # returns the smallest available suffix number. Tries up to .100
-def findSuffix( glyphName ):
+
+
+def findSuffix(glyphName):
 	glyphName = removeSuffix(glyphName)
-	if glyphName != None:
+	if glyphName is not None:
 		for i in range(1, 100):
-			suffix =".%03d" % i
+			suffix = ".%03d" % i
 			# if glyph name available, stop loop early
-			if f.glyphs[ glyphName + suffix ] == None:
+			if f.glyphs[glyphName + suffix] is None:
 				break
 		return suffix
 	else:
 		return None
+
 
 newGlyphs = []
 # make set first before iteration to avoid running multiple times
@@ -40,28 +45,28 @@ for l in set(f.selectedLayers):
 	originGlyph = l.parent
 
 	# prepare new glyph name
-	newGlyphNameBase = removeSuffix( originGlyph.name )
-	newSuffix = findSuffix( newGlyphNameBase )
-	if newSuffix != None:
+	newGlyphNameBase = removeSuffix(originGlyph.name)
+	newSuffix = findSuffix(newGlyphNameBase)
+	if newSuffix is not None:
 		newGlyphName = newGlyphNameBase + newSuffix
 
 		# add new glyph
-		newGlyph = GSGlyph( newGlyphName )
-		f.glyphs.append( newGlyph )
+		newGlyph = GSGlyph(newGlyphName)
+		f.glyphs.append(newGlyph)
 
 		# newGlyph is currently empty.
 		# Place component to all layers in it.
 		for m in f.masters:
-			c = GSComponent( originGlyph.name )
+			c = GSComponent(originGlyph.name)
 			c.alignment = True
-			newGlyph.layers[m.id].components.append( c )
+			newGlyph.layers[m.id].components.append(c)
 			# Setting width may be unncessary since component is auto-aligned
 			newGlyph.layers[m.id].width = originGlyph.layers[m.id].width
-		print("Added", newGlyphName )
-		newGlyphs.append( newGlyph )
+		print("Added", newGlyphName)
+		newGlyphs.append(newGlyph)
 
 # if the script was ran from Edit view, show the added glyphs
-if f.currentTab != None:
+if f.currentTab is not None:
 	masterID = f.selectedFontMaster.id
 	theTab = f.currentTab
 	theTabLayers = list(theTab.layers)

@@ -1,11 +1,11 @@
 #MenuTitle: Port Arabic & Hebrew kerning for G3
 # -*- coding: utf-8 -*-
-__doc__="""
+__doc__ = """
 Ports Arabic kerning data of G2 to G3 now that the kerning tables are separate.
 Run only once on a file.
 """
 
-import GlyphsApp
+from GlyphsApp import Glyphs
 
 f = Glyphs.font
 
@@ -37,6 +37,7 @@ for g in f.glyphs:
 RTLGroups = set(RTLGroups)
 # print(RTLGroups)
 
+
 def verifyRTL(name):
 	if name[0] == '@':
 		if name in RTLGroups:
@@ -50,6 +51,7 @@ def verifyRTL(name):
 	else:
 		return False
 
+
 kd = Glyphs.font.kerningDictForDirection_(0)
 pairsToRemove = []
 for mas, firsts in kd.items():
@@ -57,12 +59,12 @@ for mas, firsts in kd.items():
 		RTLFirst = verifyRTL(fir)
 		for sec, val in seconds.items():
 			RTLSecond = verifyRTL(sec)
-			if any( (RTLFirst, RTLSecond) ) is True:
+			if any((RTLFirst, RTLSecond)) is True:
 				newFir = fir.replace('_L', '_R') if fir[0] == '@' else f.glyphs[fir].id
 				newSec = sec.replace('_R', '_L') if sec[0] == '@' else f.glyphs[sec].id
 				# print(mas,newFir, newSec, val)
 				f.setKerningForFontMasterID_LeftKey_RightKey_Value_direction_(mas, newFir, newSec, val, 2)
-				pairsToRemove.append((mas,fir,sec))
+				pairsToRemove.append((mas, fir, sec))
 
 for p in pairsToRemove:
 	f.removeKerningForPair(p[0], p[1], p[2])

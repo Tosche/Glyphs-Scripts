@@ -1,18 +1,18 @@
 #MenuTitle: Report Compatibility by Numbers
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, unicode_literals
-__doc__="""
+__doc__ = """
 Outputs path count, node count, anchor count etc. of selected glyphs in the Macro Window.
 """
 
-import GlyphsApp
+from GlyphsApp import Glyphs
 
-font = Glyphs.font # frontmost font
-fontMaster = font.selectedFontMaster # active master
-selectedLayers = font.selectedLayers # active layers of selected glyphs
+font = Glyphs.font  # frontmost font
+fontMaster = font.selectedFontMaster  # active master
+selectedLayers = font.selectedLayers  # active layers of selected glyphs
 thisDoc = Glyphs.currentDocument
 
-font.disableUpdateInterface() # suppresses UI updates in Font View
+font.disableUpdateInterface()  # suppresses UI updates in Font View
 Glyphs.clearLog()
 
 for layer in selectedLayers:
@@ -33,7 +33,7 @@ for layer in selectedLayers:
 			for n in l.paths[i].nodes:
 				if n.type == 65:
 					offcurveCount += 1
-			print("\t\tpath %s: %s nodes (%s on-curve, %s off-curve)" % (i+1, nodeCount, nodeCount-offcurveCount, offcurveCount))
+			print("\t\tpath %s: %s nodes (%s on-curve, %s off-curve)" % (i + 1, nodeCount, nodeCount - offcurveCount, offcurveCount))
 	print
-font.enableUpdateInterface() # re-enables UI updates in Font View
+font.enableUpdateInterface()  # re-enables UI updates in Font View
 Glyphs.showMacroWindow()

@@ -1,48 +1,49 @@
 #MenuTitle: Search Glyph In Class Features...
 # -*- coding: utf-8 -*-
 from __future__ import print_function, division, unicode_literals
-__doc__="""
+__doc__ = """
 Searches glyphs in OpenType classes and features if they are used.
 """
 
 import vanilla
-import GlyphsApp
+from GlyphsApp import Glyphs
 
-class SearchGlyphInClassFeatures( object ):
-	def __init__( self ):
+
+class SearchGlyphInClassFeatures(object):
+	def __init__(self):
 		# Window 'self.w':
 		edY = 22
-		txY = 17
+		# txY = 17
 		sp = 10
 		btnX = 100
 		btnY = 22
-		windowWidth  = 300
-		windowHeight = sp*5+edY*2+edY+btnY+sp
+		windowWidth = 300
+		windowHeight = sp * 5 + edY * 2 + edY + btnY + sp
 		# windowWidthResize  = 100 # user can resize width by this value
 		# windowHeightResize = 0   # user can resize height by this value
 		self.w = vanilla.FloatingWindow(
-			( windowWidth, windowHeight ), # default window size
-			"Search Glyph In Class Features", # window title
+			(windowWidth, windowHeight),  # default window size
+			"Search Glyph In Class Features",  # window title
 			# minSize = ( windowWidth, windowHeight ), # minimum size (for resizing)
 			# maxSize = ( windowWidth, windowHeight ), # maximum size (for resizing)
-			autosaveName = "com.Tosche.SearchGlyphInClassFeatures.mainwindow" # stores last window position and size
+			autosaveName="com.Tosche.SearchGlyphInClassFeatures.mainwindow"  # stores last window position and size
 		)
-		
-		listOfOptions = [ "Check which alternates are unused", "Check if/where the selected glyph is used", "Any keyword" ]
-		self.w.radioButtons = vanilla.RadioGroup( (sp, sp, -sp, edY*len(listOfOptions) ), listOfOptions, sizeStyle = 'regular', callback=self.radio )
-		self.w.edit_1 = vanilla.EditText( (sp+20, sp*1.5+edY*len(listOfOptions), -sp, edY), "", sizeStyle = 'regular')
-		
+
+		listOfOptions = ["Check which alternates are unused", "Check if/where the selected glyph is used", "Any keyword"]
+		self.w.radioButtons = vanilla.RadioGroup((sp, sp, -sp, edY * len(listOfOptions)), listOfOptions, sizeStyle='regular', callback=self.radio)
+		self.w.edit_1 = vanilla.EditText((sp + 20, sp * 1.5 + edY * len(listOfOptions), -sp, edY), "", sizeStyle='regular')
+
 		# Run Button:
-		self.w.runButton = vanilla.Button((-sp-btnX, sp*5+edY*2+edY, -sp, btnY), "Check", sizeStyle='regular', callback=self.Search )
-		self.w.setDefaultButton( self.w.runButton )
-				
+		self.w.runButton = vanilla.Button((-sp - btnX, sp * 5 + edY * 2 + edY, -sp, btnY), "Check", sizeStyle='regular', callback=self.Search)
+		self.w.setDefaultButton(self.w.runButton)
+
 		# Open window and focus on it:
-		self.w.radioButtons.set( 0 )
+		self.w.radioButtons.set(0)
 		self.w.edit_1.enable(False)
 		self.w.open()
 		self.w.makeKey()
 
-	def radio( self, sender ):
+	def radio(self, sender):
 		if sender.get() == 2:
 			self.w.edit_1.enable(True)
 		else:
@@ -53,11 +54,11 @@ class SearchGlyphInClassFeatures( object ):
 		print(theText)
 		Glyphs.showMacroWindow()
 
-	def Search( self, sender ):
+	def Search(self, sender):
 		try:
-			f = Glyphs.font # frontmost font
+			f = Glyphs.font  # frontmost font
 			option = self.w.radioButtons.get()
-			if option == 0: # check all glyphs
+			if option == 0:  # check all glyphs
 				unusedGlyphs = []
 				for g in f.glyphs:
 					used = False
@@ -70,19 +71,19 @@ class SearchGlyphInClassFeatures( object ):
 							if g.name in fea.code:
 								used = True
 								break
-						if used == False:
+						if not used:
 							gName = g.name if g.export else "Non-export: %s" % g.name
 							unusedGlyphs.append(gName)
 				if len(unusedGlyphs) > 0:
-					self.showMacro("The following alternate glyphs are not used in any OpenType classes or features:\n"+"\n".join([g for g in unusedGlyphs]) )
+					self.showMacro("The following alternate glyphs are not used in any OpenType classes or features:\n" + "\n".join([g for g in unusedGlyphs]))
 				else:
 					self.showMacro("All alternates are being used!")
 
 			else:
 				if option == 1:
 					if len(f.selectedLayers) != 0:
-						proceed = True
-						gname = f.selectedLayers[0].parent.name # active layers of currently selected glyphs
+						# proceed = True
+						gname = f.selectedLayers[0].parent.name  # active layers of currently selected glyphs
 					else:
 						Glyphs.showAlert_message_OKButton_("SEARCH ERROR", "Nothing is selected.", "OK")
 				else:
@@ -91,13 +92,13 @@ class SearchGlyphInClassFeatures( object ):
 				usedFeas = []
 				for cla in f.classes:
 					if gname in cla.code:
-						usedFeas.append("@"+cla.name)
+						usedFeas.append("@" + cla.name)
 				for fea in f.features:
 					if gname in fea.code:
 						usedFeas.append(fea.name)
 
 				if len(usedFeas) != 0:
-					self.showMacro("The glyph is used in the follwing classes and features:\n"+"\n".join([fea for fea in usedFeas]))
+					self.showMacro("The glyph is used in the follwing classes and features:\n" + "\n".join([fea for fea in usedFeas]))
 				else:
 					self.showMacro("The searched word is not being used anywhere!")
 
@@ -106,5 +107,6 @@ class SearchGlyphInClassFeatures( object ):
 			# brings macro window to front and reports error:
 			Glyphs.showMacroWindow()
 			print("Search Glyph In Class Features Error: %s" % e)
+
 
 SearchGlyphInClassFeatures()
