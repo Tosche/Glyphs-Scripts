@@ -37,6 +37,7 @@ For some scripts, you will also need to install Tal Leming's *Vanilla* and may n
 * **Export InDesign Tagged Text with All Glyphs:** (GUI) Saves InDesign tagged text file that contains all glyphs for typesetting a specimen, using glyph ID.
 * **Guideline Locker:** (GUI) Locks selected guidelines and unlocks all global guidelines. *Vanilla required.*
 * **Instance Slider:** (GUI) Lets you define interpolation values of instances more graphically, using sliders and preview. *Vanilla and Robofab required.*
+* **Random Wikipedia Article:** (GUI) Gets a random Wikipedia article and typesets to your page.
 * **Search Glyph In Class Features:** Searches glyphs in OpenType classes and features if they are used.*
 * **Sync Edit Views:** Refreshes the edit view contents of non-front files. Have multiple files open! *Vanilla required.*
 * **Transform Images with Proper Maths:** (GUI) Batch scale and move images in selected layers, using the maths you learned at school. Based on mekkablue's Transform Images script. *Vanilla required.*
