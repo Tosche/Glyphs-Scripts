@@ -142,13 +142,13 @@ class InstanceSlider(object):
 		if "Weight" not in [a[0] for a in av]:
 			self.w.checkY.enable(False)
 
-		columnTitles = [{"title": "Instance", "width": self.w.getPosSize()[2] - axisX * (len(av) + 1)}]
+		columnTitles = [{"title": "Instance"}]
 		for i in range(len(av)):
 			columnTitles += [{"title": av[i][0], "width": axisX}]
 
-		self.w.list = vanilla.List((0, 0, -0, -(YOffset - 18)), insList, selectionCallback=self.listClick, allowsMultipleSelection=False, allowsEmptySelection=False, columnDescriptions=columnTitles)
+		self.w.list = vanilla.List(posSize=(0, 0, -0, -(YOffset - 18)), items=insList, selectionCallback=self.listClick, allowsMultipleSelection=False, allowsEmptySelection=False, columnDescriptions=columnTitles)
 		self.w.list._nsObject.setBorderType_(NSNoBorder)
-		tableView = self.w.list._tableView
+		tableView = self.w.list.getNSTableView()
 		tableView.setAllowsColumnReordering_(False)
 		tableView.unbind_("sortDescriptors")  # Disables sorting by clicking the title bar
 		for i in range(len(av)):
@@ -193,6 +193,9 @@ class InstanceSlider(object):
 
 			for i, els in enumerate(self.usedAxisElements):
 				if Glyphs.versionNumber > 2.5:
+					if not instance.axes:
+						# seems to be a VF setting, not a real instanmce
+						continue
 					els[1].set(float(instance.axes[i]))
 					els[2].set(int(instance.axes[i]))
 				else:
