@@ -59,7 +59,7 @@ for l in set(f.selectedLayers):
 		for m in f.masters:
 			c = GSComponent(originGlyph.name)
 			c.alignment = True
-			newGlyph.layers[m.id].components.append(c)
+			newGlyph.layers[m.id].addShape_(c)
 			# Setting width may be unncessary since component is auto-aligned
 			newGlyph.layers[m.id].width = originGlyph.layers[m.id].width
 		print("Added", newGlyphName)
