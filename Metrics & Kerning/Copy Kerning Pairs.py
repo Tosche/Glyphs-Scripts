@@ -477,7 +477,7 @@ class CopyKerningPairs(object):
 			fMaster = f.selectedFontMaster
 
 			if Glyphs.versionNumber >= 3.0:
-				kernDic = f.kerningDictForDirection_(0)
+				kernDic = f.kerning
 			else:
 				kernDic = f.kerningDict()
 			newKernDic = {}

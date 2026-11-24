@@ -11,15 +11,16 @@ from GlyphsApp import Glyphs
 thisFont = Glyphs.font
 # builing a more accessible kerning dictionary
 # it's a dictionary of lists. newKernDic[master.id][left, right, value]
-kernDic = thisFont.kerningDict()
+# GSFont.kerningDict() no longer exists in Glyphs 4; GSFont.kerning exists in Glyphs 3 and 4
+kernDic = thisFont.kerning
 newKernDic = {}
 for thisMaster in thisFont.masters:
 	kernList = []
-	for key1 in kernDic[thisMaster.id]:
-		for key2 in kernDic[thisMaster.id][key1]:
-			pairInList = [key1, key2, kernDic[thisMaster.id][key1][key2]]
-			kernList.append(pairInList)
-		newKernDic[thisMaster.id] = kernList
+	masterKerning = kernDic[thisMaster.id] if thisMaster.id in kernDic else {}
+	for key1 in masterKerning:
+		for key2 in masterKerning[key1]:
+			kernList.append([key1, key2, masterKerning[key1][key2]])
+	newKernDic[thisMaster.id] = kernList
 
 # building popup list
 # each value contains a list of glyphs involved. groupsL/R[groupName][glyph, glyph, glyph...]
